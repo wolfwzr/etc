@@ -1,0 +1,107 @@
+############################################################
+# BASH PREFERENCES
+############################################################
+set -o vi
+export EDITOR=vim
+# path
+PATH="/usr/local/bin:$PATH"
+PATH="/usr/local/sbin:$PATH"
+PATH="/Users/wolfwzr/.local/bin:$PATH"
+export PATH
+
+############################################################
+# COMMAND PROMPT
+############################################################
+wolf_update_ps1()
+{
+    ret=$?
+    if [ $ret -eq 0 ] 
+    then
+        if [ "$ITERM_PROFILE" = "Dark" ]
+        then
+            ps1_last_cmd_retval="\[\033[40;37m\]"
+        else
+            ps1_last_cmd_retval="\[\033[47;37m\]"
+        fi
+    else
+        ps1_last_cmd_retval="\[\033[41;31m\]${ret}✘"
+    fi
+
+    if [ $(id -u) = '0' ]
+    then
+        ps1_user_sign="\[\033[31m\]\u"
+    else
+        ps1_user_sign="\[\033[37m\]\u"
+    fi
+
+    PS1="${ps1_last_cmd_retval}\[\033[37m\][\[\033[36m\]\t $ps1_user_sign \[\033[33m\]\W\[\033[37m\]]\[\033[0m\] "
+    export PS1
+}
+export PROMPT_COMMAND="wolf_update_ps1"
+#export PROMPT_DIRTRIM=
+
+############################################################
+# BASH COMPLETION
+############################################################
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+    . $(brew --prefix)/etc/bash_completion
+fi
+
+############################################################
+# ALIAS
+############################################################
+alias a='./a.out'
+alias c='clear'
+alias h='history | less +G'
+alias o='open'
+alias r='netstat -f inet -nr'
+alias ls='ls -G'
+alias ll='ls -lh'
+alias la='ls -a'
+alias df='df -Ph'
+alias um='diskutil umount'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias top='top -o cpu'
+alias grep='grep --color=auto'
+alias iconvcat='iconv -f gbk -t utf8'
+alias briss='java -jar /Users/wolfwzr/.local/share/briss-0.9/briss-0.9.jar'
+alias cpwd='printf $PWD | pbcopy'
+alias srcbashrc='source /Users/wolfwzr/.local/etc/bashrc'
+
+# alias for vi
+# environment variable for vim script - vim-colorselector
+export DOTVIM='/Users/wolfwzr/.vim/bundle/vim-colorschemes'
+alias vi='vim -p'
+alias vibashrc='vi /Users/wolfwzr/.local/etc/bashrc'
+alias virc='vi /Users/wolfwzr/.vim/vimrc'
+alias vismbconf='vi /usr/local/etc/smb.conf'
+alias visshconf='vi ~/.ssh/config'
+
+############################################################
+# z - a better cd
+############################################################
+source /usr/local/etc/profile.d/z.sh
+
+############################################################
+# dir shortcut
+############################################################
+# WorkSpace
+ws="/Users/wolfwzr/Books/My OS/kernel_learning"
+alias gws='cd "$ws"'
+# WorkSpace2
+ws2="/Users/wolfwzr/Books/My OS/x86汇编语言:从实模式到保护模式/booktool/code/c14"
+alias gws2='cd "$ws2"'
+# BrewHome
+bh="/usr/local/Cellar/"
+alias gbh='cd "$bh"'
+# HomeBin(~/.local/bin)
+hb="/Users/wolfwzr/.local/bin"
+alias ghb='cd "$hb"'
+# MountFolder
+mf="/Volumes/"
+alias gmf='cd "$mf"'
+# SAE (Sina App Engine)
+sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
+alias gsae='cd $sae'
+
