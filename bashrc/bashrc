@@ -72,7 +72,7 @@ alias srcbashrc='source /Users/wolfwzr/.local/etc/bashrc'
 # alias for vi
 # environment variable for vim script - vim-colorselector
 export DOTVIM='/Users/wolfwzr/.vim/bundle/vim-colorschemes'
-alias vi='vim -p'
+alias vi='gvim -p'
 alias vibashrc='vi /Users/wolfwzr/.local/etc/bashrc'
 alias virc='vi /Users/wolfwzr/.vim/vimrc'
 alias vismbconf='vi /usr/local/etc/smb.conf'

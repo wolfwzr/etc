@@ -1,5 +1,6 @@
 " 全局变量定义 {{{1
 let WOLFWZR_colorscheme_applied = 0
+let WOLFWZR_filetyped_setting_applied = 0
 
 " 设置Tab栏（WOLFWZR_set_tabline_style） {{{1
 function WOLFWZR_set_tabline_style()
@@ -37,6 +38,10 @@ endfunction
 
 " 根据文件类型做不同设置(WOLFWZR_specific_filetyped_settings) {{{1
 function WOLFWZR_specific_filetyped_settings()
+    if WOLFWZR_filetyped_setting_applied == 1
+        return
+    endif
+
     " C/CPP/H/NASL/LEX/YACC/BISON {{{2
     if &filetype == "c" 
        \ || &filetype == "h"
@@ -106,6 +111,7 @@ function WOLFWZR_specific_filetyped_settings()
         nmap <buffer> <CR> <C-]>
         nmap <buffer> <BS> <C-t>
     endif
+    let WOLFWZR_filetyped_setting_applied = 1
 endfunction
 
 
@@ -221,12 +227,11 @@ if has("autocmd")
     autocmd BufRead,BufNewFile *.vimrc set filetype=vim
     autocmd BufRead,BufNewFile *.{md,mkd,markdown} set filetype=mkd
     " 根据不同的文件类型做不同的设置
-    autocmd BufReadPost * call WOLFWZR_specific_filetyped_settings()
+    autocmd BufNew,BufNewFile,BufReadPost * call WOLFWZR_specific_filetyped_settings()
     " 不知为何:help不会触发BufNew事件
     " 无法在WOLFWZR_specific_filetyped_settings函数中处理help类型
     autocmd FileType help nmap <buffer> <CR> <C-]> | nmap <buffer> <BS> <C-t>
 endif
-
 
 " GUI设置 {{{1
 if has("gui_running")
