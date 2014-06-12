@@ -121,10 +121,32 @@ function WOLFWZR_filetype_setting()
     " MKD {{{2
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
-        
-        call WOLFWZR_set_colorscheme("darktango")
-        highlight Pmenu     guibg=#555753 guifg=#EEEEEE
-        highlight PmenuSel  guibg=#BABDB6
+        if has("gui_running")
+            call WOLFWZR_set_colorscheme("darktango")
+            highlight Pmenu     guibg=#555753 guifg=#EEEEEE
+            highlight PmenuSel  guibg=#BABDB6
+            set guifont=Monaco:h16,YaHei\ Consolas\ Hybrid\ 14
+            " Aviable guifontwide
+            " Hannotate\ SC\ Regular
+            " Libian\ SC\ Regular
+            " Yuanti\ SC\ Regular
+            " Xingkai\ SC\ Light
+            set guifontwide=Kaiti\ SC\ Regular,YaHei\ Consolas\ Hybrid
+        endif
+    " TEXT {{{2
+    elseif &filetype == "text"
+        if has("gui_running")
+            call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
+            highlight Pmenu     guibg=#555753 guifg=#EEEEEE
+            highlight PmenuSel  guibg=#BABDB6
+            set guifont=Monaco:h18,YaHei\ Consolas\ Hybrid\ 16
+            " Aviable guifontwide
+            " Hannotate\ SC\ Regular
+            " Libian\ SC\ Regular
+            " Yuanti\ SC\ Regular
+            " Xingkai\ SC\ Light
+            set guifontwide=Kaiti\ SC\ Regular,YaHei\ Consolas\ Hybrid
+        endif
     endif
 endfunction
 
@@ -224,6 +246,9 @@ endif
 nnoremap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
 nnoremap <F1> :help <C-R>=expand("<cword>")<CR><CR>
 
+" 快捷预览当前光标下的ColorScheme
+noremap <Leader>s :color <C-r>=expand("<cWORD>")<CR><CR>
+
 " 查询当前光标下单词的意思 {{{2
 if has("macunix")
     " 复制当前光标下的单词到系统粘贴板
@@ -279,7 +304,26 @@ if has("gui_running")
         " PapayaWhip
         " Monokai
         " peaksea
-        call WOLFWZR_set_colorscheme("peaksea")
+        " pf_earth
+        " phd
+        " railscasts
+        " rainbow_neon
+        " rdark
+        " settlemyer
+        " sorcerer
+        " southwest-fog
+        " strawimodo
+        " symfony
+        " tango-desert
+        " tango2
+        " tchaba
+        " Tomorrow-Night-Eighties
+        " two2tango
+        " vilight
+        " vydark
+        " watermark
+        " wombat
+        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
     endif
     " 设置光标行高亮
     " highlight CursorLine gui=reverse

@@ -33,22 +33,27 @@ Bundle 'vim-scripts/Mark'
 "    q  - 关闭浏览界面
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
 Bundle 'scrooloose/nerdtree'
-let g:NERDTreeWinSize=27
+if has("macunix")
+    let g:NERDTreeWinSize=20
+elseif has("unix")
+    let g:NERDTreeWinSize=27
+endif
 " 本函数功能：
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
 "   2. 关闭 NERDTree 窗口，并将 vim 窗口宽度减少 g:NERDTreeWinSize
 function WOLFWZR_nerdtree_toggle()
     NERDTreeToggle
-
-    let wolfwzr_vim_window_width = &columns
-    " NERDTree Window from closed to open
-    if exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1
-        let wolfwzr_vim_window_width += g:NERDTreeWinSize + 1
-    else " NERDTree Window from open to closed
-        let wolfwzr_vim_window_width -= g:NERDTreeWinSize + 1
+    if has("gui_running")
+        let wolfwzr_vim_window_width = &columns
+        " NERDTree Window from closed to open
+        if exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1
+            let wolfwzr_vim_window_width += g:NERDTreeWinSize + 1
+        else " NERDTree Window from open to closed
+            let wolfwzr_vim_window_width -= g:NERDTreeWinSize + 1
+        endif
+        execute 'set columns='.wolfwzr_vim_window_width
     endif
-    execute 'set columns='.wolfwzr_vim_window_width
 endfunction
 nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
 
@@ -57,17 +62,29 @@ nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
-let g:tagbar_width=27
+if has("macunix")
+    let g:tagbar_width=20
+elseif has("unix")
+    let g:tagbar_width=27
+endif
+" 本函数功能：
+"   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
+"   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
+"   2. 关闭 Tagbar 窗口，并将 vim 窗口宽度减少 g:tagbar_width
 function WOLFWZR_tagbar_toggle()
-    let wolfwzr_vim_window_width = &columns
-    " Tagbar now is opened
-    if bufwinnr("__Tagbar__") != -1
-        TagbarToggle
-        let wolfwzr_vim_window_width -= g:tagbar_width + 1
-        execute 'set columns='.wolfwzr_vim_window_width
-    else " Tagbar now is closed
-        let wolfwzr_vim_window_width += g:tagbar_width + 1
-        execute 'set columns='.wolfwzr_vim_window_width
+    if has("gui_running")
+        let wolfwzr_vim_window_width = &columns
+        " Tagbar now is opened
+        if bufwinnr("__Tagbar__") != -1
+            TagbarToggle
+            let wolfwzr_vim_window_width -= g:tagbar_width + 1
+            execute 'set columns='.wolfwzr_vim_window_width
+        else " Tagbar now is closed
+            let wolfwzr_vim_window_width += g:tagbar_width + 1
+            execute 'set columns='.wolfwzr_vim_window_width
+            TagbarToggle
+        endif
+    else
         TagbarToggle
     endif
 endfunction
