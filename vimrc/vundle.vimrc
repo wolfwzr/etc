@@ -1,7 +1,17 @@
 " a插件 {{{1
 " jump between .h and .c files
 Bundle 'vim-scripts/a.vim'
-nmap <Leader>a :A<CR>
+nnoremap <Leader>a :A<CR>
+" if mapcheck("<Leader>is", "i") != ""
+"     set columns=100
+"     iunmap <Leader>is
+" endif
+" if mapcheck("<Leader>ih", "i") != ""
+"     iunmap <Leader>ih
+" endif
+" if mapcheck("<Leader>ihn", "i") != ""
+"     iunmap <Leader>ihn
+" endif
 
 " Mark插件 {{{1
 " Mark different color with different string
@@ -23,11 +33,45 @@ Bundle 'vim-scripts/Mark'
 "    q  - 关闭浏览界面
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
 Bundle 'scrooloose/nerdtree'
-let g:NERDTreeWinSize=30
-nmap <Leader>u :NERDTree<CR>
-if has("autocmd")
-    autocmd FileType nerdtree nmap <buffer> <Leader>u q
-endif
+let g:NERDTreeWinSize=27
+" 本函数功能：
+"   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
+"   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
+"   2. 关闭 NERDTree 窗口，并将 vim 窗口宽度减少 g:NERDTreeWinSize
+function WOLFWZR_nerdtree_toggle()
+    NERDTreeToggle
+
+    let wolfwzr_vim_window_width = &columns
+    " NERDTree Window from closed to open
+    if exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1
+        let wolfwzr_vim_window_width += g:NERDTreeWinSize + 1
+    else " NERDTree Window from open to closed
+        let wolfwzr_vim_window_width -= g:NERDTreeWinSize + 1
+    endif
+    execute 'set columns='.wolfwzr_vim_window_width
+endfunction
+nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
+
+" tarbar插件 {{{1
+" 显示符号列表（宏、类、函数、变量等）
+" 使用方法：
+" :TagbarToggle 或 <Leader>l
+Bundle 'majutsushi/tagbar'
+let g:tagbar_width=27
+function WOLFWZR_tagbar_toggle()
+    let wolfwzr_vim_window_width = &columns
+    " Tagbar now is opened
+    if bufwinnr("__Tagbar__") != -1
+        TagbarToggle
+        let wolfwzr_vim_window_width -= g:tagbar_width + 1
+        execute 'set columns='.wolfwzr_vim_window_width
+    else " Tagbar now is closed
+        let wolfwzr_vim_window_width += g:tagbar_width + 1
+        execute 'set columns='.wolfwzr_vim_window_width
+        TagbarToggle
+    endif
+endfunction
+nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
 
 " ctrlp插件 {{{1
 " 优雅地查找文件
@@ -66,10 +110,7 @@ Bundle 'c9s/colorselector.vim'
 " p - 预览上一个配色方案
 Bundle 'flazz/vim-colorschemes'
 
-" tarbar插件 {{{1
-" 显示符号列表（宏、类、函数、变量等）
-" 使用方法：
-" :TagbarToggle 或 <Leader>l
-Bundle 'majutsushi/tagbar'
-let g:tagbar_width=30
-nmap <Leader>l :TagbarToggle<CR>
+" bufexplorer.zip插件 {{{1
+Bundle 'vim-scripts/bufexplorer.zip'
+nnoremap <Leader>e :BufExplorer<CR>
+" nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>

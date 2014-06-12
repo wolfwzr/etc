@@ -1,6 +1,5 @@
-" 全局变量定义 {{{1
-let WOLFWZR_colorscheme_applied = 0
-let WOLFWZR_filetyped_setting_applied = 0
+" 变量定义 {{{1
+let b:WOLFWZR_colorscheme_applied = 0
 
 " 设置Tab栏（WOLFWZR_set_tabline_style） {{{1
 function WOLFWZR_set_tabline_style()
@@ -20,28 +19,24 @@ function WOLFWZR_code_common_setting()
     set expandtab 
     set nu
     if has("gui_running")
-        set columns=120
+        set columns=87
         set lines=37
-        set colorcolumn=80
+        set cursorline
+        "set colorcolumn=80
     endif
 endfunction
 
 " 设置配色方案(WOLFWZR_set_colorscheme) {{{1
-" 设置配色方案并重新执行mark.vim（否则mark.vim将失效）
+" 设置配色方案并重新加载mark.vim（否则mark.vim将失效）
 " 使用autocmd ColorScheme事件来执行mark.vim并不起作用(why?)
 function WOLFWZR_set_colorscheme(color)
     exec 'colorscheme ' . a:color
-    let WOLFWZR_colorscheme_applied = 1
     source ~/.vim/bundle/Mark/plugin/mark.vim
-    source ~/.vim/bundle/Mark/plugin/mark.vim
+    let b:WOLFWZR_colorscheme_applied = 1
 endfunction
 
-" 根据文件类型做不同设置(WOLFWZR_specific_filetyped_settings) {{{1
-function WOLFWZR_specific_filetyped_settings()
-    if WOLFWZR_filetyped_setting_applied == 1
-        return
-    endif
-
+" filetype处理 {{{1
+function WOLFWZR_filetype_setting()
     " C/CPP/H/NASL/LEX/YACC/BISON {{{2
     if &filetype == "c" 
        \ || &filetype == "h"
@@ -51,30 +46,47 @@ function WOLFWZR_specific_filetyped_settings()
        \ || &filetype == "yacc"
        \ || &filetype == "bison"
         call WOLFWZR_code_common_setting()
-        " 备选配色方案：
-        " codeschool
-        " carvedwood
-        " chance-of-storm
-        " corn
-        " corporation
-        " dante
-        " darkz
-        " darkburn
-        " freya
-        " gruvbox （有个奇怪的事情：要使这个主题生效，得先设置主题为greyblue）
-        call WOLFWZR_set_colorscheme("greyblue")
-        call WOLFWZR_set_colorscheme("gruvbox")
-        hi cFunctions guifg=DarkYellow cterm=bold ctermfg=DarkBlue
-        set cursorline
+
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
         " Tag跳转
-        nmap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>
-        nmap <buffer> <BS> <C-t>
+
+        if has("gui_running")
+            " 备选配色方案：
+            " codeschool
+            " carvedwood
+            " chance-of-storm
+            " corn
+            " corporation
+            " dante
+            " darkz
+            " darkburn
+            " freya
+            " gruvbox （有个奇怪的事情：
+            "           要使这个主题生效，得先设置主题为greyblue）
+            call WOLFWZR_set_colorscheme("greyblue")
+            call WOLFWZR_set_colorscheme("gruvbox")
+            hi cFunctions guifg=DarkYellow cterm=bold ctermfg=DarkBlue
+
+            " set colorcolumn=80
+            
+            winpos 200 20
+            set lines=38
+        endif
     " ASM {{{2
     elseif &filetype == "asm"
         call WOLFWZR_code_common_setting()
-        call WOLFWZR_set_colorscheme("wolfasm")
+        if has("gui_running")
+            " rainbow_neon
+            " selenitic
+            " settlemyer
+            " sonofobsidian
+            " spectro
+            " tchaba
+            " wolfasm ( only avirable in rmbp )
+            call WOLFWZR_set_colorscheme("rainbow_neon")
+            highlight CursorLine guibg=grey25
+        endif
     " PYTHON {{{2
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
@@ -84,7 +96,13 @@ function WOLFWZR_specific_filetyped_settings()
     " SH {{{2
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
+
+        " 设置配色方案及其对应的YouCompleteMe弹出菜单样式
         call WOLFWZR_set_colorscheme("anotherdark")
+        " 可以使用:hi命令查看所有高亮配色对，基于某个改改
+        highlight Pmenu guibg=grey25
+        highlight PmenuSel guibg=grey40
+
         if has("gui_running")
             set colorcolumn=0
             set columns=90
@@ -92,28 +110,23 @@ function WOLFWZR_specific_filetyped_settings()
     " VIM {{{2
     elseif &filetype == "vim"
         call WOLFWZR_code_common_setting()
-        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
-        if has("gui_running")
-            set colorcolumn=0
-            set columns=90
-            set cursorline
-        endif
-        nmap <buffer> <CR> gf
-        nmap <buffer> <BS> <C-o>
 	    set foldmethod=marker
+
+        if has("gui_running")
+            call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
+            highlight Folded gui=none guibg=#515151 guifg=#99CC99
+            highlight CursorLine guibg=grey23
+            highlight PmenuSel gui=none guibg=grey50
+        endif
     " MKD {{{2
     elseif &filetype == "mkd"
-        " 按F5在浏览器中预览当前文件
+        call WOLFWZR_code_common_setting()
+        
         call WOLFWZR_set_colorscheme("darktango")
-        nmap <buffer> <F5> :!mkd_preview.sh %
-    " HELP {{{2
-    elseif &filetype == "help"
-        nmap <buffer> <CR> <C-]>
-        nmap <buffer> <BS> <C-t>
+        highlight Pmenu     guibg=#555753 guifg=#EEEEEE
+        highlight PmenuSel  guibg=#BABDB6
     endif
-    let WOLFWZR_filetyped_setting_applied = 1
 endfunction
-
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " 设置开始
@@ -133,6 +146,8 @@ set backspace=indent,eol,start
 " 这里配置文件里面包含了各个插件的配置
 source ~/.vim/bundle/Vundle.vim/Vundle.vimrc
 
+" 基础设置 {{{1
+
 " 设置搜索结果高亮显示 {{{2
 set hlsearch
 
@@ -140,10 +155,10 @@ set hlsearch
 set incsearch
 
 " 设置水平新建窗口时新窗口在下边 {{{2
-set splitbelow
+"set splitbelow
 
 " 设置垂直新建窗口时新窗口在右边 {{{2
-set splitright
+" set splitright
 
 " 文件编码设置 {{{2
 " set encoding=utf-8 
@@ -168,69 +183,83 @@ set statusline=
 
 " 快捷键设置 {{{1
 " 设置代码折叠快捷键 {{{2
-nmap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
+nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
 
 " 翻页设置 {{{2
-nmap <SPACE> <C-f>
-nmap <TAB> <C-b>
+nnoremap <SPACE> <C-f>
+nnoremap <TAB> <C-b>
 
 
 " Tab跳转 {{{2
-nmap <Leader>j :tabnext<CR>
-nmap <Leader>k :tabprev<CR>
-nmap <Leader>J :tablast<CR>
-nmap <Leader>K :tabfirst<CR>
+nnoremap <Leader>j :tabnext<CR>
+nnoremap <Leader>k :tabprev<CR>
+nnoremap <Leader>J :tablast<CR>
+nnoremap <Leader>K :tabfirst<CR>
 
 " Window跳转和前进/后退 {{{2
 if has("gui_running")
     if has("macunix")
         source ~/.vim/mac-alt-map.vimrc
     elseif has("unix")
-        nmap <A-j> <C-w>j
-        nmap <A-k> <C-w>k
-        nmap <A-h> <C-w>h
-        nmap <A-l> <C-w>l
+        nnoremap <A-j> <C-w>j
+        nnoremap <A-k> <C-w>k
+        nnoremap <A-h> <C-w>h
+        nnoremap <A-l> <C-w>l
 
         " Decrease Window Height
-        nmap <A-J> <C-w>3-
+        nnoremap <A-J> <C-w>3-
         " Increase Window Height
-        nmap <A-K> <C-w>3+
+        nnoremap <A-K> <C-w>3+
         " Decrease Windows Width
-        nmap <A-H> <C-w>3<
+        nnoremap <A-H> <C-w>3<
         " Increase Windows Width
-        nmap <A-L> <C-w>3>
+        nnoremap <A-L> <C-w>3>
 
-        nmap <A-i> <C-i>
-        nmap <A-o> <C-o>
+        nnoremap <A-i> <C-i>
+        nnoremap <A-o> <C-o>
     endif
 endif
 
 " 按F1查看当前光标下单词的帮助信息 {{{2
-nmap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
-nmap <F1> :help <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
+nnoremap <F1> :help <C-R>=expand("<cword>")<CR><CR>
 
 " 查询当前光标下单词的意思 {{{2
 if has("macunix")
     " 复制当前光标下的单词到系统粘贴板
     " normal F lvf "+y
     " 调用系统的词典应用来查询单词
-    nmap <C-\> :!open -a directory <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <C-\> :!open -a directory <C-R>=expand("<cword>")<CR><CR>
 elseif has("unix")
-    nmap <C-\> :!sdcv "<cword>" <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <C-\> :!sdcv "<cword>" <C-R>=expand("<cword>")<CR><CR>
 endif
 
 " 文件类型相关设置 {{{1
 if has("autocmd") 
+    " 指定某些后缀的文件类型
     autocmd BufRead,BufNewFile *.{nasl,inc} set filetype=nasl
     autocmd BufRead,BufNewFile *.wsgi set filetype=python
     autocmd BufRead,BufNewFile *.bashrc set filetype=sh
     autocmd BufRead,BufNewFile *.vimrc set filetype=vim
     autocmd BufRead,BufNewFile *.{md,mkd,markdown} set filetype=mkd
+
     " 根据不同的文件类型做不同的设置
-    autocmd BufNew,BufNewFile,BufReadPost * call WOLFWZR_specific_filetyped_settings()
-    " 不知为何:help不会触发BufNew事件
-    " 无法在WOLFWZR_specific_filetyped_settings函数中处理help类型
-    autocmd FileType help nmap <buffer> <CR> <C-]> | nmap <buffer> <BS> <C-t>
+    autocmd VimEnter * call WOLFWZR_filetype_setting()
+    nnoremap <Leader>w :call WOLFWZR_filetype_setting()<CR>
+
+    " 根据不同的文件类型设置按键映射
+    autocmd FileType c,cpp,h,flex,bison,yacc 
+        \ nnoremap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+        \ nnoremap <buffer> <BS> <C-t>
+    autocmd FileType help 
+        \ nnoremap <buffer> <CR> <C-]>| 
+        \ nnoremap <buffer> <BS> <C-t>|
+        \ nnoremap <buffer> q :q<CR>
+    autocmd FileType vim
+        \ nnoremap <buffer> <CR> gf|
+        \ nnoremap <buffer> <BS> <C-o>
+    autocmd FileType mkd
+        \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>
 endif
 
 " GUI设置 {{{1
@@ -240,12 +269,12 @@ if has("gui_running")
     " 设置窗口位置
     winpos 200 30
     " 设置窗口行数和列数
-    set columns=88
+    set columns=90
     set lines=35
     " 设置显示字体
     set guifont=YaHei\ Consolas\ Hybrid\ 14,Monaco:h16
     " 设置默认配色方案
-    if WOLFWZR_colorscheme_applied == 0
+    if b:WOLFWZR_colorscheme_applied == 0
         " 备用配色方案
         " PapayaWhip
         " Monokai
@@ -265,11 +294,10 @@ if has("gui_running")
     set guicursor+=sm:block-Cursor
     set guicursor+=a:blinkon0
 else
-    if WOLFWZR_colorscheme_applied == 0
+    if b:WOLFWZR_colorscheme_applied == 0
         call WOLFWZR_set_colorscheme("delek")
     endif
 endif
-
 
 " cscope设置 {{{1
 if has("cscope")
@@ -285,20 +313,20 @@ if has("cscope")
         cs add $CSCOPE_DB
     endif
     set csverb
-    nmap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
-    nmap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nmap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
-    nmap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
-    command -nargs=1 CSs cs find s <args>
-    command -nargs=1 CSg cs find g <args>
-    command -nargs=1 CSc cs find c <args>
-    command -nargs=1 CSt cs find t <args>
-    command -nargs=1 CSe cs find e <args>
-    command -nargs=1 CSf cs find f <args>
-    command -nargs=1 CSi cs find i <args>
-    command -nargs=1 CSd cs find d <args>
+    nnoremap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
+    nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
+    command -nargs=1 Css cs find s <args>
+    command -nargs=1 Csg cs find g <args>
+    command -nargs=1 Csc cs find c <args>
+    command -nargs=1 Cst cs find t <args>
+    command -nargs=1 Cse cs find e <args>
+    command -nargs=1 Csf cs find f <args>
+    command -nargs=1 Csi cs find i <args>
+    command -nargs=1 Csd cs find d <args>
 endif
