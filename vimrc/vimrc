@@ -26,6 +26,9 @@ function WOLFWZR_code_common_setting()
         set cursorline
         "set colorcolumn=80
     endif
+
+    " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
+    nnoremap <Leader>c :make<CR><CR>:cw<CR>:cc<CR>
 endfunction
 "}}}2
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
@@ -134,9 +137,6 @@ function WOLFWZR_filetype_setting()
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
         " Tag跳转
-
-        " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
-        nnoremap <Leader>c :make<CR><CR>:cw<CR>:cc<CR>
 
         " gruvbox （有个奇怪的事情：
         "           要使这个主题生效，得先设置主题为greyblue）
@@ -263,6 +263,10 @@ source ~/.vim/bundle/Vundle.vim/Vundle.vimrc
 " 翻页设置 {{{2
 nnoremap <SPACE> <C-f>
 nnoremap <TAB> <C-b>
+" }}}2
+" 快速查看QuickFix List的上一项/下一项 {{{2
+nmap  <C-n> :cn<CR>
+nmap  <C-S-n> :cp<CR>
 " }}}2
 " Tab跳转 {{{2
 nnoremap <Leader>j :tabnext<CR>

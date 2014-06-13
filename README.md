@@ -27,6 +27,7 @@ $ bash install.sh
     - YouCompleteMe配置，感觉在一些文件中不会补全，如asm
     - 各tab栏配色
     - iunmap keymap from a.vim
+    - 将:cn映射成<C-n>, :cp映射成<C-N>
 - bash
 
 存在的问题
