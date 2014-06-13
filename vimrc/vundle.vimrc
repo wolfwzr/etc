@@ -12,10 +12,12 @@ nnoremap <Leader>a :A<CR>
 " if mapcheck("<Leader>ihn", "i") != ""
 "     iunmap <Leader>ihn
 " endif
+" }}}1
 
 " Mark插件 {{{1
 " Mark different color with different string
 Bundle 'vim-scripts/Mark'
+" }}}1
 
 " NERDTree插件 {{{1
 " 优雅地文件浏览
@@ -33,11 +35,7 @@ Bundle 'vim-scripts/Mark'
 "    q  - 关闭浏览界面
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
 Bundle 'scrooloose/nerdtree'
-if has("macunix")
-    let g:NERDTreeWinSize=20
-elseif has("unix")
-    let g:NERDTreeWinSize=27
-endif
+let g:NERDTreeWinSize=30
 " 本函数功能：
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
@@ -56,17 +54,14 @@ function WOLFWZR_nerdtree_toggle()
     endif
 endfunction
 nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
+" }}}1
 
 " tarbar插件 {{{1
 " 显示符号列表（宏、类、函数、变量等）
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
-if has("macunix")
-    let g:tagbar_width=20
-elseif has("unix")
-    let g:tagbar_width=27
-endif
+let g:tagbar_width=30
 " 本函数功能：
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
@@ -89,6 +84,7 @@ function WOLFWZR_tagbar_toggle()
     endif
 endfunction
 nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
+" }}}1
 
 " ctrlp插件 {{{1
 " 优雅地查找文件
@@ -99,10 +95,12 @@ nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
 nmap <Leader>o <C-p>
+" }}}1
 
 " vim-markdown插件 {{{1
 " 提供markdown的代码高亮及折叠方法
 Bundle 'plasticboy/vim-markdown'
+" }}}1
 
 " YouCompleteMe插件 {{{1
 " 根据语义自动补全代码
@@ -115,9 +113,11 @@ Bundle 'Valloric/YouCompleteMe'
 if has("macunix")
     let g:ycm_global_ycm_extra_conf = '/Users/wolfwzr/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_c_conf.py'
 endif
+" }}}1
 
 " colorselector插件 {{{1
 Bundle 'c9s/colorselector.vim'
+" }}}1
 
 " vim-colorscheme插件 {{{1
 " 优雅的挑选配色方案
@@ -126,8 +126,10 @@ Bundle 'c9s/colorselector.vim'
 " n - 预览下一个配色方案
 " p - 预览上一个配色方案
 Bundle 'flazz/vim-colorschemes'
+" }}}1
 
 " bufexplorer.zip插件 {{{1
 Bundle 'vim-scripts/bufexplorer.zip'
 nnoremap <Leader>e :BufExplorer<CR>
 " nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
+" }}}1

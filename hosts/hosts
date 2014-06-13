@@ -1,0 +1,31 @@
+#
+# hosts         This file describes a number of hostname-to-address
+#               mappings for the TCP/IP subsystem.  It is mostly
+#               used at boot time, when no name servers are running.
+#               On small systems, this file can be used instead of a
+#               "named" name server.
+# Syntax:
+#    
+# IP-Address  Full-Qualified-Hostname  Short-Hostname
+#
+
+127.0.0.1	localhost
+127.0.0.1	lh
+
+# special IPv6 addresses
+::1             localhost ipv6-localhost ipv6-loopback
+
+fe00::0         ipv6-localnet
+
+ff00::0         ipv6-mcastprefix
+ff02::1         ipv6-allnodes
+ff02::2         ipv6-allrouters
+ff02::3         ipv6-allhosts
+
+
+172.152.254.200 rd_hz_bug.dptechnology.net
+172.153.254.55  sse.dptechnology.net
+
+#121.14.39.54    bbs.meizu.com
+#121.14.39.54    bbs.meizu.cn
+#58.63.253.116 	www.meizu.com
