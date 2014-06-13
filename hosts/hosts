@@ -1,4 +1,3 @@
-#
 # hosts         This file describes a number of hostname-to-address
 #               mappings for the TCP/IP subsystem.  It is mostly
 #               used at boot time, when no name servers are running.
@@ -9,23 +8,53 @@
 # IP-Address  Full-Qualified-Hostname  Short-Hostname
 #
 
+#######################################################
+# LOCALHOST
+#######################################################
 127.0.0.1	localhost
 127.0.0.1	lh
 
 # special IPv6 addresses
 ::1             localhost ipv6-localhost ipv6-loopback
+::1             localhost 
+fe80::1%lo0	localhost
+# END OF LOCALHOST
 
+
+#######################################################
+# COMPANY ONLY 
+#######################################################
 fe00::0         ipv6-localnet
-
 ff00::0         ipv6-mcastprefix
 ff02::1         ipv6-allnodes
 ff02::2         ipv6-allrouters
 ff02::3         ipv6-allhosts
 
-
 172.152.254.200 rd_hz_bug.dptechnology.net
 172.153.254.55  sse.dptechnology.net
+# END OF COMPANY ONLY
 
-#121.14.39.54    bbs.meizu.com
-#121.14.39.54    bbs.meizu.cn
-#58.63.253.116 	www.meizu.com
+
+#######################################################
+# RMBP ONLY
+#######################################################
+255.255.255.255	broadcasthost
+
+192.168.8.112 	centos
+192.168.8.124 	router
+192.168.8.160 	mx2
+192.168.8.162 	win7
+192.168.8.166 	mbp
+192.168.8.168 	nb
+192.168.8.168 	notebook
+192.168.8.169 	xiaomi
+# END OF RMBP ONLY
+
+
+#######################################################
+# COMMON
+#######################################################
+
+#203.208.46.200 www.google.com
+74.125.128.99	www.google.com
+

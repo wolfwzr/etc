@@ -42,7 +42,11 @@ function WOLFWZR_set_colorscheme(color)
 
     " 设置配色方案及可能的修剪 {{{3
     " 备选配色方案：
+    " Monokai
+    " PapayaWhip
+    " Tomorrow-Night-Eighties
     " anotherdark
+    " bubblegum
     " carvedwood
     " chance-of-storm
     " codeschool
@@ -51,9 +55,16 @@ function WOLFWZR_set_colorscheme(color)
     " dante
     " darkburn
     " darkz
+    " dusk
+    " evening_2
     " freya
-    " Monokai
-    " PapayaWhip
+    " hybrid
+    " lilypink
+    " lucius
+    " metacosm
+    " mint
+    " mrpink
+    " neon
     " peaksea
     " pf_earth
     " phd
@@ -68,16 +79,17 @@ function WOLFWZR_set_colorscheme(color)
     " spectro
     " strawimodo
     " symfony
-    " tango2
     " tango-desert
+    " tango2
     " tchaba
-    " Tomorrow-Night-Eighties
     " two2tango 
     " vilight
+    " void
     " vydark
     " watermark
     " wolfasm (only aviliable in rmbp)
     " wombat
+    " zenburn
 
     exec 'colorscheme ' . a:color
 
@@ -86,8 +98,9 @@ function WOLFWZR_set_colorscheme(color)
     elseif a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
         highlight CursorLine guibg=grey23
-    elseif a:color == "rainbow_neon"
-        highlight CursorLine guibg=grey25
+    elseif a:color == "rainbow_neon" || a:color == "neon"
+        highlight CursorLine guibg=grey30
+        highlight StatusLine guibg=grey40
     endif
     " }}}3
 
@@ -161,7 +174,7 @@ function WOLFWZR_filetype_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
-        call WOLFWZR_set_colorscheme("two2tango")
+        call WOLFWZR_set_colorscheme("neon")
         if has("gui_running")
             set columns=100
         endif
@@ -176,7 +189,7 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_set_colorscheme("darktango")
         if has("gui_running")
             if has("macunix")
-                set guifont=Monaco:h16
+                set guifont=Monaco:h18
                 " 单独设置中文字体
                 " 备用字体
                 " Hannotate\ SC\ Regular
@@ -393,6 +406,7 @@ if has("gui_running")
     " 设置显示字体
     if has("macunix")
         set guifont=Monaco:h16
+        set guifontwide=Kaiti\ SC\ Regular
     else
         set guifont=YaHei\ Consolas\ Hybrid\ 14
     endif

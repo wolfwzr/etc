@@ -15,13 +15,13 @@ if has("macunix")
     
     " Window Size Adjust {{{1
     " <A--> Decrease Window Height
-    " nmap Ô 3-
+    nmap – 3-
     " <A-+> Increase Window Height
-    " nmap  3+
+    nmap ± 3+
     " <A-<> Decrease Windows Width
-    " nmap Ó 3<
+    nmap ¯ 3<
     " <A->> Increase Windows Width
-    " nmap Ò 3>
+    nmap ˘ 3>
     " }}}1
     
     " Back/Forword Jump {{{1
@@ -34,13 +34,13 @@ if has("macunix")
     " GUI Window Size Adjust {{{1
     if has("gui_running")
         " <A-S-j>
-        " nmap <A-S-j> :set lines+=1<CR>
+        nmap Ô :set lines+=1<CR>
         " <A-S-k>
-        " nmap <A-S-k> :set lines-=1<CR>
+        nmap  :set lines-=1<CR>
         " <A-S-h>
-        " nmap <A-S-h> :set columns-=2<CR>
+        nmap Ó :set columns-=2<CR>
         " <A-S-l>
-        " nmap <A-S-l> :set columns+=2<CR>
+        nmap Ò :set columns+=2<CR>
     endif
     " }}}1
 endif

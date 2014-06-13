@@ -28,6 +28,7 @@ $ bash install.sh
     - 各tab栏配色
     - iunmap keymap from a.vim
     - 将:cn映射成<C-n>, :cp映射成<C-N>
+    - mac下无法映射<A-->
 - bash
 
 存在的问题
