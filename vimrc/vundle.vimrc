@@ -43,14 +43,14 @@ let g:NERDTreeWinSize=30
 function WOLFWZR_nerdtree_toggle()
     NERDTreeToggle
     if has("gui_running")
-        let wolfwzr_vim_window_width = &columns
+        let l:vim_window_width = &columns
         " NERDTree Window from closed to open
         if exists("t:NERDTreeBufName") && bufwinnr(t:NERDTreeBufName) != -1
-            let wolfwzr_vim_window_width += g:NERDTreeWinSize + 1
+            let l:vim_window_width += g:NERDTreeWinSize + 1
         else " NERDTree Window from open to closed
-            let wolfwzr_vim_window_width -= g:NERDTreeWinSize + 1
+            let l:vim_window_width -= g:NERDTreeWinSize + 1
         endif
-        execute 'set columns='.wolfwzr_vim_window_width
+        execute 'set columns='.l:vim_window_width
     endif
 endfunction
 nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
@@ -68,15 +68,15 @@ let g:tagbar_width=30
 "   2. 关闭 Tagbar 窗口，并将 vim 窗口宽度减少 g:tagbar_width
 function WOLFWZR_tagbar_toggle()
     if has("gui_running")
-        let wolfwzr_vim_window_width = &columns
+        let l:vim_window_width = &columns
         " Tagbar now is opened
         if bufwinnr("__Tagbar__") != -1
             TagbarToggle
-            let wolfwzr_vim_window_width -= g:tagbar_width + 1
-            execute 'set columns='.wolfwzr_vim_window_width
+            let l:vim_window_width -= g:tagbar_width + 1
+            execute 'set columns='.l:vim_window_width
         else " Tagbar now is closed
-            let wolfwzr_vim_window_width += g:tagbar_width + 1
-            execute 'set columns='.wolfwzr_vim_window_width
+            let l:vim_window_width += g:tagbar_width + 1
+            execute 'set columns='.l:vim_window_width
             TagbarToggle
         endif
     else

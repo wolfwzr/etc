@@ -98,6 +98,9 @@ function WOLFWZR_set_colorscheme(color)
     elseif a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
         highlight CursorLine guibg=grey23
+        if hlID("vimCommand") != 0
+            highlight vimCommand guifg=#ffcc66
+        endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
         highlight CursorLine guibg=grey30
         highlight StatusLine guibg=grey40
@@ -180,6 +183,16 @@ function WOLFWZR_filetype_setting()
         endif
     " VIM {{{3
     elseif &filetype == "vim"
+        " kellys
+        " mrpink
+        " kib_darktango
+        " kolor
+        " lilypink
+        " liquidcarbon
+        " lucius
+        " manuscript
+        " native
+        " nazca
         call WOLFWZR_code_common_setting()
 	    set foldmethod=marker
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
@@ -217,9 +230,41 @@ endfunction
 " }}}2
 " WOLFWZR_winpos_adjust: 调整GVIM窗口坐标 {{{2
 function WOLFWZR_winpos_adjust(x_inc, y_inc)
-    let WOLFWZR_winpos_x = getwinposx() + a:x_inc
-    let WOLFWZR_winpos_y = getwinposy() + a:y_inc
-    execute 'winpos '.WOLFWZR_winpos_x.' '.WOLFWZR_winpos_y
+    let l:winpos_x = getwinposx() + a:x_inc
+    let l:winpos_y = getwinposy() + a:y_inc
+    execute 'winpos '.l:winpos_x.' '.l:winpos_y
+endfunction
+" }}}2
+" WOLFWZR_dictionary_qurey: 单词字典查询 {{{2
+function WOLFWZR_dictionary_qurey(word)
+    if a:word == ""
+        return
+    endif
+    let l:tmp_file_prefix = "/tmp/vim_dict_"
+
+    " 备份寄存器a
+    let l:buf = @a
+
+    if has("macunix")
+        " open -a directory --args a:word
+    elseif has("unix")
+        " sdcv -n 非交互模式
+        let @a = system('sdcv -n '.a:word)
+    endif
+
+    let l:nr = bufwinnr(l:tmp_file_prefix . "*")
+    if l:nr != -1
+        execute nr . "wincmd w"
+        normal ggVGd
+    else
+        " mktemp -u 只会生成文件名，不会创建文件
+        execute "split" . system("mktemp -u ". l:tmp_file_prefix . "XXXXXXX")
+    endif
+    normal "ap
+
+    nmap <buffer> q :q!<CR>
+    " 恢复寄存器a
+    let @a = l:buf
 endfunction
 " }}}2
 " }}}1
@@ -283,9 +328,7 @@ nmap  <C-S-n> :cp<CR>
 " }}}2
 " Tab跳转 {{{2
 nnoremap <Leader>j :tabnext<CR>
-nnoremap <Leader>k :tabprev<CR>
-nnoremap <Leader>J :tablast<CR>
-nnoremap <Leader>K :tabfirst<CR>
+"nnoremap <Leader>k :tabprev<CR>
 " }}}2
 " 前进/后退和Window跳转、大小调整 {{{2
 if has("gui_running") && has("unix")
@@ -309,10 +352,11 @@ endif
 " }}}2
 " 调整GVIM窗口位置 {{{2
 if has("gui_running")
-    nmap <C-S-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
-    nmap <C-S-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
-    nmap <C-S-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
-    nmap <C-S-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
+    " <C-S-j>和<C-j>等效，why?
+    nmap <C-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
+    nmap <C-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
+    nmap <C-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
+    nmap <C-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
 endif
 " }}}2
 " 调整GVIM窗口大小 {{{2
@@ -337,19 +381,26 @@ endif
 " nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
 nnoremap <Leader><SPACE> za
 " }}}2
-" 按F1查看当前光标下单词的帮助信息 {{{2
-nnoremap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
-nnoremap <F1> :help <C-R>=expand("<cword>")<CR><CR>
-" }}}2
-" 查询当前光标下单词的意思 {{{2
-if has("macunix")
-    " 复制当前光标下的单词到系统粘贴板
-    " normal F lvf "+y
-    " 调用系统的词典应用来查询单词
-    nnoremap <C-\> :!open -a directory <C-R>=expand("<cword>")<CR><CR>
-elseif has("unix")
-    nnoremap <C-\> :!sdcv "<cword>" <C-R>=expand("<cword>")<CR><CR>
-endif
+" 查看当前光标下单词的帮助信息 {{{2
+" VIM的帮助信息
+nnoremap <Leader>hh :help <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hH :help <C-R>=expand("<cWORD>")<CR><CR>
+" linux的man手册
+runtime ftplugin/man.vim
+nnoremap <Leader>hm  :Man <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
+" 单词字典查询
+nnoremap <Leader>hd
+    \ :call WOLFWZR_dictionary_qurey('<C-R>=expand("<cword>")<CR>')<CR>
 " }}}2
 " 快速预览当前光标下的 ColorScheme {{{2
 noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
@@ -386,6 +437,8 @@ if has("autocmd")
         \ nnoremap <buffer> o <CR>|
         \ nnoremap <buffer> n :cn<CR>|
         \ nnoremap <buffer> p :cp<CR>|
+        \ nnoremap <buffer> q :q<CR>
+    autocmd FileType man
         \ nnoremap <buffer> q :q<CR>
 endif
 " }}}1
@@ -467,3 +520,4 @@ if has("cscope")
     command -nargs=1 Csd cs find d <args>
 endif
 " }}}1
+
