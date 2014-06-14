@@ -1,7 +1,7 @@
 " ***IMPORTANT README***
 " Please ***DO NOT USE CHINESE*** in this file
 
-if has("macunix")
+if has("gui_running") && has("macunix")
     " Window Switch {{{1
     " nmap <A-j> <C-w>j
     nmap ∆ j
@@ -32,15 +32,20 @@ if has("macunix")
     " }}}1
     
     " GUI Window Size Adjust {{{1
-    if has("gui_running")
-        " <A-S-j>
-        nmap Ô :set lines+=1<CR>
-        " <A-S-k>
-        nmap  :set lines-=1<CR>
-        " <A-S-h>
-        nmap Ó :set columns-=2<CR>
-        " <A-S-l>
-        nmap Ò :set columns+=2<CR>
-    endif
+    " <A-S-j>
+    nmap Ô :set lines+=1<CR>
+    " <A-S-k>
+    nmap  :set lines-=1<CR>
+    " <A-S-h>
+    nmap Ó :set columns-=2<CR>
+    " <A-S-l>
+    nmap Ò :set columns+=2<CR>
+    " }}}1
+
+    " QuickFix List Next/Prev item {{{1
+    " <A-n>
+    nmap ˜ :cn<CR>
+    " <A-p>
+    nmap π :cp<CR>
     " }}}1
 endif

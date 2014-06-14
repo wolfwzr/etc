@@ -99,11 +99,13 @@ function WOLFWZR_set_colorscheme(color)
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
         highlight CursorLine guibg=grey23
         if hlID("vimCommand") != 0
-            highlight vimCommand guifg=#ffcc66
+            highlight vimCommand guifg=#ffccbb
         endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
         highlight CursorLine guibg=grey30
         highlight StatusLine guibg=grey40
+    elseif a:color == "gruvbox"
+        hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
     endif
     " }}}3
 
@@ -152,13 +154,10 @@ function WOLFWZR_filetype_setting()
 
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
-        " Tag跳转
 
-        " gruvbox （有个奇怪的事情：
-        "           要使这个主题生效，得先设置主题为greyblue）
+        " gruvbox (要使这个主题生效，得先设置主题为greyblue)
         call WOLFWZR_set_colorscheme("greyblue")
         call WOLFWZR_set_colorscheme("gruvbox")
-        hi cFunctions guifg=DarkYellow cterm=bold ctermfg=DarkBlue
 
         if has("gui_running")
             winpos 200 20
@@ -267,6 +266,11 @@ function WOLFWZR_dictionary_qurey(word)
     let @a = l:buf
 endfunction
 " }}}2
+" WOLFWZR_vimgrep: vimgrep
+function WOLFWZR_vimgrep(word)
+    execute 'vimgrep /' . a:word . '/gj %'
+    cw
+endfunction
 " }}}1
 
 " 基础设置 {{{1
@@ -323,8 +327,10 @@ nnoremap <SPACE> <C-f>
 nnoremap <TAB> <C-b>
 " }}}2
 " 快速查看QuickFix List的上一项/下一项 {{{2
-nmap  <C-n> :cn<CR>
-nmap  <C-S-n> :cp<CR>
+if has("gui_running") && !has("macunix")
+    nmap  <A-n> :cn<CR>
+    nmap  <A-p> :cp-<CR>
+endif
 " }}}2
 " Tab跳转 {{{2
 nnoremap <Leader>j :tabnext<CR>
@@ -382,25 +388,33 @@ endif
 nnoremap <Leader><SPACE> za
 " }}}2
 " 查看当前光标下单词的帮助信息 {{{2
-" VIM的帮助信息
+" VIM的帮助信息 {{{3
 nnoremap <Leader>hh :help <C-R>=expand("<cword>")<CR><CR>
 nnoremap <Leader>hH :help <C-R>=expand("<cWORD>")<CR><CR>
-" linux的man手册
+" }}}3
+" linux的man手册 {{{3
 runtime ftplugin/man.vim
 nnoremap <Leader>hm  :Man <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
-" 单词字典查询
+" 使用<Leader>hn0-9以加快<Leader>hm的响应速度
+nnoremap <Leader>hn0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hn9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
+" }}}3
+" 单词字典查询 {{{3
 nnoremap <Leader>hd
     \ :call WOLFWZR_dictionary_qurey('<C-R>=expand("<cword>")<CR>')<CR>
+" }}}3
+" vimgrep {{{3
+nnoremap <Leader>hg
+    \ :call WOLFWZR_vimgrep('<C-R>=expand("<cword>")<CR>')<CR>
+" }}}3
 " }}}2
 " 快速预览当前光标下的 ColorScheme {{{2
 noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
