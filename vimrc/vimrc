@@ -20,11 +20,14 @@ function WOLFWZR_code_common_setting()
     set shiftwidth=4 
     set expandtab 
     set nu
+
     if has("gui_running")
         set columns=90
         set lines=37
         set cursorline
         "set colorcolumn=80
+        "highlight WarningCols gui=undercurl
+        "match WarningCols /.\%>80v/
     endif
 
     " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
@@ -183,6 +186,7 @@ function WOLFWZR_filetype_setting()
         endif
     " VIM {{{3
     elseif &filetype == "vim"
+        call WOLFWZR_code_common_setting()
         " kellys
         " mrpink
         " kib_darktango
@@ -193,9 +197,8 @@ function WOLFWZR_filetype_setting()
         " manuscript
         " native
         " nazca
-        call WOLFWZR_code_common_setting()
-	    set foldmethod=marker
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
+	    set foldmethod=marker
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
