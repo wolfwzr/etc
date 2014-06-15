@@ -5,6 +5,10 @@ bash配置和vim配置
 vim配置
 -------
 
+依赖工具：
+- Vundle插件
+- sdcv（命令行词典工具）
+- mkd_preview.sh 实现mkd文件预览功能
 
 bash配置
 --------
@@ -27,21 +31,18 @@ $ bash install.sh
     - YouCompleteMe配置，感觉在一些文件中不会补全，如asm
     - 各tab栏配色
     - iunmap keymap from a.vim
-    - 将:cn映射成<C-n>, :cp映射成<C-N>
     - mac下无法映射<A-->
-    - mac下的命令行字典或gui可传参字典
     - <Leader>hg vimgrep ... 
         - 借助插件
-        - 使用buffers得到buffer列表，再使用vimgrep /pattern/gj buffer_list | cw来查询, 参考bufferexplorer.zip插件的GetBufferInfo函数
+        - 使用buffers得到buffer列表，再使用grep pattern buffer_list | cw来查询, 参考bufferexplorer.zip插件的GetBufferInfo函数
     - 多个quickfix list的管理
-    - execute 命令没必要？可以直接在脚本里写命令？如
-        buffers 
-        execute "buffers"
-        还是说execute的优势在于可以在里面用变量?,如
-        let a = 1
-        buffer a
-        execute "buffers" . a
-        检查代码里用了execute又没用变量的，去除它们
+        - cw (Quickfix List Window)
+        - colder
+        - cnewer
+        - lw (Location List Window)
+        - lolder
+        - lnewer
+    - 考虑powerline
 - bash
 
 存在的疑问

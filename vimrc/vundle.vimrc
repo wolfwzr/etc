@@ -56,7 +56,7 @@ endfunction
 nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
 " }}}1
 
-" tarbar插件 {{{1
+" tagbar插件 {{{1
 " 显示符号列表（宏、类、函数、变量等）
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
@@ -130,6 +130,16 @@ Bundle 'flazz/vim-colorschemes'
 
 " bufexplorer.zip插件 {{{1
 Bundle 'vim-scripts/bufexplorer.zip'
+let g:bufExplorerShowNoName = 1
+let g:bufExplorerDisableDefaultKeyMapping = 1
 nnoremap <Leader>e :BufExplorer<CR>
 " nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
 " }}}1
+
+" Buffer-grep插件 {{{1
+" 在所有Buffer中搜索并放到新的quickfix窗口中然后打开quickfix窗口
+" 使用方法
+" :Bgrep pattern
+Bundle 'vim-scripts/Buffer-grep'
+" }}}1
+

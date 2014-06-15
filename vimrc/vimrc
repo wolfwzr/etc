@@ -21,7 +21,7 @@ function WOLFWZR_code_common_setting()
     set expandtab 
     set nu
     if has("gui_running")
-        set columns=87
+        set columns=90
         set lines=37
         set cursorline
         "set colorcolumn=80
@@ -91,19 +91,20 @@ function WOLFWZR_set_colorscheme(color)
     " wombat
     " zenburn
 
-    exec 'colorscheme ' . a:color
+    execute 'colorscheme ' . a:color
 
     if a:color == "two2tango"
-        highlight StatusLine guibg=grey40
+        "highlight StatusLine guibg=grey50
     elseif a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
-        highlight CursorLine guibg=grey23
+        "highlight CursorLine guibg=grey30
+        "highlight StatusLine guibg=grey50
         if hlID("vimCommand") != 0
-            highlight vimCommand guifg=#ffccbb
+            highlight vimCommand guifg=#bbccaa
         endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
-        highlight CursorLine guibg=grey30
-        highlight StatusLine guibg=grey40
+        "highlight CursorLine guibg=grey30
+        "highlight StatusLine guibg=grey50
     elseif a:color == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
     endif
@@ -201,7 +202,7 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_set_colorscheme("darktango")
         if has("gui_running")
             if has("macunix")
-                set guifont=Monaco:h18
+                set guifont=Monaco:h16
                 " 单独设置中文字体
                 " 备用字体
                 " Hannotate\ SC\ Regular
@@ -239,16 +240,18 @@ function WOLFWZR_dictionary_qurey(word)
     if a:word == ""
         return
     endif
+
     let l:tmp_file_prefix = "/tmp/vim_dict_"
 
     " 备份寄存器a
-    let l:buf = @a
+    let l:bakup_reg_a = @a
 
-    if has("macunix")
-        " open -a directory --args a:word
-    elseif has("unix")
-        " sdcv -n 非交互模式
-        let @a = system('sdcv -n '.a:word)
+    if has("unix")
+        " sdcv -n: 非交互模式
+        let @a = system('sdcv -n --utf8-input --utf8-output '.a:word)
+    else
+        let @a = l:bakup_reg_a
+        return
     endif
 
     let l:nr = bufwinnr(l:tmp_file_prefix . "*")
@@ -263,14 +266,16 @@ function WOLFWZR_dictionary_qurey(word)
 
     nmap <buffer> q :q!<CR>
     " 恢复寄存器a
-    let @a = l:buf
+    let @a = l:bakup_reg_a
 endfunction
 " }}}2
-" WOLFWZR_vimgrep: vimgrep
-function WOLFWZR_vimgrep(word)
-    execute 'vimgrep /' . a:word . '/gj %'
+" WOLFWZR_grep: grep {{{2
+function WOLFWZR_grep(word)
+    call setqflist([])
+    silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
     cw
 endfunction
+" }}}2
 " }}}1
 
 " 基础设置 {{{1
@@ -329,15 +334,15 @@ nnoremap <TAB> <C-b>
 " 快速查看QuickFix List的上一项/下一项 {{{2
 if has("gui_running") && !has("macunix")
     nmap  <A-n> :cn<CR>
-    nmap  <A-p> :cp-<CR>
+    nmap  <A-p> :cp<CR>
 endif
 " }}}2
 " Tab跳转 {{{2
 nnoremap <Leader>j :tabnext<CR>
-"nnoremap <Leader>k :tabprev<CR>
+nnoremap <Leader>k :tabprev<CR>
 " }}}2
 " 前进/后退和Window跳转、大小调整 {{{2
-if has("gui_running") && has("unix")
+if has("gui_running") && !has("macunix")
         nnoremap <A-j> <C-w>j
         nnoremap <A-k> <C-w>k
         nnoremap <A-h> <C-w>h
@@ -371,6 +376,13 @@ if has("gui_running") && !has("macunix")
     nmap <A-S-k> :set lines-=1<CR>
     nmap <A-S-h> :set columns-=2<CR>
     nmap <A-S-l> :set columns+=2<CR>
+endif
+" }}}2
+" 复制/粘贴 {{{2
+if has("gui_running") && !has("macunix")
+    vmap <A-c> "+y
+    imap <A-v> <ESC>"+pa
+    nmap <A-v> "+p
 endif
 " }}}2
 " MacVim alt键映射 {{{2
@@ -411,9 +423,13 @@ nnoremap <Leader>hn9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 nnoremap <Leader>hd
     \ :call WOLFWZR_dictionary_qurey('<C-R>=expand("<cword>")<CR>')<CR>
 " }}}3
-" vimgrep {{{3
+" Buffer Grep {{{3
+" 在当前Buffer中Grep
 nnoremap <Leader>hg
-    \ :call WOLFWZR_vimgrep('<C-R>=expand("<cword>")<CR>')<CR>
+    \ :call WOLFWZR_grep('<C-R>=expand("<cword>")<CR>')<CR>
+" 在所有Buffer中Grep
+nnoremap <Leader>hG
+    \ :Bgrep <C-R>=expand("<cword>")<CR><CR>
 " }}}3
 " }}}2
 " 快速预览当前光标下的 ColorScheme {{{2

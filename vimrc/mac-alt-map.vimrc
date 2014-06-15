@@ -2,6 +2,7 @@
 " Please ***DO NOT USE CHINESE*** in this file
 
 if has("gui_running") && has("macunix")
+
     " Window Switch {{{1
     " nmap <A-j> <C-w>j
     nmap ∆ j
@@ -48,4 +49,14 @@ if has("gui_running") && has("macunix")
     " <A-p>
     nmap π :cp<CR>
     " }}}1
+    
+    " Copy/Paste {{{1
+    " vmap <A-c> "+y
+    vmap ç "+y
+    " imap <A-v> <ESC>"+pa
+    imap √ <ESC>"+pa
+    " nmap <A-v> "+p
+    nmap √ "+p
+    "}}}1
+
 endif
