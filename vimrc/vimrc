@@ -267,7 +267,11 @@ function WOLFWZR_dictionary_qurey(word)
     endif
     normal "ap
 
-    nmap <buffer> q :q!<CR>
+    nnoremap <buffer> q :q!<CR>
+    nnoremap <buffer> <CR> 
+        \ :call WOLFWZR_dictionary_qurey('<C-r>=expand("<cword>")<CR>')<CR>
+    nnoremap <buffer> o
+        \ :call WOLFWZR_dictionary_qurey('<C-r>=expand("<cword>")<CR>')<CR>
     " 恢复寄存器a
     let @a = l:bakup_reg_a
 endfunction
@@ -381,11 +385,18 @@ if has("gui_running") && !has("macunix")
     nmap <A-S-l> :set columns+=2<CR>
 endif
 " }}}2
-" 复制/粘贴 {{{2
+" 复制/剪切/粘贴 {{{2
 if has("gui_running") && !has("macunix")
-    vmap <A-c> "+y
-    imap <A-v> <ESC>"+pa
-    nmap <A-v> "+p
+    nnoremap <A-c> viw"+y
+    vnoremap <A-c> "+y
+    inoremap <A-c> <ESC>viw"+yea
+
+    nnoremap <A-x> viw"+x
+    vnoremap <A-x> "+x
+    inoremap <A-x> <ESC>viw"+xea
+
+    nnoremap <A-v> "+p
+    inoremap <A-v> <ESC>"+p
 endif
 " }}}2
 " MacVim alt键映射 {{{2
@@ -423,8 +434,8 @@ nnoremap <Leader>hn8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
 nnoremap <Leader>hn9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 " }}}3
 " 单词字典查询 {{{3
-nnoremap <Leader>hd
-    \ :call WOLFWZR_dictionary_qurey('<C-R>=expand("<cword>")<CR>')<CR>
+command -nargs=1 Sdcv call WOLFWZR_dictionary_qurey("<args>")
+nnoremap <Leader>hd :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 " }}}3
 " Buffer Grep {{{3
 " 在当前Buffer中Grep
@@ -437,6 +448,17 @@ nnoremap <Leader>hG
 " }}}2
 " 快速预览当前光标下的 ColorScheme {{{2
 noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
+" }}}2
+" VIMRC快速编辑及生效 {{{2
+nnoremap <Leader>ve :split ~/.vim/vimrc<CR>
+nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
+" }}}2
+" cmdline模式下的光标移动 {{{2
+cnoremap <A-h> <Left>
+cnoremap <A-l> <Right>
+cnoremap <A-H> <Home>
+cnoremap <A-L> <End>
+cnoremap <A-f> <C-f>
 " }}}2
 " }}}1
 
@@ -453,26 +475,37 @@ if has("autocmd")
     autocmd VimEnter * call WOLFWZR_filetype_setting()
     nnoremap <Leader>w :call WOLFWZR_filetype_setting()<CR>
 
+    " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
+    autocmd CmdWinEnter : nnoremap <buffer> o <CR>
+
     " 根据不同的文件类型设置按键映射
-    autocmd FileType c,cpp,h,flex,bison,yacc 
-        \ nnoremap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>|
-        \ nnoremap <buffer> <BS> <C-t>
-    autocmd FileType help 
-        \ nnoremap <buffer> <CR> <C-]>| 
-        \ nnoremap <buffer> <BS> <C-t>|
-        \ nnoremap <buffer> q :q<CR>
-    autocmd FileType vim
-        \ nnoremap <buffer> <CR> gf|
-        \ nnoremap <buffer> <BS> <C-o>
-    autocmd FileType mkd
-        \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>
-    autocmd FileType qf
-        \ nnoremap <buffer> o <CR>|
-        \ nnoremap <buffer> n :cn<CR>|
-        \ nnoremap <buffer> p :cp<CR>|
-        \ nnoremap <buffer> q :q<CR>
-    autocmd FileType man
-        \ nnoremap <buffer> q :q<CR>
+    augroup filetype_autocmd
+        autocmd FileType c,cpp,h,flex,bison,yacc 
+            \ nnoremap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <BS> <C-t>
+        autocmd FileType help 
+            \ nnoremap <buffer> <CR> <C-]>| 
+            \ nnoremap <buffer> o    <C-]>| 
+            \ nnoremap <buffer> <BS> <C-t>|
+            \ nnoremap <buffer> q :q<CR>
+        autocmd FileType vim
+            \ nnoremap <buffer> <CR> gf|
+            \ nnoremap <buffer> <BS> <C-o>
+        autocmd FileType mkd
+            \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
+            \ nnoremap <buffer> o    A<CR>|
+            \ iabbrev <buffer> codee^ ```<CR>```<ESC>ka|
+            \ iabbrev <buffer> cdd^ ``<ESC>i
+        autocmd FileType qf
+            \ nnoremap <buffer> o <CR>|
+            \ nnoremap <buffer> n :cn<CR>|
+            \ nnoremap <buffer> p :cp<CR>|
+            \ nnoremap <buffer> q :q<CR>
+        autocmd FileType man
+            \ nnoremap <buffer> q :q<CR>|
+            \ nnoremap <buffer> o :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <CR> :Man <C-r>=expand("<cword>")<CR><CR>
+    augroup end
 endif
 " }}}1
 

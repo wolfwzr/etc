@@ -28,21 +28,19 @@ $ bash install.sh
 
 - vim
     - 一个更好的Tab跳转快捷键
-    - YouCompleteMe配置，感觉在一些文件中不会补全，如asm
-    - 各tab栏配色
-    - iunmap keymap from a.vim
+    -Search  YouCompleteMe配置，感觉在一些文件中不会补全，如asm
+    - 代码块的补全插件
     - mac下无法映射<A-->
-    - <Leader>hg vimgrep ... 
-        - 借助插件
-        - 使用buffers得到buffer列表，再使用grep pattern buffer_list | cw来查询, 参考bufferexplorer.zip插件的GetBufferInfo函数
-    - 多个quickfix list的管理
-        - cw (Quickfix List Window)
-        - colder
-        - cnewer
-        - lw (Location List Window)
-        - lolder
-        - lnewer
-    - 考虑powerline
+    - 快速编辑vimrc及生效
+    - 许多<buffer>map是否把<Leader>改为<localleader>?
+    - nnoremap <A-d> :r !date +\%F<CR>kJwe 插入当前日期
+    - inoremap <A-d> <ESC>:r !date +\%F<CR>kJwea 插入当前日期
+    - nnoremap <A-u> 将当前单词变大写
+    - inoremap <A-u> 将当前单词变大写
+    - copy/cur/paste keymap for macvim
+    - abbr for^ ...
+    - 使用augroup避免autocmd重复加载
+    
 - bash
 
 存在的疑问

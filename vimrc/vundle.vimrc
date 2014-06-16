@@ -84,6 +84,11 @@ function WOLFWZR_tagbar_toggle()
     endif
 endfunction
 nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
+augroup tagbar_autocmd
+    autocmd FileType tagbar 
+        \ nnoremap <buffer> J <C-d>|
+        \ nnoremap <buffer> K <C-u>
+augroup end
 " }}}1
 
 " ctrlp插件 {{{1
@@ -95,6 +100,14 @@ nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
 nmap <Leader>o <C-p>
+let g:ctrlp_working_path_mode = 'c'
+set wildignore+=*.so,*.swp,*.zip
+let g:ctrlp_custom_ignore = {
+  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+  \ 'file': '\v\.(exe|so|dll)$',
+  \ 'link': 'some_bad_symbolic_links_balabala',
+  \ }
+let g:ctrlp_user_command = 'find %s -type f'
 " }}}1
 
 " vim-markdown插件 {{{1
