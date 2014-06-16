@@ -50,13 +50,35 @@ if has("gui_running") && has("macunix")
     nmap π :cp<CR>
     " }}}1
     
-    " Copy/Paste {{{1
-    " vmap <A-c> "+y
-    vmap ç "+y
-    " imap <A-v> <ESC>"+pa
-    imap √ <ESC>"+pa
-    " nmap <A-v> "+p
-    nmap √ "+p
+    " Copy/Cut/Paste {{{1
+    " Copy <A-c>
+    nnoremap ç viw"+y
+    vnoremap ç "+y
+    inoremap ç <ESC>viw"+yea
+    " Cut <A-x>
+    nnoremap ≈ viw"+x
+    vnoremap ≈ "+x
+    inoremap ≈ <ESC>viw"+xea
+    " Paste <A-v>
+    nnoremap √ "+p
+    inoremap √ <ESC>"+p
     "}}}1
+    
+    " Moving in Cmdline Mode {{{1
+    " <A-h> <Left>
+    cnoremap ˙ <Left>
+    " <A-l> <Right>
+    cnoremap ¬ <Right>
+    " <A-H> <Home>
+    cnoremap Ó <Home>
+    " <A-L> <End>
+    cnoremap Ò <End>
+    " <A-f> <C-f>
+    cnoremap ƒ <C-f>
+    " <A-j> <Down>
+    cnoremap ∆ <Down>
+    " <A-k> <Up>
+    cnoremap ˚ <Up>
+    " }}}1
 
 endif

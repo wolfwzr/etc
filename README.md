@@ -37,10 +37,8 @@ $ bash install.sh
     - inoremap <A-d> <ESC>:r !date +\%F<CR>kJwea 插入当前日期
     - nnoremap <A-u> 将当前单词变大写
     - inoremap <A-u> 将当前单词变大写
-    - copy/cur/paste keymap for macvim
     - abbr for^ ...
     - 使用augroup避免autocmd重复加载
-    
 - bash
 
 存在的疑问

@@ -280,7 +280,7 @@ endfunction
 function WOLFWZR_grep(word)
     call setqflist([])
     silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
-    cw
+    botright cw
 endfunction
 " }}}2
 " }}}1
@@ -459,6 +459,8 @@ cnoremap <A-l> <Right>
 cnoremap <A-H> <Home>
 cnoremap <A-L> <End>
 cnoremap <A-f> <C-f>
+cnoremap <A-j> <Down>
+cnoremap <A-k> <Up>
 " }}}2
 " }}}1
 

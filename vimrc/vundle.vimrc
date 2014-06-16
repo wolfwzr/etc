@@ -100,14 +100,16 @@ augroup end
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
 nmap <Leader>o <C-p>
-let g:ctrlp_working_path_mode = 'c'
-set wildignore+=*.so,*.swp,*.zip
+let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
+let g:ctrlp_by_filename = 1
+let g:ctrlp_working_path_mode = 'ra'
+set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
+set wildignore+=*.a,*.so,*.swp,*.zip,*.o,a.out
 let g:ctrlp_custom_ignore = {
   \ 'dir':  '\v[\/]\.(git|hg|svn)$',
   \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'some_bad_symbolic_links_balabala',
+  \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
   \ }
-let g:ctrlp_user_command = 'find %s -type f'
 " }}}1
 
 " vim-markdown插件 {{{1
@@ -145,7 +147,8 @@ Bundle 'flazz/vim-colorschemes'
 Bundle 'vim-scripts/bufexplorer.zip'
 let g:bufExplorerShowNoName = 1
 let g:bufExplorerDisableDefaultKeyMapping = 1
-nnoremap <Leader>e :BufExplorer<CR>
+"nnoremap <Leader>e :BufExplorer<CR>
+nnoremap <Leader>e :CtrlPBuffer<CR>
 " nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
 " }}}1
 
