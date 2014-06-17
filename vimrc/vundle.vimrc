@@ -99,7 +99,8 @@ augroup end
 " 文件匹配不必连续，但要顺序，如abc可匹配文件
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
-nmap <Leader>o <C-p>
+nnoremap <Leader>o :CtrlP<CR>
+nnoremap <Leader>b :CtrlPBuffer<CR>
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_working_path_mode = 'ra'
@@ -148,7 +149,7 @@ Bundle 'vim-scripts/bufexplorer.zip'
 let g:bufExplorerShowNoName = 1
 let g:bufExplorerDisableDefaultKeyMapping = 1
 "nnoremap <Leader>e :BufExplorer<CR>
-nnoremap <Leader>e :CtrlPBuffer<CR>
+"nnoremap <Leader>e :CtrlPBuffer<CR>
 " nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
 " }}}1
 

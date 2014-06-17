@@ -28,17 +28,18 @@ $ bash install.sh
 
 - vim
     - 一个更好的Tab跳转快捷键
-    -Search  YouCompleteMe配置，感觉在一些文件中不会补全，如asm
+    - YouCompleteMe配置，感觉在一些文件中不会补全，如asm
     - 代码块的补全插件
     - mac下无法映射<A-->
     - 快速编辑vimrc及生效
     - 许多<buffer>map是否把<Leader>改为<localleader>?
     - nnoremap <A-d> :r !date +\%F<CR>kJwe 插入当前日期
     - inoremap <A-d> <ESC>:r !date +\%F<CR>kJwea 插入当前日期
-    - nnoremap <A-u> 将当前单词变大写
+    - nnoremap <A-u> 将当前单词变大写 gUaw
     - inoremap <A-u> 将当前单词变大写
     - abbr for^ ...
     - 使用augroup避免autocmd重复加载
+    - 将Caps换成Ctrl, Ctrl-[ 与 <ESC> 等效 
 - bash
 
 存在的疑问
@@ -55,5 +56,3 @@ $ bash install.sh
     - nmap <A-N> :cn<CR>
     - nmap <A-S-n> :cn<CR>
     - 上面三个<A-N>与<A-S-n>是等效的，但与<A-n>不等效
-
-

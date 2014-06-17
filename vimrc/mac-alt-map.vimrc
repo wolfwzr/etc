@@ -3,17 +3,28 @@
 
 if has("gui_running") && has("macunix")
 
-    " Window Switch {{{1
-    " nmap <A-j> <C-w>j
-    nmap ∆ j
-    " nmap <A-k> <C-w>k
-    nmap ˚ k
-    " nmap <A-h> <C-w>h
-    nmap ˙ h
-    " nmap <A-l> <C-w>l
-    nmap ¬ l
+    " GUI Window Position Adjust {{{1
+    " <A-j>
+    "nmap <A-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
+    " <A-k>
+    "nmap <A-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
+    " <A-h>
+    "nmap <A-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
+    " <A-l>
+    "nmap <A-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
     " }}}1
     
+    " GUI Window Size Adjust {{{1
+    " <A-S-j>
+    nmap Ô :set lines+=1<CR>
+    " <A-S-k>
+    nmap  :set lines-=1<CR>
+    " <A-S-h>
+    nmap Ó :set columns-=2<CR>
+    " <A-S-l>
+    nmap Ò :set columns+=2<CR>
+    " }}}1
+
     " Window Size Adjust {{{1
     " <A--> Decrease Window Height
     nmap – 3-
@@ -32,24 +43,6 @@ if has("gui_running") && has("macunix")
     nmap ˆ 	
     " }}}1
     
-    " GUI Window Size Adjust {{{1
-    " <A-S-j>
-    nmap Ô :set lines+=1<CR>
-    " <A-S-k>
-    nmap  :set lines-=1<CR>
-    " <A-S-h>
-    nmap Ó :set columns-=2<CR>
-    " <A-S-l>
-    nmap Ò :set columns+=2<CR>
-    " }}}1
-
-    " QuickFix List Next/Prev item {{{1
-    " <A-n>
-    nmap ˜ :cn<CR>
-    " <A-p>
-    nmap π :cp<CR>
-    " }}}1
-    
     " Copy/Cut/Paste {{{1
     " Copy <A-c>
     nnoremap ç viw"+y
@@ -62,23 +55,30 @@ if has("gui_running") && has("macunix")
     " Paste <A-v>
     nnoremap √ "+p
     inoremap √ <ESC>"+p
+    "cnoremap <A-v> <C-r>+
     "}}}1
     
-    " Moving in Cmdline Mode {{{1
-    " <A-h> <Left>
-    cnoremap ˙ <Left>
-    " <A-l> <Right>
-    cnoremap ¬ <Right>
-    " <A-H> <Home>
-    cnoremap Ó <Home>
-    " <A-L> <End>
-    cnoremap Ò <End>
-    " <A-f> <C-f>
-    cnoremap ƒ <C-f>
-    " <A-j> <Down>
-    cnoremap ∆ <Down>
-    " <A-k> <Up>
-    cnoremap ˚ <Up>
+    " Quick move in command line mode {{{1
+    " <A-h>
+    "cnoremap <A-h> <Left>
+    " <A-l>
+    "cnoremap <A-l> <Right>
+    " <A-H>
+    "cnoremap <A-H> <Home>
+    " <A-L>
+    "cnoremap <A-L> <End>
+    " <A-f>
+    "cnoremap <A-f> <C-f>
+    " <A-j>
+    "cnoremap <A-j> <Down>
+    " <A-k>
+    "cnoremap <A-k> <Up>
+    "}}}1
+    
+    " QuickFix Next/Prev Item {{{1
+    " <A-n>
+    "nnoremap <A-n> :cn<CR>
+    " <A-n>
+    "nnoremap <A-p> :cp<CR>
     " }}}1
-
 endif

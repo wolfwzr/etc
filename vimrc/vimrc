@@ -115,8 +115,8 @@ function WOLFWZR_set_colorscheme(color)
 
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
-    " autocmd ColorScheme * source  ~/.vim/bundle/Mark/plugin/mark.vim
-    source ~/.vim/bundle/Mark/plugin/mark.vim
+    " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
+    source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
 
     " 更新YouCompleteMe弹出菜单样式 {{{3
@@ -286,6 +286,10 @@ endfunction
 " }}}1
 
 " 基础设置 {{{1
+set runtimepath-=~wolfwzr/.vim
+set runtimepath+=~wolfwzr/.vim
+set runtimepath-=~wolfwzr/.vim/bundle/Vundle.vim
+set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
 " VI兼容性设置 {{{2
 set nocp
 " }}}2
@@ -330,30 +334,36 @@ endif
 " ~/.vim/bundle/Vundle.vim/Vundle.vimrc
 " Vundle是一个管理插件的插件
 " 这里配置文件里面包含了各个插件的配置
-source ~/.vim/bundle/Vundle.vim/Vundle.vimrc
+source ~wolfwzr/.vim/bundle/Vundle.vim/Vundle.vimrc
 " }}}1
 
 " 快捷键设置 {{{1
+" hardmode {{{2
+" 用 <C-h> 代替 <BS>, <C-w> 还可以直接删除一个word
+" 等熟练使用后可以将<BS>映射为删除整行 <ESC>^C
+inoremap <BS> <NOP>
+cnoremap <BS> <NOP>
+" }}}2
 " 翻页设置 {{{2
 nnoremap <SPACE> <C-f>
 nnoremap <TAB> <C-b>
 " }}}2
 " 快速查看QuickFix List的上一项/下一项 {{{2
 if has("gui_running") && !has("macunix")
-    nmap  <A-n> :cn<CR>
-    nmap  <A-p> :cp<CR>
+    nnoremap <A-n> :cn<CR>
+    nnoremap <A-p> :cp<CR>
 endif
 " }}}2
 " Tab跳转 {{{2
 nnoremap <Leader>j :tabnext<CR>
 nnoremap <Leader>k :tabprev<CR>
 " }}}2
-" 前进/后退和Window跳转、大小调整 {{{2
+" Window跳转、大小调整 {{{2
 if has("gui_running") && !has("macunix")
-        nnoremap <A-j> <C-w>j
-        nnoremap <A-k> <C-w>k
-        nnoremap <A-h> <C-w>h
-        nnoremap <A-l> <C-w>l
+        nnoremap <C-j> <C-w>j
+        nnoremap <C-k> <C-w>k
+        nnoremap <C-h> <C-w>h
+        nnoremap <C-l> <C-w>l
 
         " Decrease Window Height
         nnoremap <A--> <C-w>3-
@@ -363,18 +373,14 @@ if has("gui_running") && !has("macunix")
         nnoremap <A-<> <C-w>3<
         " Increase Windows Width
         nnoremap <A->> <C-w>3>
-
-        nnoremap <A-i> <C-i>
-        nnoremap <A-o> <C-o>
 endif
 " }}}2
 " 调整GVIM窗口位置 {{{2
-if has("gui_running")
-    " <C-S-j>和<C-j>等效，why?
-    nmap <C-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
-    nmap <C-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
-    nmap <C-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
-    nmap <C-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
+if has("gui_running") && !has("macunix")
+    nmap <A-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
+    nmap <A-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
+    nmap <A-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
+    nmap <A-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
 endif
 " }}}2
 " 调整GVIM窗口大小 {{{2
@@ -397,16 +403,7 @@ if has("gui_running") && !has("macunix")
 
     nnoremap <A-v> "+p
     inoremap <A-v> <ESC>"+p
-endif
-" }}}2
-" MacVim alt键映射 {{{2
-if has("gui_running") && has("macunix")
-    " MacVim无法映射alt键(<A-,<M-)都不行
-    " 但可以通过直接输入<A-x>(在键盘上按住alt再按x键，得到一个乱码字符）得到
-    " 于是可以通过 nmap ê <C-w>j 来创建映射
-    " 但直接写在本文件中无效，在新文件中有效,所以将Mac下的alt映射放在新文件中
-    " 猜测可能是因为本文件包含中文的原因，新文件中若不包含中文就有效
-    source ~/.vim/mac-alt-map.vimrc
+    cnoremap <A-v> <C-r>+
 endif
 " }}}2
 " 代码折叠快捷键 {{{2
@@ -454,13 +451,27 @@ nnoremap <Leader>ve :split ~/.vim/vimrc<CR>
 nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
 " }}}2
 " cmdline模式下的光标移动 {{{2
-cnoremap <A-h> <Left>
-cnoremap <A-l> <Right>
-cnoremap <A-H> <Home>
-cnoremap <A-L> <End>
-cnoremap <A-f> <C-f>
-cnoremap <A-j> <Down>
-cnoremap <A-k> <Up>
+if has("gui_running") && !has("macunix")
+    cnoremap <A-h> <Left>
+    cnoremap <A-l> <Right>
+    cnoremap <A-H> <Home>
+    cnoremap <A-L> <End>
+    cnoremap <A-f> <C-f>
+    cnoremap <A-j> <Down>
+    cnoremap <A-k> <Up>
+endif
+cnoremap <C-j> <Down>
+cnoremap <C-k> <Up>
+" }}}2
+" MacVim alt键映射 {{{2
+if has("gui_running") && has("macunix")
+    " MacVim无法映射alt键(<A-,<M-)都不行
+    " 但可以通过直接输入<A-x>(在键盘上按住alt再按x键，得到一个乱码字符）得到
+    " 于是可以通过 nmap ê <C-w>j 来创建映射
+    " 但直接写在本文件中无效，在新文件中有效,所以将Mac下的alt映射放在新文件中
+    " 猜测可能是因为本文件包含中文的原因，新文件中若不包含中文就有效
+    source ~wolfwzr/.vim/mac-alt-map.vimrc
+endif
 " }}}2
 " }}}1
 
