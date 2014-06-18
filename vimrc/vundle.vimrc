@@ -160,3 +160,7 @@ let g:bufExplorerDisableDefaultKeyMapping = 1
 Bundle 'vim-scripts/Buffer-grep'
 " }}}1
 
+" Lokaltog/vim-easymotion插件 {{{1
+Bundle "Lokaltog/vim-easymotion"
+" }}}1
+

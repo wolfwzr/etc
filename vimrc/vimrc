@@ -20,6 +20,8 @@ function WOLFWZR_code_common_setting()
     set shiftwidth=4 
     set expandtab 
     set nu
+    " 设置显示相对行号，方便jk跳转
+    set relativenumber
 
     if has("gui_running")
         set columns=90
@@ -402,7 +404,7 @@ if has("gui_running") && !has("macunix")
     inoremap <A-x> <ESC>viw"+xea
 
     nnoremap <A-v> "+p
-    inoremap <A-v> <ESC>"+p
+    inoremap <A-v> <ESC>"+pa
     cnoremap <A-v> <C-r>+
 endif
 " }}}2
