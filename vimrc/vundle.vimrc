@@ -194,4 +194,5 @@ Bundle 'Lokaltog/vim-powerline'
 " 本地版: ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
 " 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
 let g:Powerline_symbols = 'fancy'
+let g:Powerline_stl_path_style = 'short'
 "}}}

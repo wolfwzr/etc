@@ -322,13 +322,13 @@ set encoding=utf-8
 "}}}
 " 状态栏设置 {{{2
 set laststatus=2   " Always show the statusline
-"使用powerline代替
-"hi StatusLine cterm=bold gui=bold
-"set statusline=
-"    \%f\ %r\ %m\ %q
-"    \%=
-"    \[%{&fileformat},%{&fileencoding}%Y]
-"    \\ (%l/%L,%03v)\ %03P
+" 使用powerline代替
+hi StatusLine cterm=bold gui=bold
+set statusline=
+    \%f\ %r\ %m\ %q
+    \%=
+    \[%{&fileformat},%{&fileencoding}%Y]
+    \\ (%l/%L,%03v)\ %03P
 " }}}2
 " 打开文件时恢复光标位置 {{{2
 if has("autocmd")
