@@ -164,3 +164,32 @@ Bundle 'vim-scripts/Buffer-grep'
 Bundle "Lokaltog/vim-easymotion"
 " }}}1
 
+" UltiSnip插件 {{{
+" 代码块的补全
+Bundle 'sirver/UltiSnips'
+"}}}
+
+" powerline插件 "{{{
+Bundle 'Lokaltog/vim-powerline'
+"let g:Powerline_symbols = 'unicode'
+" fancy最漂亮，但要求字体支持一些特殊字符
+" 若当前使用的字体不支持这些字符，给字体打个补丁就行了,具体如下：
+" 1. linux 系统
+"   1. 安装fontforge
+"       zypper install fontforge
+"   2. 找到powerline自带的fontpatcher程序，如：
+"       ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
+"   3. 找到当前使用的字体的文件，如:
+"       /usr/share/font/truetype/YaHei.Consolas.1.12.ttf
+"   4. 执行以下命令给字体打补丁：
+"       fontforge -script ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher /usr/share/font/truetype/YaHei.Consolas.1.12.ttf
+"   5. 执行完以上命令后在当前目录应该生成了一个新字体文件，将该字体安装
+"       /usr/share/font/truetype/YaHei.Consolas.1.12-Powerline.ttf
+"   6. 在vim做如下设置：
+"       set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+"           \,YaHei\ Consolas\ Hybrid\ 14
+"       let g:Powerline_symbols = 'fancy'
+" 2. Mac OSX 系统 
+" 参考文章： https://powerline.readthedocs.org/en/latest/fontpatching.html
+let g:Powerline_symbols = 'fancy'
+"}}}

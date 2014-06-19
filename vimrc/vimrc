@@ -19,9 +19,6 @@ function WOLFWZR_code_common_setting()
     set tabstop=4 
     set shiftwidth=4 
     set expandtab 
-    set nu
-    " 设置显示相对行号，方便jk跳转
-    set relativenumber
 
     if has("gui_running")
         set columns=90
@@ -38,15 +35,13 @@ endfunction
 "}}}2
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
-
     " 只在GUI下生效 {{{3
     if !has("gui_running")
         return
     endif
     " }}}3
-
     " 设置配色方案及可能的修剪 {{{3
-    " 备选配色方案：
+    " 备选配色方案："{{{
     " Monokai
     " PapayaWhip
     " Tomorrow-Night-Eighties
@@ -95,54 +90,53 @@ function WOLFWZR_set_colorscheme(color)
     " wolfasm (only aviliable in rmbp)
     " wombat
     " zenburn
-
+"}}}
     execute 'colorscheme ' . a:color
-
-    if a:color == "two2tango"
-        "highlight StatusLine guibg=grey50
-    elseif a:color == "Tomorrow-Night-Eighties"
+    " 修剪 "{{{
+    if a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
-        "highlight CursorLine guibg=grey30
-        "highlight StatusLine guibg=grey50
         if hlID("vimCommand") != 0
             highlight vimCommand guifg=#bbccaa
         endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
-        "highlight CursorLine guibg=grey30
-        "highlight StatusLine guibg=grey50
+        hi Cursor guibg=white guifg=black
     elseif a:color == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
     endif
-    " }}}3
 
+    let b:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
+    if b:WOLFWZR_tmp_color != ""
+        execute 'highlight LineNr guifg='.b:WOLFWZR_tmp_color
+    endif
+
+    "}}}
+    " }}}3
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
-
     " 更新YouCompleteMe弹出菜单样式 {{{3
-    let WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
-    if WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guibg='.WOLFWZR_tmp_color
+    let b:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
+    if b:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guibg='.b:WOLFWZR_tmp_color
     endif
 
-    let WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
-    if WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guifg='.WOLFWZR_tmp_color
+    let b:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
+    if b:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guifg='.b:WOLFWZR_tmp_color
     endif
         
-    let WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
-    if WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guibg='.WOLFWZR_tmp_color
+    let b:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
+    if b:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guibg='.b:WOLFWZR_tmp_color
     endif
 
-    let WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
-    if WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guifg='.WOLFWZR_tmp_color
+    let b:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
+    if b:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guifg='.b:WOLFWZR_tmp_color
     endif
     " }}}3
-
     let b:WOLFWZR_colorscheme_applied = 1
 endfunction
 " }}}2
@@ -157,6 +151,7 @@ function WOLFWZR_filetype_setting()
        \ || &filetype == "yacc"
        \ || &filetype == "bison"
         call WOLFWZR_code_common_setting()
+        set foldmethod=syntax
 
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
@@ -172,16 +167,19 @@ function WOLFWZR_filetype_setting()
     " ASM {{{3
     elseif &filetype == "asm"
         call WOLFWZR_code_common_setting()
+        set syntax=nasm
         call WOLFWZR_set_colorscheme("rainbow_neon")
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
+        set foldmethod=indent
     " JAVA {{{3
     elseif &filetype == "java"
         call WOLFWZR_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
+        set foldmethod=indent
         call WOLFWZR_set_colorscheme("neon")
         if has("gui_running")
             set columns=100
@@ -204,6 +202,7 @@ function WOLFWZR_filetype_setting()
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
+        set autoindent
         call WOLFWZR_set_colorscheme("darktango")
         if has("gui_running")
             if has("macunix")
@@ -288,10 +287,15 @@ endfunction
 " }}}1
 
 " 基础设置 {{{1
+" 设置显示相对行号，方便jk跳转 "{{{
+set relativenumber
+"}}}
+" runtimepath管理 "{{{
 set runtimepath-=~wolfwzr/.vim
 set runtimepath+=~wolfwzr/.vim
 set runtimepath-=~wolfwzr/.vim/bundle/Vundle.vim
 set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
+"}}}
 " VI兼容性设置 {{{2
 set nocp
 " }}}2
@@ -313,14 +317,18 @@ set splitright
 " 退格键设置(设置<BS>可删除的内容） {{{2
 set backspace=indent,eol,start
 " }}}2
+" 文件编码设置 "{{{
+set encoding=utf-8
+"}}}
 " 状态栏设置 {{{2
-set laststatus=2
-hi StatusLine cterm=bold gui=bold
-set statusline=
-    \%f\ %r\ %m\ %q
-    \%=
-    \[%{&fileformat},%{&fileencoding}%Y]
-    \\ (%l/%L,%03v)\ %03P
+set laststatus=2   " Always show the statusline
+"使用powerline代替
+"hi StatusLine cterm=bold gui=bold
+"set statusline=
+"    \%f\ %r\ %m\ %q
+"    \%=
+"    \[%{&fileformat},%{&fileencoding}%Y]
+"    \\ (%l/%L,%03v)\ %03P
 " }}}2
 " 打开文件时恢复光标位置 {{{2
 if has("autocmd")
@@ -419,18 +427,17 @@ nnoremap <Leader>hH :help <C-R>=expand("<cWORD>")<CR><CR>
 " }}}3
 " linux的man手册 {{{3
 runtime ftplugin/man.vim
-nnoremap <Leader>hm  :Man <C-r>=expand("<cword>")<CR><CR>
-" 使用<Leader>hn0-9以加快<Leader>hm的响应速度
-nnoremap <Leader>hn0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hn9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
+nnoremap K :Man <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>hm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 " }}}3
 " 单词字典查询 {{{3
 command -nargs=1 Sdcv call WOLFWZR_dictionary_qurey("<args>")
@@ -509,6 +516,7 @@ if has("autocmd")
         autocmd FileType mkd
             \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
             \ nnoremap <buffer> o    A<CR>|
+            \ inoremap <A-d> <ESC>:r !date +\%F<CR>kJA |
             \ iabbrev <buffer> codee^ ```<CR>```<ESC>ka|
             \ iabbrev <buffer> cdd^ ``<ESC>i
         autocmd FileType qf
@@ -542,7 +550,8 @@ if has("gui_running")
         set guifont=Monaco:h16
         set guifontwide=Kaiti\ SC\ Regular
     else
-        set guifont=YaHei\ Consolas\ Hybrid\ 14
+        set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+            \,YaHei\ Consolas\ Hybrid\ 14
     endif
 
     " 设置默认配色方案
@@ -601,4 +610,3 @@ if has("cscope")
     command -nargs=1 Csd cs find d <args>
 endif
 " }}}1
-
