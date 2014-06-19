@@ -190,6 +190,8 @@ Bundle 'Lokaltog/vim-powerline'
 "           \,YaHei\ Consolas\ Hybrid\ 14
 "       let g:Powerline_symbols = 'fancy'
 " 2. Mac OSX 系统 
-" 参考文章： https://powerline.readthedocs.org/en/latest/fontpatching.html
+" 参考:
+" 本地版: ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
+" 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
 let g:Powerline_symbols = 'fancy'
 "}}}
