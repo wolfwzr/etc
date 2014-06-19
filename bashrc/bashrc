@@ -87,8 +87,11 @@ source /usr/local/etc/profile.d/z.sh
 ############################################################
 # dir shortcut
 ############################################################
+# Github
+gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
+alias ggh='cd "$gh"'
 # WorkSpace
-ws="/Users/wolfwzr/Books/My OS/kernel_learning"
+ws="$gh/kernel_learning"
 alias gws='cd "$ws"'
 # WorkSpace2
 ws2="/Users/wolfwzr/Books/My OS/x86汇编语言:从实模式到保护模式/booktool/code/c14"
