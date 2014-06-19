@@ -145,11 +145,11 @@ Bundle 'flazz/vim-colorschemes'
 " }}}1
 
 " bufexplorer.zip插件 {{{1
-Bundle 'vim-scripts/bufexplorer.zip'
-let g:bufExplorerShowNoName = 1
-let g:bufExplorerDisableDefaultKeyMapping = 1
-"nnoremap <Leader>e :BufExplorer<CR>
-"nnoremap <Leader>e :CtrlPBuffer<CR>
+" 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
+" Bundle 'vim-scripts/bufexplorer.zip'
+" let g:bufExplorerShowNoName = 1
+" let g:bufExplorerDisableDefaultKeyMapping = 1
+" nnoremap <Leader>e :BufExplorer<CR>
 " nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
 " }}}1
 
