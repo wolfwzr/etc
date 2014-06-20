@@ -1,0 +1,21 @@
+"3.8.1 (created: 2013/11/21 23:49:14)
+
+nmap sj :tabnext<Return>
+nmap sk :tabprev<Return>
+
+nmap C :emenu Tools.Clearly<Return>
+nmap D :emenu Tools.Downloads<Return>
+nmap <BS> :back<Return>
+
+cmap <A-j> <Down>
+cmap <A-k> <Up>
+cmap <A-h> <Left>
+cmap <A-l> <Right>
+
+" press <C-]> to make complete
+iabbrev mail wolfwzr.china@gmail.com
+iabbrev ww wolfwzr
+
+source! /home/wolfwzr/.vimperatorrc.local
+
+" vim: set ft=vimperator:
