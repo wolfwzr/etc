@@ -103,7 +103,7 @@ nnoremap <Leader>o :CtrlP<CR>
 nnoremap <Leader>b :CtrlPBuffer<CR>
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
-let g:ctrlp_working_path_mode = 'ra'
+let g:ctrlp_working_path_mode = 'c'
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*.a,*.so,*.swp,*.zip,*.o,a.out
 let g:ctrlp_custom_ignore = {

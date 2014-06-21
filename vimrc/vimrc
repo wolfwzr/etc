@@ -90,7 +90,17 @@ function WOLFWZR_set_colorscheme(color)
     " wolfasm (only aviliable in rmbp)
     " wombat
     " zenburn
-"}}}
+    " kellys
+    " mrpink
+    " kib_darktango
+    " kolor
+    " lilypink
+    " liquidcarbon
+    " lucius
+    " manuscript
+    " native
+    " nazca
+    "}}}
     execute 'colorscheme ' . a:color
     " 修剪 "{{{
     if a:color == "Tomorrow-Night-Eighties"
@@ -179,29 +189,17 @@ function WOLFWZR_filetype_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
-        set foldmethod=indent
+        "set foldmethod=indent
         call WOLFWZR_set_colorscheme("neon")
-        if has("gui_running")
-            set columns=100
-        endif
     " VIM {{{3
     elseif &filetype == "vim"
         call WOLFWZR_code_common_setting()
-        " kellys
-        " mrpink
-        " kib_darktango
-        " kolor
-        " lilypink
-        " liquidcarbon
-        " lucius
-        " manuscript
-        " native
-        " nazca
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
 	    set foldmethod=marker
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
+        set nocindent
         set autoindent
         call WOLFWZR_set_colorscheme("darktango")
     " TEXT {{{3
@@ -210,8 +208,6 @@ function WOLFWZR_filetype_setting()
         if has("gui_running")
             if has("macunix")
                 set guifont=Monaco:h18
-            else
-                set guifont=YaHei\ Consolas\ Hybrid\ 16
             endif
         endif
     endif
@@ -529,8 +525,8 @@ if has("gui_running")
     winpos 200 30
 
     " 设置窗口行数和列数
-    set columns=90
-    set lines=35
+    set columns=85
+    set lines=37
 
     " 设置显示字体
     if has("macunix")
