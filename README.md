@@ -36,6 +36,7 @@ $ bash install.sh
     - abbr for^ ...
     - 使用augroup避免autocmd重复加载
     - Ultisnap安装了但还不清楚用法
+    - F2 toggle botright cw, F3 :cp F4 :cn
 - bash
 
 存在的疑问

@@ -53,7 +53,11 @@ function WOLFWZR_nerdtree_toggle()
         execute 'set columns='.l:vim_window_width
     endif
 endfunction
-nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
+nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle()<CR>
+"if has("autocmd")
+"    这个nnoremap未能生效，因为被nerdtree插件覆盖了吗？
+"    autocmd FileType nerdtree nnoremap <buffer> q :call WOLFWZR_nerdtree_toggle()<CR>
+"endif
 " }}}1
 
 " tagbar插件 {{{1
