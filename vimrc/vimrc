@@ -161,7 +161,9 @@ function WOLFWZR_filetype_setting()
        \ || &filetype == "yacc"
        \ || &filetype == "bison"
         call WOLFWZR_code_common_setting()
-        "set foldmethod=syntax
+        " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
+        set nofoldenable
+        set foldmethod=syntax
 
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
@@ -182,6 +184,7 @@ function WOLFWZR_filetype_setting()
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
+        "set nofoldenable
         set foldmethod=indent
     " JAVA {{{3
     elseif &filetype == "java"
@@ -189,7 +192,8 @@ function WOLFWZR_filetype_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
-        "set foldmethod=indent
+        set nofoldenable
+        set foldmethod=indent
         call WOLFWZR_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
