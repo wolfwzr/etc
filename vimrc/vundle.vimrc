@@ -65,7 +65,7 @@ nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle()<CR>
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
-let g:tagbar_width=25
+let g:tagbar_width=28
 " 本函数功能：
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
