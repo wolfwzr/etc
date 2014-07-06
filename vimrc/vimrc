@@ -395,7 +395,7 @@ if has("gui_running") && !has("macunix")
     inoremap <A-x> <ESC>viw"+xea
 
     nnoremap <A-v> "+p
-    inoremap <A-v> <ESC>"+pa
+    inoremap <A-v> <C-r>+
     cnoremap <A-v> <C-r>+
 endif
 " }}}2

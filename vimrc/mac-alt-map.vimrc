@@ -47,7 +47,7 @@ if has("gui_running") && has("macunix")
     inoremap ≈ <ESC>viw"+xea
     " Paste <A-v>
     nnoremap √ "+p
-    inoremap √ <ESC>"+p
+    inoremap √ <C-r>+
     cnoremap √ <C-r>+
     "}}}1
     
