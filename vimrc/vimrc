@@ -161,6 +161,8 @@ function WOLFWZR_filetype_setting()
        \ || &filetype == "yacc"
        \ || &filetype == "bison"
         call WOLFWZR_code_common_setting()
+        " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
+        set nofoldenable
         set foldmethod=syntax
 
         " 用缩写(abbreivations)自定义代码块的补全
@@ -182,6 +184,7 @@ function WOLFWZR_filetype_setting()
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
+        "set nofoldenable
         set foldmethod=indent
     " JAVA {{{3
     elseif &filetype == "java"
@@ -189,7 +192,8 @@ function WOLFWZR_filetype_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
-        "set foldmethod=indent
+        set nofoldenable
+        set foldmethod=indent
         call WOLFWZR_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
@@ -202,6 +206,12 @@ function WOLFWZR_filetype_setting()
         set nocindent
         set autoindent
         call WOLFWZR_set_colorscheme("darktango")
+    " HTML {{{3
+    elseif &filetype == "html"
+        call WOLFWZR_code_common_setting()
+        set nocindent
+        set autoindent
+        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
     " TEXT {{{3
     elseif &filetype == "text"
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
@@ -342,8 +352,14 @@ nnoremap <TAB> <C-b>
 " }}}2
 " 快速查看QuickFix List的上一项/下一项 {{{2
 if has("gui_running") && !has("macunix")
+    nnoremap <A-w> :botright cw<CR>
     nnoremap <A-n> :cn<CR>
     nnoremap <A-p> :cp<CR>
+    "nnoremap <F2> :botright cw<CR>
+    "nnoremap <F3> :cp<CR>
+    "nnoremap <F4> :cn<CR>
+    " :colder 查看上一个quickfix窗口
+    " :cnewer 查看下一个quickfix窗口
 endif
 " }}}2
 " Tab跳转 {{{2
@@ -504,8 +520,6 @@ if has("autocmd")
             \ iabbrev <buffer> cdd^ ``<ESC>i
         autocmd FileType qf
             \ nnoremap <buffer> o <CR>|
-            \ nnoremap <buffer> n :cn<CR>|
-            \ nnoremap <buffer> p :cp<CR>|
             \ nnoremap <buffer> q :q<CR>
         autocmd FileType man
             \ nnoremap <buffer> q :q<CR>|
@@ -569,6 +583,7 @@ if has("cscope")
     set csprg=/usr/bin/cscope
     set csto=0
     set cst
+	set cscopequickfix=s-,c-,d-,i-,t-,e-
 
     set nocsverb
     " add any database in current directory

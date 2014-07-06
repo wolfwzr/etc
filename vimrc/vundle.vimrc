@@ -35,7 +35,7 @@ Bundle 'vim-scripts/Mark'
 "    q  - 关闭浏览界面
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
 Bundle 'scrooloose/nerdtree'
-let g:NERDTreeWinSize=30
+let g:NERDTreeWinSize=25
 " 本函数功能：
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
@@ -53,7 +53,11 @@ function WOLFWZR_nerdtree_toggle()
         execute 'set columns='.l:vim_window_width
     endif
 endfunction
-nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
+nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle()<CR>
+"if has("autocmd")
+"    这个nnoremap未能生效，因为被nerdtree插件覆盖了吗？
+"    autocmd FileType nerdtree nnoremap <buffer> q :call WOLFWZR_nerdtree_toggle()<CR>
+"endif
 " }}}1
 
 " tagbar插件 {{{1
@@ -61,7 +65,7 @@ nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle() <CR>
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
-let g:tagbar_width=30
+let g:tagbar_width=28
 " 本函数功能：
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
