@@ -179,8 +179,8 @@ function WOLFWZR_filetype_setting()
     " ASM {{{3
     elseif &filetype == "asm"
         call WOLFWZR_code_common_setting()
-        set syntax=nasm
         call WOLFWZR_set_colorscheme("rainbow_neon")
+        setlocal syntax=nasm
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
@@ -444,6 +444,7 @@ nnoremap <Leader>hd :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 " }}}3
 " Buffer Grep {{{3
 " 在当前Buffer中Grep
+command -nargs=1 Grep call WOLFWZR_grep("<args>")
 nnoremap <Leader>hg
     \ :call WOLFWZR_grep('<C-R>=expand("<cword>")<CR>')<CR>
 " 在所有Buffer中Grep
