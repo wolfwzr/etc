@@ -34,9 +34,9 @@ $ bash install.sh
     - nnoremap <A-u> 将当前单词变大写 gUaw
     - inoremap <A-u> 将当前单词变大写
     - abbr for^ ...
-    - 使用augroup避免autocmd重复加载
     - Ultisnap安装了但还不清楚用法
-    - F2 toggle botright cw, F3 :cp F4 :cn
+    - command模式下 Alt-w toggle cwindow
+    - 默认nofoldenable, 按Alt-f来toggle foldenable
 - bash
 
 存在的疑问
@@ -45,11 +45,17 @@ $ bash install.sh
 1. help类型的buffer无法通过autocmd BufNew,BufNewFile事件触发动作，为什么？目前是通过autocmd FileType help cmd来实现help类型的功能定制的
 2. autocmd ColorScheme事件无法在ColorScheme切换后触发
 3. 为什么ctrl和alt表现不同？
-    - nmap <C-n> :cn<CR>
-    - nmap <C-N> :cn<CR>
-    - nmap <C-S-n> :cn<CR>
-    - 上面三个是等效的
-    - nmap <A-n> :cn<CR>
-    - nmap <A-N> :cn<CR>
-    - nmap <A-S-n> :cn<CR>
-    - 上面三个<A-N>与<A-S-n>是等效的，但与<A-n>不等效
+   ``` 
+    " 这三个是等效的
+    nmap <C-n> :cn<CR>
+    nmap <C-N> :cn<CR>
+    nmap <C-S-n> :cn<CR>
+    " <A-N> == <A-S-n> != <A-n>
+    nmap <A-n> :cn<CR>
+    nmap <A-N> :cn<CR>
+    nmap <A-S-n> :cn<CR>
+   ``` 
+4. 在asm类型处理函数里设置set syntax=nasm无效果，连autocmd也没效果，为什么
+    ```
+    autocmd FileType asm set syntax=nasm
+    ```

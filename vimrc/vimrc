@@ -180,7 +180,9 @@ function WOLFWZR_filetype_setting()
     elseif &filetype == "asm"
         call WOLFWZR_code_common_setting()
         call WOLFWZR_set_colorscheme("rainbow_neon")
-        setlocal syntax=nasm
+        set syntax=nasm
+        set foldmethod=marker
+        set commentstring=;%s
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
