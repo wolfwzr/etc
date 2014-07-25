@@ -78,6 +78,7 @@ alias vibashrc='vi /Users/wolfwzr/.local/etc/bashrc'
 alias virc='vi /Users/wolfwzr/.vim/vimrc'
 alias vismbconf='vi /usr/local/etc/smb.conf'
 alias visshconf='vi ~/.ssh/config'
+alias vihosts='vi /etc/hosts'
 
 ############################################################
 # z - a better cd
