@@ -179,7 +179,12 @@ Bundle 'Lokaltog/vim-powerline'
 " 参考:
 " 本地版: ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
 " 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
-let g:Powerline_symbols = 'fancy'
+if has("gui_running")
+    let g:Powerline_symbols = 'fancy'
+else
+    let g:Powerline_symbols = 'unicode'
+    "let g:Powerline_symbols = 'compatible'
+endif
 let g:Powerline_stl_path_style = 'short'
 "}}}
 

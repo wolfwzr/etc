@@ -539,13 +539,18 @@ endif
 " }}}1
 
 " GUI设置 {{{1
+let b:cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 " GVIM {{{2
 if has("gui_running")
     " 去掉菜单栏、工具栏等
     set go=
 
     " 设置窗口位置
-    winpos 245 30
+    if b:cpu_info == "Atom"
+        winpos 120 0
+    else
+        winpos 245 30
+    endif
 
     " 设置窗口行数和列数
     set columns=85
@@ -562,8 +567,13 @@ if has("gui_running")
         " Xingkai\ SC\ Light
         set guifontwide=Kaiti\ SC\ Regular
     else
-        set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
-            \,YaHei\ Consolas\ Hybrid\ 14
+        if b:cpu_info == "Atom"
+            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 12
+                \,YaHei\ Consolas\ Hybrid\ 12
+        else
+            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+                \,YaHei\ Consolas\ Hybrid\ 14
+        endif
     endif
 
     " 设置默认配色方案
