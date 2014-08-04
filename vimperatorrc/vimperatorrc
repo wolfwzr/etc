@@ -17,4 +17,4 @@ iabbrev mail wolfwzr.china@gmail.com
 
 source! ~wolfwzr/.vimperatorrc.local
 
-" vim: set ft=vimperator:
+" vim: set ft=vim:

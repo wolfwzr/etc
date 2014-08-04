@@ -633,3 +633,5 @@ if has("cscope")
     command -nargs=1 Csd cs find d <args>
 endif
 " }}}1
+
+" vim: set ft=vim:

@@ -202,3 +202,5 @@ let g:Powerline_stl_path_style = 'short'
 " 代码块的补全
 " Bundle 'sirver/UltiSnips'
 "}}}
+
+" vim: set ft=vim:

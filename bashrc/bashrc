@@ -2,7 +2,7 @@
 # VARIABLES FOR THIS SCRIPT
 ############################################################
 WOLFWZR_HOME=~wolfwzr
-if [ "$(uname -u)" = "Darwin" ]
+if [ "$(uname -s)" = "Darwin" ]
 then
     OS_TYPE="osx"
 else
@@ -46,10 +46,16 @@ function wolf_update_ps1()
         then
             last_cmd_exit_code="\[\033[40;37m\]"
         else
-            last_cmd_exit_code="\[\033[47;37m\]"
+            if [ "$OS_TYPE" = "osx" ]
+            then
+                last_cmd_exit_code="\[\033[47;37m\]"
+            else
+                last_cmd_exit_code="\[\033[47;37m\]"
+            fi
         fi
     else
-        last_cmd_exit_code="\[\033[41;31m\]${ret}✘"
+        # reverse on error
+        last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
     fi
     prefix="\[\033[37m\]["
     time="\[\033[36m\]\t"
@@ -69,8 +75,8 @@ export PROMPT_COMMAND="wolf_update_ps1"
 ############################################################
 # BASH COMPLETION
 ############################################################
-if [ -f $(brew --prefix)/etc/bash_completion ]; then
-    . $(brew --prefix)/etc/bash_completion
+if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+    . "$(brew --prefix)/etc/bash_completion"
 fi
 
 ############################################################
@@ -133,13 +139,13 @@ export CSCOPE_EDITOR=vim
 alias vi='gvim'
 alias vibashrc='vi /etc/wolfwzr.bashrc'
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf='vi ~/.ssh/config'
+alias visshconf='vi ~wolfwzr/.ssh/config'
 alias vihosts='vi /etc/hosts'
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf='vi /usr/local/etc/smb.conf'
 else
-    alias vismbconf='vi /usr/etc/smb.conf'
+    alias vismbconf='vi /etc/samba/smb.conf'
 fi
 
 ############################################################
@@ -197,3 +203,5 @@ then
         resize -s 30 100 > /dev/null
     fi
 fi
+
+# vim: set ft=sh:

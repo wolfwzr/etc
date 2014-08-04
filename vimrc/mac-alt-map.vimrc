@@ -76,3 +76,5 @@ if has("gui_running") && has("macunix")
     " }}}1
     
 endif
+
+" vim: set ft=vim:
