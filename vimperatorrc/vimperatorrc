@@ -14,8 +14,7 @@ cmap <A-l> <Right>
 
 " press <C-]> to make complete
 iabbrev mail wolfwzr.china@gmail.com
-iabbrev ww wolfwzr
 
-source! /home/wolfwzr/.vimperatorrc.local
+source! ~wolfwzr/.vimperatorrc.local
 
 " vim: set ft=vimperator:

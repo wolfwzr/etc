@@ -1,41 +1,67 @@
 ############################################################
+# VARIABLES FOR THIS SCRIPT
+############################################################
+WOLFWZR_HOME=~wolfwzr
+if [ "$(uname -u)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
+############################################################
 # BASH PREFERENCES
 ############################################################
 set -o vi
 export EDITOR=vim
-# path
-PATH="/usr/local/bin:$PATH"
-PATH="/usr/local/sbin:$PATH"
-PATH="/Users/wolfwzr/.local/bin:$PATH"
+
+# PATH
+PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+if [ "$OS_TYPE" = "osx" ]
+then
+    PATH="$WOLFWZR_HOME/.local/bin:$PATH"
+else
+    PATH="$PATH:/opt/cross-mips32/bin"
+fi
 export PATH
+
+export HISTTIMEFORMAT="[%m-%d %R] "
 
 ############################################################
 # COMMAND PROMPT
 ############################################################
-wolf_update_ps1()
+function wolf_update_ps1()
 {
-    ret=$?
-    if [ $ret -eq 0 ] 
+    local exit_code=$?
+    local last_cmd_exit_code
+    local time
+    local username
+    local work_dir
+    local prefix
+    local suffix
+
+    if [ $exit_code -eq 0 ] 
     then
-        if [ "$ITERM_PROFILE" = "Dark" ]
+        if [ "$TERMINAL_PROFILE" = "Dark" ]
         then
-            ps1_last_cmd_retval="\[\033[40;37m\]"
+            last_cmd_exit_code="\[\033[40;37m\]"
         else
-            ps1_last_cmd_retval="\[\033[47;37m\]"
+            last_cmd_exit_code="\[\033[47;37m\]"
         fi
     else
-        ps1_last_cmd_retval="\[\033[41;31m\]${ret}✘"
+        last_cmd_exit_code="\[\033[41;31m\]${ret}✘"
     fi
-
+    prefix="\[\033[37m\]["
+    time="\[\033[36m\]\t"
     if [ $(id -u) = '0' ]
     then
-        ps1_user_sign="\[\033[31m\]\u"
+        username="\[\033[36m\]\u"
     else
-        ps1_user_sign="\[\033[37m\]\u"
+        username="\[\033[37m\]\u"
     fi
-
-    PS1="${ps1_last_cmd_retval}\[\033[37m\][\[\033[36m\]\t $ps1_user_sign \[\033[33m\]\W\[\033[37m\]]\[\033[0m\] "
-    export PS1
+    work_dir="\[\033[33m\]\W"
+    suffix="\[\033[37m\]]\[\033[0m\] "
+    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
 }
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
@@ -53,60 +79,121 @@ fi
 alias a='./a.out'
 alias c='clear'
 alias h='history | less +G'
+if [ "$OS_TYPE" = "osx" ] 
+then
+    alias r='netstat -f inet -nr'
+    alias ls='ls -G'
+    alias ll='ls -Glh'
+    alias la='ls -GlhA'
+    alias top='top -o cpu'
+    alias um='diskutil umount'
+    alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
+    alias cpwd='printf $PWD | pbcopy'
+else
+    alias r='route -n'
+    alias ls='ls --color=auto'
+    alias ll='ls --color=auto -lh'
+    alias la='ls --color=auto -lhA'
+    alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
+    alias cpwd='printf $PWD | xclip -selection clipboard'
+    alias open='xdg-open'
+    alias m='mplayer -zoom'
+    alias mkd='Markdown.pl --html4tags'
+    alias wz='/home/wolfwzr/usr/src/WizNote/WizNote'
+fi
 alias o='open'
-alias r='netstat -f inet -nr'
-alias ls='ls -G'
-alias ll='ls -lh'
-alias la='ls -a'
-alias df='df -Ph'
-alias um='diskutil umount'
+alias df='df -PTh'
+alias lb='lsblk'
 alias ..='cd ..'
 alias ...='cd ../..'
-alias top='top -o cpu'
+alias u='cd ..'
+alias uu='cd ../..'
+alias u3='cd ../../..'
+alias u4='cd ../../../..'
+alias u5='cd ../../../../..'
+alias u6='cd ../../../../../..'
 alias grep='grep --color=auto'
 alias sdcv='sdcv --color --utf8-input --utf8-output'
 alias iconvcat='iconv -f gbk -t utf8'
-alias briss='java -jar /Users/wolfwzr/.local/share/briss-0.9/briss-0.9.jar'
-alias cpwd='printf $PWD | pbcopy'
-alias srcbashrc='source /Users/wolfwzr/.local/etc/bashrc'
+alias man_cn='LANG=zh_CN.utf8 man'
+alias info='info --vi-keys'
+alias pgrep='pgrep -lf'
+alias hgrep='history | grep'
+alias h='history | less +G --'
+alias j='jobs -l'
+alias wget='wget -c'
+
+alias srcbashrc='source /etc/wolfwzr.bashrc'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector
-export DOTVIM='/Users/wolfwzr/.vim/bundle/vim-colorschemes'
+export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
+# variable for cscope
+export CSCOPE_EDITOR=vim
 alias vi='gvim'
-alias vibashrc='vi /Users/wolfwzr/.local/etc/bashrc'
-alias virc='vi /Users/wolfwzr/.vim/vimrc'
-alias vismbconf='vi /usr/local/etc/smb.conf'
+alias vibashrc='vi /etc/wolfwzr.bashrc'
+alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf='vi ~/.ssh/config'
 alias vihosts='vi /etc/hosts'
+if [ "$OS_TYPE" = "osx" ]
+then
+    alias vismbconf='vi /usr/local/etc/smb.conf'
+else
+    alias vismbconf='vi /usr/etc/smb.conf'
+fi
 
 ############################################################
 # z - a better cd
 ############################################################
-source /usr/local/etc/profile.d/z.sh
+if [ "$OS_TYPE" = "osx" ]
+then
+    source /usr/local/etc/profile.d/z.sh
+fi
 
 ############################################################
-# dir shortcut
+# DIR SHORTCUT
 ############################################################
-# Github
-gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
-alias ggh='cd "$gh"'
-# WorkSpace
-ws="$gh/kernel_learning"
-alias gws='cd "$ws"'
-# WorkSpace2
-ws2="/Users/wolfwzr/Books/My OS/x86汇编语言:从实模式到保护模式/booktool/code/c14"
-alias gws2='cd "$ws2"'
-# BrewHome
-bh="/usr/local/Cellar/"
-alias gbh='cd "$bh"'
-# HomeBin(~/.local/bin)
-hb="/Users/wolfwzr/.local/bin"
-alias ghb='cd "$hb"'
-# MountFolder
-mf="/Volumes/"
-alias gmf='cd "$mf"'
-# SAE (Sina App Engine)
-sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
-alias gsae='cd $sae'
+if [ "$OS_TYPE" = "osx" ]
+then
+    # Github
+    gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
+    alias ggh='cd "$gh"'
+    # WorkSpace
+    ws="$gh/kernel_learning"
+    alias gws='cd "$ws"'
+    # WorkSpace2
+    ws2="/Users/wolfwzr/Books/My OS/x86汇编语言:从实模式到保护模式/booktool/code/c14"
+    alias gws2='cd "$ws2"'
+    # BrewHome
+    bh="/usr/local/Cellar/"
+    alias gbh='cd "$bh"'
+    # HomeBin(~/.local/bin)
+    hb="/Users/wolfwzr/.local/bin"
+    alias ghb='cd "$hb"'
+    # MountFolder
+    mf="/Volumes/"
+    alias gmf='cd "$mf"'
+    # SAE (Sina App Engine)
+    sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
+    alias gsae='cd $sae'
+else
+    hse='/home/wolfwzr/Documents/scanner/svn/scanner/user/modules/hse'
+    alias ghse='cd $hse'
+    ws='/windows/E/Documents/Computer/program/os/李忠系列/booktool/code/c14'
+    alias gws='cd $ws'
+    sae='/home/wolfwzr/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1'
+    alias gsae='cd $sae'
+fi
 
+
+############################################################
+# MISCS
+############################################################
+if [ "$OS_TYPE" = "linux" ]
+then
+    export MANPAGER="/usr/local/bin/most -s"
+    if [ "$DESKTOP_SESSION" = "xfce4" ]
+    then
+        resize -s 30 100 > /dev/null
+    fi
+fi

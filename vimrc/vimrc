@@ -109,9 +109,11 @@ function WOLFWZR_set_colorscheme(color)
             highlight vimCommand guifg=#bbccaa
         endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
-        hi Cursor guibg=white guifg=black
+        hi Cursor guibg=grey85 guifg=black
+        hi CursorLine guibg=Grey25
     elseif a:color == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
+        hi CursorLine guibg=Grey25
     endif
 
     let b:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
@@ -162,8 +164,8 @@ function WOLFWZR_filetype_setting()
        \ || &filetype == "bison"
         call WOLFWZR_code_common_setting()
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
-        set nofoldenable
         set foldmethod=syntax
+        set nofoldenable
 
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
@@ -183,30 +185,33 @@ function WOLFWZR_filetype_setting()
         set syntax=nasm
         set foldmethod=marker
         set commentstring=;%s
+        set nofoldenable
     " PYTHON {{{3
     elseif &filetype == "python"
         call WOLFWZR_code_common_setting()
-        "set nofoldenable
         set foldmethod=indent
+        set nofoldenable
     " JAVA {{{3
     elseif &filetype == "java"
         call WOLFWZR_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
         call WOLFWZR_code_common_setting()
-        set nofoldenable
         set foldmethod=indent
+        set nofoldenable
         call WOLFWZR_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
         call WOLFWZR_code_common_setting()
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
-	    set foldmethod=marker
+        set foldmethod=marker
+        set nofoldenable
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
         set nocindent
         set autoindent
+        set nofoldenable
         call WOLFWZR_set_colorscheme("darktango")
     " HTML {{{3
     elseif &filetype == "html"
@@ -519,9 +524,9 @@ if has("autocmd")
         autocmd FileType mkd
             \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
             \ nnoremap <buffer> o    A<CR>|
-            \ inoremap <A-d> <ESC>:r !date +\%F<CR>kJA |
-            \ iabbrev <buffer> codee^ ```<CR>```<ESC>ka|
-            \ iabbrev <buffer> cdd^ ``<ESC>i
+            \ inoremap <A-d> <CR><ESC>k:r !date +\%F<CR>kJJi<SPACE> |
+            \ iabbrev <buffer> cdb^ ```<CR>```<ESC>ka|
+            \ iabbrev <buffer> cd^ ``<ESC>i
         autocmd FileType qf
             \ nnoremap <buffer> o <CR>|
             \ nnoremap <buffer> q :q<CR>
@@ -540,7 +545,7 @@ if has("gui_running")
     set go=
 
     " 设置窗口位置
-    winpos 200 30
+    winpos 245 30
 
     " 设置窗口行数和列数
     set columns=85

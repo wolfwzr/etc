@@ -148,30 +148,12 @@ Bundle 'c9s/colorselector.vim'
 Bundle 'flazz/vim-colorschemes'
 " }}}1
 
-" bufexplorer.zip插件 {{{1
-" 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
-" Bundle 'vim-scripts/bufexplorer.zip'
-" let g:bufExplorerShowNoName = 1
-" let g:bufExplorerDisableDefaultKeyMapping = 1
-" nnoremap <Leader>e :BufExplorer<CR>
-" nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
-" }}}1
-
 " Buffer-grep插件 {{{1
 " 在所有Buffer中搜索并放到新的quickfix窗口中然后打开quickfix窗口
 " 使用方法
 " :Bgrep pattern
 Bundle 'vim-scripts/Buffer-grep'
 " }}}1
-
-" Lokaltog/vim-easymotion插件 {{{1
-Bundle "Lokaltog/vim-easymotion"
-" }}}1
-
-" UltiSnip插件 {{{
-" 代码块的补全
-Bundle 'sirver/UltiSnips'
-"}}}
 
 " powerline插件 "{{{
 Bundle 'Lokaltog/vim-powerline'
@@ -199,4 +181,19 @@ Bundle 'Lokaltog/vim-powerline'
 " 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
 let g:Powerline_symbols = 'fancy'
 let g:Powerline_stl_path_style = 'short'
+"}}}
+
+" 未启用插件
+
+" bufexplorer.zip插件(未启用) {{{1
+" 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
+" Bundle 'vim-scripts/bufexplorer.zip'
+" let g:bufExplorerShowNoName = 1
+" let g:bufExplorerDisableDefaultKeyMapping = 1
+" nnoremap <Leader>e :BufExplorer<CR>
+" nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
+" }}}1
+" UltiSnip插件(未启用) {{{
+" 代码块的补全
+" Bundle 'sirver/UltiSnips'
 "}}}

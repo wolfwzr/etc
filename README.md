@@ -36,7 +36,7 @@ $ bash install.sh
     - abbr for^ ...
     - Ultisnap安装了但还不清楚用法
     - command模式下 Alt-w toggle cwindow
-    - 默认nofoldenable, 按Alt-f来toggle foldenable
+    - 默认nofoldenable, 按Alt-f来toggle foldenable 不需要了，自带zi命令可实现
 - bash
 
 存在的疑问
@@ -59,3 +59,9 @@ $ bash install.sh
     ```
     autocmd FileType asm set syntax=nasm
     ```
+5. 设置了CursorLine的背景色后，当前行Search/语法高亮字符的背景色能保留，但Mark插件高亮的背景色无法保留，这是为什么？
+    ```
+    set CursorLine
+    hi CursorLine guibg=Grey30
+    ```
+6. 当文件较大时，tagbar插件容易在文件刚打开或文件写入后发生卡顿，能不能针对某些文件类型关闭tagbar的功能，如asm?
