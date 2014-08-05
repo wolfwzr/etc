@@ -80,6 +80,7 @@ fi
 ############################################################
 alias a='./a.out'
 alias c='clear'
+alias d='du -sh * | sort -h'
 alias h='history | less +G'
 if [ "$OS_TYPE" = "osx" ] 
 then
@@ -125,7 +126,7 @@ alias h='history | less +G --'
 alias j='jobs -l'
 alias wget='wget -c'
 
-alias srcbashrc='source /etc/wolfwzr.bashrc'
+alias s='source /etc/wolfwzr.bashrc'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector

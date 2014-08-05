@@ -9,7 +9,7 @@ GITHUB_HOSTS_DIR="$GITHUB_REPO_DIR/hosts"
 
 function install_vimrc()
 {
-    local user_vim_dir=~/.vim
+    local user_vim_dir=~wolfwzr/.vim
 
     mkdir -p "$user_vim_dir"
     ls "$GITHUB_VIMRC_DIR" | while read file
@@ -23,7 +23,7 @@ function install_vimrc()
 function install_vimperatorrc()
 {
     local github_vimperatorrc="$GITHUB_VIMPERATORRC_DIR/vimperatorrc"
-    local target_file=~/.vimperatorrc
+    local target_file=~wolfwzr/.vimperatorrc
 
     [ -e "$target_file" ] && mv -f "$target_file" "$target_file.bak"
     ln -s "$github_vimperatorrc" "$target_file"
@@ -39,7 +39,7 @@ function install_bashrc()
     ln -s "$github_bashrc" "$target_file"
 
     grep "^[ \t]*#" "$system_bashrc" | grep -s -q "source[ \t]\+$target_file"
-    if [ $? -eq 0 ]
+    if [ $? -ne 0 ]
     then
         cp -f "$system_bashrc" "$system_bashrc.bak"
         echo "source $target_file" >> "$system_bashrc"

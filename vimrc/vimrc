@@ -547,14 +547,14 @@ if has("gui_running")
 
     " 设置窗口位置
     if b:cpu_info == "Atom"
-        winpos 120 0
+        winpos 0 0
+        set columns=113
+        set lines=26
     else
         winpos 245 30
+        set columns=85
+        set lines=37
     endif
-
-    " 设置窗口行数和列数
-    set columns=85
-    set lines=37
 
     " 设置显示字体
     if has("macunix")

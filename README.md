@@ -65,3 +65,4 @@ $ bash install.sh
     hi CursorLine guibg=Grey30
     ```
 6. 当文件较大时，tagbar插件容易在文件刚打开或文件写入后发生卡顿，能不能针对某些文件类型关闭tagbar的功能，如asm?
+7. atom下YCM报错，ycm server restart...
