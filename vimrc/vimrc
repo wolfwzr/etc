@@ -1,5 +1,7 @@
 " 变量定义 {{{1
-let b:WOLFWZR_colorscheme_applied = 0
+let s:WOLFWZR_colorscheme_applied = 0
+let s:WOLFWZR_color_scheme = "none"
+let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 " }}}1
 
 " 函数定义 {{{1
@@ -21,25 +23,56 @@ function WOLFWZR_code_common_setting()
     set expandtab 
 
     if has("gui_running")
-        set columns=90
-        set lines=37
-        set cursorline
-        "set colorcolumn=80
-        "highlight WarningCols gui=undercurl
-        "match WarningCols /.\%>80v/
+        if s:WOLFWZR_cpu_info == "Atom"
+            set nocursorline
+        else
+            set columns=90
+            set lines=37
+            set cursorline
+            "set colorcolumn=80
+            "highlight WarningCols gui=undercurl
+            "match WarningCols /.\%>80v/
+        endif
     endif
 
     " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
     nnoremap <Leader>c :make<CR><CR>:cw<CR>:cc<CR>
 endfunction
 "}}}2
-" WOLFWZR_set_colorscheme: 设置配色方案 {{{2
-function WOLFWZR_set_colorscheme(color)
-    " 只在GUI下生效 {{{3
+" WOLFWZR_set_guifont: 设置GUI字体{{{2
+function WOLFWZR_set_guifont()
     if !has("gui_running")
         return
     endif
+
+    if has("macunix")
+        set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
+        " 单独设置中文字体
+        " 备用字体
+        " Hannotate\ SC\ Regular
+        " Libian\ SC\ Regular
+        " Yuanti\ SC\ Regular
+        " Xingkai\ SC\ Light
+        set guifontwide=Kaiti\ SC\ Regular
+    else
+        if s:WOLFWZR_cpu_info == "Atom"
+            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 12
+                        \,YaHei\ Consolas\ Hybrid\ 12
+        else
+            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+                        \,YaHei\ Consolas\ Hybrid\ 14
+        endif
+    endif
+endfunction
+"}}}2
+" WOLFWZR_set_colorscheme: 设置配色方案 {{{2
+function WOLFWZR_set_colorscheme(color)
+    " 条件检查 {{{3
+    if (!has("gui_running")) || (s:WOLFWZR_color_scheme == a:color)
+        return
+    endif
     " }}}3
+    
     " 设置配色方案及可能的修剪 {{{3
     " 备选配色方案："{{{
     " Monokai
@@ -102,6 +135,7 @@ function WOLFWZR_set_colorscheme(color)
     " nazca
     "}}}
     execute 'colorscheme ' . a:color
+    let s:WOLFWZR_color_scheme = a:color
     " 修剪 "{{{
     if a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
@@ -116,9 +150,9 @@ function WOLFWZR_set_colorscheme(color)
         hi CursorLine guibg=Grey25
     endif
 
-    let b:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
-    if b:WOLFWZR_tmp_color != ""
-        execute 'highlight LineNr guifg='.b:WOLFWZR_tmp_color
+    let s:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
+    if s:WOLFWZR_tmp_color != ""
+        execute 'highlight LineNr guifg='.s:WOLFWZR_tmp_color
     endif
 
     "}}}
@@ -129,31 +163,32 @@ function WOLFWZR_set_colorscheme(color)
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
     " 更新YouCompleteMe弹出菜单样式 {{{3
-    let b:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
-    if b:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guibg='.b:WOLFWZR_tmp_color
+    let s:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
+    if s:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guibg='.s:WOLFWZR_tmp_color
     endif
 
-    let b:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
-    if b:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guifg='.b:WOLFWZR_tmp_color
+    let s:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
+    if s:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guifg='.s:WOLFWZR_tmp_color
     endif
         
-    let b:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
-    if b:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guibg='.b:WOLFWZR_tmp_color
+    let s:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
+    if s:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guibg='.s:WOLFWZR_tmp_color
     endif
 
-    let b:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
-    if b:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guifg='.b:WOLFWZR_tmp_color
+    let s:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
+    if s:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guifg='.s:WOLFWZR_tmp_color
     endif
     " }}}3
-    let b:WOLFWZR_colorscheme_applied = 1
+    let s:WOLFWZR_colorscheme_applied = 1
 endfunction
 " }}}2
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
+    call WOLFWZR_set_guifont()
     " C/CPP/H/NASL/LEX/YACC/BISON {{{3
     if &filetype == "c" 
        \ || &filetype == "h"
@@ -222,11 +257,6 @@ function WOLFWZR_filetype_setting()
     " TEXT {{{3
     elseif &filetype == "text"
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
-        if has("gui_running")
-            if has("macunix")
-                set guifont=Monaco:h18
-            endif
-        endif
     endif
     " }}}3
 endfunction
@@ -348,6 +378,14 @@ source ~wolfwzr/.vim/bundle/Vundle.vim/Vundle.vimrc
 " }}}1
 
 " 快捷键设置 {{{1
+" 重设字体 (Bug?){{{
+" 不知为何，当打开一些没有特殊处理的类型文件时
+" （不在 WOLFWZR_filetype_setting 函数处理的类型）
+" 偶尔会出现状态栏位于最底一行，把命令行给侵占了
+" 通过debug发现重现设置字体能解决这问题。于是有了这个快捷键
+" 但根本原因还是未找到，为何字体会造成这样的影响？
+" nnoremap <Leader>\ :call WOLFWZR_set_guifont()<CR>
+" }}}
 " hardmode {{{2
 " 用 <C-h> 代替 <BS>, <C-w> 还可以直接删除一个word
 " 等熟练使用后可以将<BS>映射为删除整行 <ESC>^C
@@ -539,14 +577,13 @@ endif
 " }}}1
 
 " GUI设置 {{{1
-let b:cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 " GVIM {{{2
 if has("gui_running")
     " 去掉菜单栏、工具栏等
     set go=
 
     " 设置窗口位置
-    if b:cpu_info == "Atom"
+    if s:WOLFWZR_cpu_info == "Atom"
         winpos 120 0
     else
         winpos 245 30
@@ -556,28 +593,8 @@ if has("gui_running")
     set columns=85
     set lines=37
 
-    " 设置显示字体
-    if has("macunix")
-        set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        " 单独设置中文字体
-        " 备用字体
-        " Hannotate\ SC\ Regular
-        " Libian\ SC\ Regular
-        " Yuanti\ SC\ Regular
-        " Xingkai\ SC\ Light
-        set guifontwide=Kaiti\ SC\ Regular
-    else
-        if b:cpu_info == "Atom"
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 12
-                \,YaHei\ Consolas\ Hybrid\ 12
-        else
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
-                \,YaHei\ Consolas\ Hybrid\ 14
-        endif
-    endif
-
     " 设置默认配色方案
-    if b:WOLFWZR_colorscheme_applied == 0
+    if s:WOLFWZR_colorscheme_applied == 0
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
     endif
 
@@ -591,7 +608,7 @@ if has("gui_running")
     set guicursor+=a:blinkon0
 " TERMINAL {{{2
 else 
-    if b:WOLFWZR_colorscheme_applied == 0
+    if s:WOLFWZR_colorscheme_applied == 0
         call WOLFWZR_set_colorscheme("delek")
     endif
 endif
