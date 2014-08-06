@@ -38,7 +38,7 @@ function install_bashrc()
     [ -e "$target_file" ] && mv -f "$target_file" "$target_file.bak"
     ln -s "$github_bashrc" "$target_file"
 
-    grep "^[ \t]*#" "$system_bashrc" | grep -s -q "source[ \t]\+$target_file"
+    grep -v "^[ \t]*#" "$system_bashrc" | grep -s -q "source[ \t]\+$target_file"
     if [ $? -ne 0 ]
     then
         cp -f "$system_bashrc" "$system_bashrc.bak"

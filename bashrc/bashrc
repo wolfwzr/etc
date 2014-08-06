@@ -16,14 +16,33 @@ set -o vi
 export EDITOR=vim
 
 # PATH
-PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+function append_to_path()
+{
+    local new_path=$1
+
+    [ -z "$new_path" ] && return
+    grep -s -q ":${new_path}:" <<< "$PATH" || grep -s -q ":$new_path$" <<< "$PATH" 
+    [ $? -ne 0 ] && PATH="$PATH:$new_path"
+    export PATH
+}
+function uniq_path()
+{
+    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort | uniq \
+                        | tr '\n' ':' | sed 's/:$//g')\""
+}
+append_to_path "/bin"
+append_to_path "/sbin"
+append_to_path "/usr/bin"
+append_to_path "/usr/sbin"
+append_to_path "/usr/local/bin"
+append_to_path "/usr/local/sbin"
 if [ "$OS_TYPE" = "osx" ]
 then
-    PATH="$WOLFWZR_HOME/.local/bin:$PATH"
+    append_to_path "$WOLFWZR_HOME/.local/bin"
 else
-    PATH="$PATH:/opt/cross-mips32/bin"
+    append_to_path "/opt/cross-mips32/bin"
 fi
-export PATH
+uniq_path
 
 export HISTTIMEFORMAT="[%m-%d %R] "
 
@@ -194,7 +213,7 @@ fi
 ############################################################
 if [ "$OS_TYPE" = "linux" ]
 then
-    export MANPAGER="/usr/local/bin/most -s"
+    export MANPAGER="most -s"
     if [ "$DESKTOP_SESSION" = "xfce4" ]
     then
         resize -s 30 100 > /dev/null

@@ -338,6 +338,9 @@ if has("autocmd")
       \ endif 
 endif
 " }}}2
+" 杂项设置{{{2
+set wrap
+" }}}2
 " }}}1
 
 " Vundle及插件设置入口 {{{1
