@@ -586,46 +586,13 @@ if has("gui_running")
     set go=
 
     " 设置窗口位置
-<<<<<<< HEAD
-    if b:cpu_info == "Atom"
-        winpos 0 0
-        set columns=113
-        set lines=26
-=======
     if s:WOLFWZR_cpu_info == "Atom"
         winpos 120 0
->>>>>>> 29bad9632de096898a83ca2e5ef5542682e35e3f
     else
         winpos 245 30
-        set columns=85
-        set lines=37
     endif
-
-<<<<<<< HEAD
-    " 设置显示字体
-    if has("macunix")
-        set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        " 单独设置中文字体
-        " 备用字体
-        " Hannotate\ SC\ Regular
-        " Libian\ SC\ Regular
-        " Yuanti\ SC\ Regular
-        " Xingkai\ SC\ Light
-        set guifontwide=Kaiti\ SC\ Regular
-    else
-        if b:cpu_info == "Atom"
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 12
-                \,YaHei\ Consolas\ Hybrid\ 12
-        else
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
-                \,YaHei\ Consolas\ Hybrid\ 14
-        endif
-    endif
-=======
-    " 设置窗口行数和列数
     set columns=85
     set lines=37
->>>>>>> 29bad9632de096898a83ca2e5ef5542682e35e3f
 
     " 设置默认配色方案
     if s:WOLFWZR_colorscheme_applied == 0
