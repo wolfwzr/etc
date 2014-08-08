@@ -8,6 +8,7 @@ then
 else
     OS_TYPE="linux"
 fi
+grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
 
 ############################################################
 # BASH PREFERENCES
@@ -27,7 +28,7 @@ function append_to_path()
 }
 function uniq_path()
 {
-    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort | uniq \
+    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
 append_to_path "/bin"
@@ -46,6 +47,11 @@ uniq_path
 
 export HISTTIMEFORMAT="[%m-%d %R] "
 
+if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
+then
+    w | grep " w$" | awk '{print $3}' | grep -s -q ":"
+    [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
+fi
 ############################################################
 # COMMAND PROMPT
 ############################################################
@@ -155,15 +161,21 @@ export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
 alias vi='gvim'
-alias vibashrc='vi /etc/wolfwzr.bashrc'
-alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf='vi ~wolfwzr/.ssh/config'
-alias vihosts='vi /etc/hosts'
+alias vibashrc='gvim /etc/wolfwzr.bashrc'
+alias vimbashrc='vim /etc/wolfwzr.bashrc'
+alias virc="gvim $WOLFWZR_HOME/.vim/vimrc"
+alias vimrc="vim $WOLFWZR_HOME/.vim/vimrc"
+alias visshconf='gvim ~wolfwzr/.ssh/config'
+alias vimsshconf='vim ~wolfwzr/.ssh/config'
+alias vihosts='gvim /etc/hosts'
+alias vimhosts='vim /etc/hosts'
 if [ "$OS_TYPE" = "osx" ]
 then
-    alias vismbconf='vi /usr/local/etc/smb.conf'
+    alias vismbconf='gvim /usr/local/etc/smb.conf'
+    alias vimsmbconf='vim /usr/local/etc/smb.conf'
 else
-    alias vismbconf='vi /etc/samba/smb.conf'
+    alias vismbconf='gvim /etc/samba/smb.conf'
+    alias vimsmbconf='vim /etc/samba/smb.conf'
 fi
 
 ############################################################
