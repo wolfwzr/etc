@@ -28,7 +28,7 @@ function append_to_path()
 }
 function uniq_path()
 {
-    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort | uniq \
+    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
 append_to_path "/bin"
