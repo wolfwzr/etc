@@ -99,7 +99,6 @@ fi
 ############################################################
 alias a='./a.out'
 alias c='clear'
-alias d='du -sh * | sort -h'
 alias h='history | less +G'
 if [ "$OS_TYPE" = "osx" ] 
 then
@@ -111,6 +110,8 @@ then
     alias um='diskutil umount'
     alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
     alias cpwd='printf $PWD | pbcopy'
+    alias df='df -Ph'
+    alias d='du -sh * | sort -g'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
@@ -122,9 +123,10 @@ else
     alias m='mplayer -zoom'
     alias mkd='Markdown.pl --html4tags'
     alias wz='/home/wolfwzr/usr/src/WizNote/WizNote'
+    alias df='df -PTh'
+    alias d='du -sh * | sort -h'
 fi
 alias o='open'
-alias df='df -PTh'
 alias lb='lsblk'
 alias ..='cd ..'
 alias ...='cd ../..'
