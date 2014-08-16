@@ -147,16 +147,20 @@ alias u3='cd ../../..'
 alias u4='cd ../../../..'
 alias u5='cd ../../../../..'
 alias u6='cd ../../../../../..'
-alias grep='grep --color=auto'
 alias sdcv='sdcv --color --utf8-input --utf8-output'
 alias iconvcat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
+alias grep='grep --color=auto'
 alias pgrep='pgrep -lf'
 alias hgrep='history | grep'
 alias h='history | less +G --'
 alias j='jobs -l'
 alias wget='wget -c'
+
+alias o='open'
+alias g='grep'
+alias pg='ps -elf | grep'
 
 alias s='source /etc/wolfwzr.bashrc'
 
@@ -226,6 +230,66 @@ else
     alias gsae='cd $sae'
 fi
 
+############################################################
+# Service control
+############################################################
+function wolf_service_control()
+{
+    # function parameter
+    #   $1 - service name (eg. smb|ssh|http)
+    #   $2 - action (eg. start|stop|restart|status)
+
+    local service_name=$1
+    local action=$2
+    local service_script="/etc/init.d/$service_name"
+
+    [ "$OS_TYPE" != "linux" ] && echo "Only avaliable in linux" && return 1
+    [ -z "$service_name" ] && echo "please specific a service name" && return 2
+    if [ ! -e "$service_script" ]
+    then
+        echo "$service_script: no such service"
+        return 3
+    fi
+
+    case "$action" in
+        "status")
+            sudo $service_script status
+            ;;
+        "start")
+            sudo $service_script start
+            ;;
+        "stop")
+            sudo $service_script stop
+            ;;
+        "restart")
+            sudo $service_script stop
+            sudo $service_script start
+            ;;
+        *)
+            echo "$action: Invalid action, use [status|start|stop|restart]"
+            ;;
+    esac
+}
+
+function wstatus()
+{
+    wolf_service_control "$1" status
+}
+
+function wstart()
+{
+    wolf_service_control "$1" start
+}
+
+function wstop()
+{
+    wolf_service_control "$1" stop
+}
+
+function wrestart()
+{
+    wolf_service_control "$1" restart
+}
 
 ############################################################
 # MISCS
