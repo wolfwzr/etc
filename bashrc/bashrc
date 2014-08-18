@@ -8,7 +8,11 @@ then
 else
     OS_TYPE="linux"
 fi
-grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+fi
 
 ############################################################
 # BASH PREFERENCES
@@ -105,8 +109,8 @@ fi
 ############################################################
 alias a='./a.out'
 alias c='clear'
-alias d='du -sh * | sort -h'
 alias h='history | less +G'
+alias d='du -sh'
 if [ "$OS_TYPE" = "osx" ] 
 then
     alias r='netstat -f inet -nr'
@@ -117,6 +121,8 @@ then
     alias um='diskutil umount'
     alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
     alias cpwd='printf $PWD | pbcopy'
+    alias df='df -Ph'
+    alias ds='d * | sort -g'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
@@ -128,8 +134,10 @@ else
     alias m='mplayer -zoom'
     alias mkd='Markdown.pl --html4tags'
     alias wz='/home/wolfwzr/usr/src/WizNote/WizNote'
+    alias df='df -PTh'
+    alias ds='d * | sort -h'
 fi
-alias df='df -PTh'
+alias o='open'
 alias lb='lsblk'
 alias ..='cd ..'
 alias ...='cd ../..'

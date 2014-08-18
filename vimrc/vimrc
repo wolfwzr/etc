@@ -136,14 +136,16 @@ function WOLFWZR_set_colorscheme(color)
     "}}}
     execute 'colorscheme ' . a:color
     let s:WOLFWZR_color_scheme = a:color
-    " 修剪 "{{{
+    hi Cursor NONE
+    hi Cursor gui=reverse
+
+    " 修剪{{{
     if a:color == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
         if hlID("vimCommand") != 0
             highlight vimCommand guifg=#bbccaa
         endif
     elseif a:color == "rainbow_neon" || a:color == "neon"
-        hi Cursor guibg=grey85 guifg=black
         hi CursorLine guibg=Grey25
     elseif a:color == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
@@ -154,8 +156,8 @@ function WOLFWZR_set_colorscheme(color)
     if s:WOLFWZR_tmp_color != ""
         execute 'highlight LineNr guifg='.s:WOLFWZR_tmp_color
     endif
-
     "}}}
+    
     " }}}3
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
@@ -188,7 +190,6 @@ endfunction
 " }}}2
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
-    call WOLFWZR_set_guifont()
     " C/CPP/H/NASL/LEX/YACC/BISON {{{3
     if &filetype == "c" 
        \ || &filetype == "h"
@@ -584,6 +585,8 @@ endif
 if has("gui_running")
     " 去掉菜单栏、工具栏等
     set go=
+
+    call WOLFWZR_set_guifont()
 
     " 设置窗口位置
     if s:WOLFWZR_cpu_info == "Atom"

@@ -7,6 +7,13 @@ GITHUB_VIMPERATORRC_DIR="$GITHUB_REPO_DIR/vimperatorrc"
 GITHUB_BASHRC_DIR="$GITHUB_REPO_DIR/bashrc"
 GITHUB_HOSTS_DIR="$GITHUB_REPO_DIR/hosts"
 
+if [ "$(uname -s)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
 function install_vimrc()
 {
     local user_vim_dir=~wolfwzr/.vim
@@ -34,6 +41,8 @@ function install_bashrc()
     local github_bashrc="$GITHUB_BASHRC_DIR/bashrc"
     local target_file=/etc/wolfwzr.bashrc
     local system_bashrc=/etc/bash.bashrc
+
+    [ "$OS_TYPE" = "osx" ] && system_bashrc=~/.bashrc
 
     [ -e "$target_file" ] && mv -f "$target_file" "$target_file.bak"
     ln -s "$github_bashrc" "$target_file"
