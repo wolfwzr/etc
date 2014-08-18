@@ -1,6 +1,7 @@
 " 变量定义 {{{1
 let s:WOLFWZR_colorscheme_applied = 0
 let s:WOLFWZR_color_scheme = "none"
+let s:WOLFWZR_backgroud = "light"
 let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 " }}}1
 
@@ -71,8 +72,41 @@ function WOLFWZR_set_colorscheme(color)
     if (!has("gui_running")) || (s:WOLFWZR_color_scheme == a:color)
         return
     endif
+    let s:WOLFWZR_color_scheme = a:color
     " }}}3
-    
+    " 为配合macosx夜间颜色反转，增加light主题{{{
+    if has("macunix")
+        let l:cur_hour = system("date +%H")
+
+        if l:cur_hour >= 22 || l:cur_hour <= 8
+            " 深夜OSX反转颜色，所有选用亮色背景，反转变成暗背景
+            let s:WOLFWZR_backgroud = "light"
+        else
+            let s:WOLFWZR_backgroud = "dark"
+        endif
+
+        if s:WOLFWZR_backgroud == "light"
+            " biogoo
+            " bmichaelsen
+            " cleanphp
+            " colorful
+            " colorzone
+            " d8g_02
+            " nedit
+            " nedit2
+            " pspad
+            " smp
+            " soso
+            " [*****] neutron 
+            " [*****] newspaper
+            " [*****] oceanlight
+            " [*****] peaksea
+            " [*****] pyte
+            " [*****] Tomorrow
+            let s:WOLFWZR_color_scheme = "peaksea"
+        endif
+    endif
+    "}}}
     " 设置配色方案及可能的修剪 {{{3
     " 备选配色方案："{{{
     " Monokai
@@ -133,28 +167,32 @@ function WOLFWZR_set_colorscheme(color)
     " manuscript
     " native
     " nazca
+    " southwest-fog
     "}}}
-    execute 'colorscheme ' . a:color
-    let s:WOLFWZR_color_scheme = a:color
+    execute 'colorscheme ' . s:WOLFWZR_color_scheme
+    let s:WOLFWZR_colorscheme_applied = 1
+
+    " 修剪{{{
     hi Cursor NONE
     hi Cursor gui=reverse
 
-    " 修剪{{{
-    if a:color == "Tomorrow-Night-Eighties"
+    if s:WOLFWZR_color_scheme == "Tomorrow-Night-Eighties"
         highlight Folded gui=none guibg=#515151 guifg=#99CC99
         if hlID("vimCommand") != 0
             highlight vimCommand guifg=#bbccaa
         endif
-    elseif a:color == "rainbow_neon" || a:color == "neon"
+    elseif s:WOLFWZR_color_scheme == "rainbow_neon" || a:color == "neon"
         hi CursorLine guibg=Grey25
-    elseif a:color == "gruvbox"
+    elseif s:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         hi CursorLine guibg=Grey25
+    elseif s:WOLFWZR_color_scheme == "peaksea"
+        hi CursorLine gui=NONE guibg=Grey77
     endif
 
-    let s:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
-    if s:WOLFWZR_tmp_color != ""
-        execute 'highlight LineNr guifg='.s:WOLFWZR_tmp_color
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
+    if l:WOLFWZR_tmp_color != ""
+        execute 'highlight LineNr guifg='.l:WOLFWZR_tmp_color
     endif
     "}}}
     
@@ -165,27 +203,26 @@ function WOLFWZR_set_colorscheme(color)
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
     " 更新YouCompleteMe弹出菜单样式 {{{3
-    let s:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
-    if s:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guibg='.s:WOLFWZR_tmp_color
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
+    if l:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guibg='.l:WOLFWZR_tmp_color
     endif
 
-    let s:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
-    if s:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guifg='.s:WOLFWZR_tmp_color
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
+    if l:WOLFWZR_tmp_color != ""
+        execute 'highlight Pmenu guifg='.l:WOLFWZR_tmp_color
     endif
         
-    let s:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
-    if s:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guibg='.s:WOLFWZR_tmp_color
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
+    if l:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guibg='.l:WOLFWZR_tmp_color
     endif
 
-    let s:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
-    if s:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guifg='.s:WOLFWZR_tmp_color
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
+    if l:WOLFWZR_tmp_color != ""
+        execute 'highlight PmenuSel gui=bold guifg='.l:WOLFWZR_tmp_color
     endif
     " }}}3
-    let s:WOLFWZR_colorscheme_applied = 1
 endfunction
 " }}}2
 " WOLFWZR_filetype_setting: FileType处理 {{{2
