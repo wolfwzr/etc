@@ -249,8 +249,13 @@ function WOLFWZR_filetype_setting()
         set autoindent
         set nofoldenable
         call WOLFWZR_set_colorscheme("darktango")
-    " HTML {{{3
+    " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"
+        \ || &filetype == "xml"
+        \ || &filetype == "css"
+        \ || &filetype == "js"
+        \ || &filetype == "xsl"
+        \ || &filetype == "xslt"
         call WOLFWZR_code_common_setting()
         set nocindent
         set autoindent
