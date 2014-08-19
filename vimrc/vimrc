@@ -187,7 +187,8 @@ function WOLFWZR_set_colorscheme(color)
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         hi CursorLine guibg=Grey25
     elseif s:WOLFWZR_color_scheme == "peaksea"
-        hi CursorLine gui=NONE guibg=Grey77
+        hi CursorLine NONE 
+        "hi CursorLine guibg=Grey77
     endif
 
     let l:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")

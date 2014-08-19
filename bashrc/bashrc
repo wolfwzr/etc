@@ -152,7 +152,7 @@ alias iconvcat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
 alias grep='grep --color=auto'
-alias pgrep='pgrep -lf'
+alias pgrep='ps -elf | grep -i'
 alias hgrep='history | grep -i'
 alias h='history | less +G --'
 alias j='jobs -l'
@@ -160,7 +160,7 @@ alias wget='wget -c'
 
 alias o='open'
 alias g='grep'
-alias pg='ps -elf | grep -i'
+alias pg='pgrep -lif'
 
 alias s='source /etc/wolfwzr.bashrc'
 
