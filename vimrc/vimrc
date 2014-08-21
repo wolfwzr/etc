@@ -37,7 +37,7 @@ function WOLFWZR_code_common_setting()
     endif
 
     " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
-    nnoremap <Leader>c :make<CR><CR>:cw<CR>:cc<CR>
+    nnoremap <Leader>\ :make<CR><CR>:cw<CR>:cc<CR>
 endfunction
 "}}}2
 " WOLFWZR_set_guifont: 设置GUI字体{{{2
@@ -374,7 +374,7 @@ set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
 set nocp
 " }}}2
 " mapleader设置 {{{2
-let mapleader="s"
+let mapleader="z"
 " }}}2
 " 搜索效果设置 {{{2
 set hlsearch
@@ -384,15 +384,12 @@ set incsearch
 set splitbelow
 set splitright
 " }}}2
-" 文件编码设置 {{{2
-" set encoding=utf-8 
-" set fileencodings=ucs-bom,utf-8,default,latin1
-" }}}2
 " 退格键设置(设置<BS>可删除的内容） {{{2
 set backspace=indent,eol,start
 " }}}2
 " 文件编码设置 "{{{
 set encoding=utf-8
+set fileencodings=ucs-bom,utf-8,default,latin1
 "}}}
 " 状态栏设置 {{{2
 set laststatus=2   " Always show the statusline
@@ -444,13 +441,11 @@ nnoremap <SPACE> <C-f>
 nnoremap <TAB> <C-b>
 " }}}2
 " 快速查看QuickFix List的上一项/下一项 {{{2
-if has("gui_running") && !has("macunix")
-    nnoremap <A-w> :botright cw<CR>
-    nnoremap <A-n> :cn<CR>
-    nnoremap <A-p> :cp<CR>
-    "nnoremap <F2> :botright cw<CR>
-    "nnoremap <F3> :cp<CR>
-    "nnoremap <F4> :cn<CR>
+if has("gui_running") && ! has("macunix")
+    nnoremap <C-q> :botright cw<CR>
+    nnoremap <C-n> :cn<CR>
+    nnoremap <C-p> :cp<CR>
+    " 提示:
     " :colder 查看上一个quickfix窗口
     " :cnewer 查看下一个quickfix窗口
 endif
@@ -459,58 +454,62 @@ endif
 nnoremap <Leader>j :tabnext<CR>
 nnoremap <Leader>k :tabprev<CR>
 " }}}2
-" Window跳转 "{{{
-nnoremap <C-j> <C-w>j
-nnoremap <C-k> <C-w>k
-nnoremap <C-h> <C-w>h
-nnoremap <C-l> <C-w>l
-"}}}
-" Window大小调整 {{{2
-if has("gui_running") && !has("macunix")
+" Window/GUI窗口相关{{{2
+if has("gui_running") && ! has("macunix")
+    " Window跳转 "{{{
+    nnoremap <C-j> <C-w>j
+    nnoremap <C-k> <C-w>k
+    nnoremap <C-h> <C-w>h
+    nnoremap <C-l> <C-w>l
+    "}}}
+    
+    " Window大小调整 {{{
     " Decrease Window Height
-    nnoremap <A--> <C-w>3-
+    nnoremap <C-w>j <C-w>3-
     " Increase Window Height
-    nnoremap <A-+> <C-w>3+
+    nnoremap <C-w>k <C-w>3+
     " Decrease Windows Width
-    nnoremap <A-<> <C-w>3<
+    nnoremap <C-w>h <C-w>3<
     " Increase Windows Width
-    nnoremap <A->> <C-w>3>
-endif
-" }}}2
-" 调整GVIM窗口位置 {{{2
-if has("gui_running") && !has("macunix")
+    nnoremap <C-w>l <C-w>3>
+    " }}}
+
+    " 调整GVIM窗口位置 {{{
     nmap <A-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
     nmap <A-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
     nmap <A-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
     nmap <A-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
-endif
-" }}}2
-" 调整GVIM窗口大小 {{{2
-if has("gui_running") && !has("macunix")
+    " }}}
+
+    " 调整GVIM窗口大小 {{{
     nmap <A-S-j> :set lines+=1<CR>
     nmap <A-S-k> :set lines-=1<CR>
     nmap <A-S-h> :set columns-=2<CR>
     nmap <A-S-l> :set columns+=2<CR>
+    "}}}
 endif
-" }}}2
+" }}}
 " 复制/剪切/粘贴 {{{2
 if has("gui_running") && !has("macunix")
-    nnoremap <A-c> viw"+y
-    vnoremap <A-c> "+y
-    inoremap <A-c> <ESC>viw"+yea
+    nnoremap <Leader>c viw"+y
+    vnoremap <Leader>c "+y
+    inoremap <Leader>c <ESC>viw"+yea
 
-    nnoremap <A-x> viw"+x
-    vnoremap <A-x> "+x
-    inoremap <A-x> <ESC>viw"+xea
-
-    nnoremap <A-v> "+p
-    inoremap <A-v> <C-r>+
-    cnoremap <A-v> <C-r>+
+    nnoremap <Leader>x viw"+x
+    vnoremap <Leader>x "+x
+    inoremap <Leader>x <ESC>viw"+xea
+                     
+    nnoremap <Leader>v "+p
+    inoremap <Leader>v <C-r>+
+    cnoremap <Leader>v <C-r>+
 endif
 " }}}2
 " 代码折叠快捷键 {{{2
 " nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
-nnoremap <Leader><SPACE> za
+" nnoremap <Leader><SPACE> za
+" }}}2
+" 切换输入法快捷键 {{{2
+nnoremap <Leader><SPACE> <A-SPACE>
 " }}}2
 " 查看当前光标下单词的帮助信息 {{{2
 " VIM的帮助信息 {{{3
@@ -549,21 +548,21 @@ nnoremap <Leader>hG
 noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
 " }}}2
 " VIMRC快速编辑及生效 {{{2
-nnoremap <Leader>ve :split ~/.vim/vimrc<CR>
-nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
+"nnoremap <Leader>ve :split ~/.vim/vimrc<CR>
+"nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
 " }}}2
 " cmdline模式下的光标移动 {{{2
-if has("gui_running") && !has("macunix")
+if has("gui_running") && ! has("macunix")
     cnoremap <A-h> <Left>
     cnoremap <A-l> <Right>
     cnoremap <A-H> <Home>
     cnoremap <A-L> <End>
+    " 跳到cmdline窗口 
     cnoremap <A-f> <C-f>
-    cnoremap <A-j> <Down>
-    cnoremap <A-k> <Up>
+
+    cnoremap <C-j> <Down>
+    cnoremap <C-k> <Up>
 endif
-cnoremap <C-j> <Down>
-cnoremap <C-k> <Up>
 " }}}2
 " MacVim alt键映射 {{{2
 if has("gui_running") && has("macunix")

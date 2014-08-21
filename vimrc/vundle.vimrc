@@ -130,6 +130,7 @@ Bundle 'plasticboy/vim-markdown'
 " 2. 匹配过程中不必从头完全匹配，如输入hw，
 "    下拉列表中可能出现oh_hello_world选项
 Bundle 'Valloric/YouCompleteMe'
+let g:ctrlp_map = ''
 if has("macunix")
     let g:ycm_global_ycm_extra_conf = '/Users/wolfwzr/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_c_conf.py'
 endif

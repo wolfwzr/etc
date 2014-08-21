@@ -14,10 +14,10 @@ nmap <Leader>s :source! ~/.vimperatorrc<Return>
 
 nmap <BS> :back<Return>
 
-cmap <A-j> <Down>
-cmap <A-k> <Up>
-cmap <A-h> <Left>
-cmap <A-l> <Right>
+cmap <C-j> <Down>
+cmap <C-k> <Up>
+cmap <C-h> <Left>
+cmap <C-l> <Right>
 
 set defsearch=g
 
