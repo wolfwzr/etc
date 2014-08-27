@@ -29,11 +29,11 @@ if has("gui_running") && has("macunix")
     " <A--> Decrease Window Height
     "nnoremap – 3-
     " <A-+> Increase Window Height
-    nnoremap ± 3+
+    " nnoremap ± 3+
     " <A-<> Decrease Windows Width
-    nnoremap ¯ 3<
+    " nnoremap ¯ 3<
     " <A->> Increase Windows Width
-    nnoremap ˘ 3>
+    " nnoremap ˘ 3>
     " }}}1
     
     " Copy/Cut/Paste {{{1

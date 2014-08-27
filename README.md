@@ -37,6 +37,8 @@ $ bash install.sh
     - Ultisnap安装了但还不清楚用法
     - command模式下 Alt-w toggle cwindow
     - 默认nofoldenable, 按Alt-f来toggle foldenable 不需要了，自带zi命令可实现
+    - using C-j/k move cursor in insert/command mode
+    - maping C-0/9/8/,/.
 - bash
 
 存在的疑问

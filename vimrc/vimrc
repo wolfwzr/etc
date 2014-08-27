@@ -374,7 +374,7 @@ set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
 set nocp
 " }}}2
 " mapleader设置 {{{2
-let mapleader="z"
+let mapleader="s"
 " }}}2
 " 搜索效果设置 {{{2
 set hlsearch
@@ -455,42 +455,42 @@ nnoremap <Leader>j :tabnext<CR>
 nnoremap <Leader>k :tabprev<CR>
 " }}}2
 " Window/GUI窗口相关{{{2
-if has("gui_running") && ! has("macunix")
+if has("gui_running") 
     " Window跳转 "{{{
     nnoremap <C-j> <C-w>j
     nnoremap <C-k> <C-w>k
     nnoremap <C-h> <C-w>h
     nnoremap <C-l> <C-w>l
     "}}}
+        " Window大小调整 {{{
+        " Decrease Window Height
+        " nnoremap <C--> <C-w>3-
+        " Increase Window Height
+        " nnoremap <C-=> <C-w>3+
+        " Decrease Windows Width
+        " nnoremap <C-<> <C-w>3<
+        " Increase Windows Width
+        " nnoremap <C->> <C-w>3>
+        " }}}
     
-    " Window大小调整 {{{
-    " Decrease Window Height
-    nnoremap <C-w>j <C-w>3-
-    " Increase Window Height
-    nnoremap <C-w>k <C-w>3+
-    " Decrease Windows Width
-    nnoremap <C-w>h <C-w>3<
-    " Increase Windows Width
-    nnoremap <C-w>l <C-w>3>
-    " }}}
-
-    " 调整GVIM窗口位置 {{{
-    nmap <A-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
-    nmap <A-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
-    nmap <A-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
-    nmap <A-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
-    " }}}
-
-    " 调整GVIM窗口大小 {{{
-    nmap <A-S-j> :set lines+=1<CR>
-    nmap <A-S-k> :set lines-=1<CR>
-    nmap <A-S-h> :set columns-=2<CR>
-    nmap <A-S-l> :set columns+=2<CR>
-    "}}}
+    if ! has("macunix")
+        " 调整GVIM窗口位置 {{{
+        nmap <A-j> :call WOLFWZR_winpos_adjust(0,10)<CR>
+        nmap <A-k> :call WOLFWZR_winpos_adjust(0,-10)<CR>
+        nmap <A-h> :call WOLFWZR_winpos_adjust(-20,0)<CR>
+        nmap <A-l> :call WOLFWZR_winpos_adjust(20,0)<CR>
+        " }}}
+        " 调整GVIM窗口大小 {{{
+        nmap <A-S-j> :set lines+=1<CR>
+        nmap <A-S-k> :set lines-=1<CR>
+        nmap <A-S-h> :set columns-=2<CR>
+        nmap <A-S-l> :set columns+=2<CR>
+        "}}}
+    endif
 endif
 " }}}
 " 复制/剪切/粘贴 {{{2
-if has("gui_running") && !has("macunix")
+if has("gui_running")
     nnoremap <Leader>c viw"+y
     vnoremap <Leader>c "+y
     inoremap <Leader>c <ESC>viw"+yea
@@ -502,14 +502,25 @@ if has("gui_running") && !has("macunix")
     nnoremap <Leader>v "+p
     inoremap <Leader>v <C-r>+
     cnoremap <Leader>v <C-r>+
+
+    if ! has("macunix")
+        nnoremap <A-c> viw"+y
+        vnoremap <A-c> "+y
+        inoremap <A-c> <ESC>viw"+yea
+                     
+        nnoremap <A-x> viw"+x
+        vnoremap <A-x> "+x
+        inoremap <A-x> <ESC>viw"+xea
+
+        nnoremap <A-v> "+p
+        inoremap <A-v> <C-r>+
+        cnoremap <A-v> <C-r>+
+    endif
 endif
 " }}}2
 " 代码折叠快捷键 {{{2
 " nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
 " nnoremap <Leader><SPACE> za
-" }}}2
-" 切换输入法快捷键 {{{2
-nnoremap <Leader><SPACE> <A-SPACE>
 " }}}2
 " 查看当前光标下单词的帮助信息 {{{2
 " VIM的帮助信息 {{{3
@@ -552,16 +563,20 @@ noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
 "nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
 " }}}2
 " cmdline模式下的光标移动 {{{2
-if has("gui_running") && ! has("macunix")
-    cnoremap <A-h> <Left>
-    cnoremap <A-l> <Right>
-    cnoremap <A-H> <Home>
-    cnoremap <A-L> <End>
-    " 跳到cmdline窗口 
-    cnoremap <A-f> <C-f>
-
+if has("gui_running")
     cnoremap <C-j> <Down>
     cnoremap <C-k> <Up>
+
+    if ! has("macunix")
+        cnoremap <A-h> <Left>
+        cnoremap <A-l> <Right>
+        cnoremap <A-H> <Home>
+        cnoremap <A-L> <End>
+
+        " 跳到cmdline窗口 
+        cnoremap <A-f> <C-f>
+    endif
+
 endif
 " }}}2
 " MacVim alt键映射 {{{2

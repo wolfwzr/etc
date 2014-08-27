@@ -2,8 +2,17 @@
 
 let mapleader='s'
 
+" common
 nmap <Leader>j :tabnext<Return>
 nmap <Leader>k :tabprev<Return>
+
+" for osx
+nmap <M-j> :tabnext<Return>
+nmap <M-k> :tabprev<Return>
+
+" for linux
+nmap <C-j> :tabnext<Return>
+nmap <C-k> :tabprev<Return>
 
 nmap <Leader>c :emenu Tools.Clearly<Return>
 nmap <Leader>d :tab downloads<Return>
