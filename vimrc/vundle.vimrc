@@ -53,7 +53,7 @@ function WOLFWZR_nerdtree_toggle()
         execute 'set columns='.l:vim_window_width
     endif
 endfunction
-nnoremap <Leader>u :call WOLFWZR_nerdtree_toggle()<CR>
+nnoremap <Leader>e :call WOLFWZR_nerdtree_toggle()<CR>
 "if has("autocmd")
 "    这个nnoremap未能生效，因为被nerdtree插件覆盖了吗？
 "    autocmd FileType nerdtree nnoremap <buffer> q :call WOLFWZR_nerdtree_toggle()<CR>
@@ -87,7 +87,7 @@ function WOLFWZR_tagbar_toggle()
         TagbarToggle
     endif
 endfunction
-nnoremap <Leader>l :call WOLFWZR_tagbar_toggle()<CR>
+nnoremap <Leader>t :call WOLFWZR_tagbar_toggle()<CR>
 augroup tagbar_autocmd
     autocmd FileType tagbar 
         \ nnoremap <buffer> J <C-d>|
@@ -103,8 +103,10 @@ augroup end
 " 文件匹配不必连续，但要顺序，如abc可匹配文件
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
-nnoremap <Leader>o :CtrlP<CR>
-nnoremap <Leader>b :CtrlPBuffer<CR>
+" let g:ctrlp_map = ''
+" nnoremap <Leader>b :CtrlPBuffer<CR>
+nnoremap <Leader><Leader> :CtrlPBuffer<CR>
+" CtrlP查找的文件列表
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
 let g:ctrlp_working_path_mode = 'c'
@@ -119,7 +121,22 @@ let g:ctrlp_custom_ignore = {
 
 " vim-markdown插件 {{{1
 " 提供markdown的代码高亮及折叠方法
+" Mappings:
+"   ]] : go to next header
+"   [[ : go to prev header
+"   ][ : go to next sibling header
+"   [] : go to prev sibling header
+"   ]c : go to current header
+"   ]u : go to parrent header
+" Commands:
+"   :Toc : create Table of Contents in a quickfix vertical window
+"   :Toch : same as Toc, but in a horizontal window
+"   :Toct : same as Toc, but in a new tab
+"   :Tocv : same as Toc, for sysmetry(对称) with :Toch and :Tocv
 Bundle 'plasticboy/vim-markdown'
+" let g:vim_markdown_no_default_key_mappings=1
+" let g:vim_markdown_folding_disabled=1
+let g:vim_markdown_initial_foldlevel=1
 " }}}1
 
 " YouCompleteMe插件 {{{1
@@ -127,25 +144,26 @@ Bundle 'plasticboy/vim-markdown'
 " 还能实时编译，显示编译告警
 " 使用方法：
 " 1. 输入过程中有可选匹配项时会自动弹出下拉列表，可使用tab选择
-" 2. 匹配过程中不必从头完全匹配，如输入hw，
-"    下拉列表中可能出现oh_hello_world选项
+" 2. 匹配过程中不必从头完全匹配
+"    如输入hw，下拉列表中可能出现oh_hello_world选项
 Bundle 'Valloric/YouCompleteMe'
-let g:ctrlp_map = ''
 if has("macunix")
     let g:ycm_global_ycm_extra_conf = '/Users/wolfwzr/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_c_conf.py'
 endif
 " }}}1
 
 " colorselector插件 {{{1
+" 优雅的挑选配色方案
+" 使用方法：
+" :SelectColorS
+"   n - 预览下一个配色方案
+"   p - 预览上一个配色方案
+" :EditCurrentColorS 编辑当前配色方案
 Bundle 'c9s/colorselector.vim'
 " }}}1
 
 " vim-colorscheme插件 {{{1
-" 优雅的挑选配色方案
-" 使用方法：
-" :SelectColorS
-" n - 预览下一个配色方案
-" p - 预览上一个配色方案
+" 海量配色方案
 Bundle 'flazz/vim-colorschemes'
 " }}}1
 
@@ -158,7 +176,6 @@ Bundle 'vim-scripts/Buffer-grep'
 
 " powerline插件 "{{{
 Bundle 'Lokaltog/vim-powerline'
-"let g:Powerline_symbols = 'unicode'
 " fancy最漂亮，但要求字体支持一些特殊字符
 " 若当前使用的字体不支持这些字符，给字体打个补丁就行了,具体如下：
 " 1. linux 系统
@@ -180,6 +197,7 @@ Bundle 'Lokaltog/vim-powerline'
 " 参考:
 " 本地版: ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
 " 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
+"
 if has("gui_running")
     let g:Powerline_symbols = 'fancy'
 else

@@ -1,7 +1,6 @@
 bash配置和vim配置
 =================
 
-
 vim配置
 -------
 
@@ -27,18 +26,14 @@ $ bash install.sh
 ----------
 
 - vim
-    - YouCompleteMe配置，感觉在一些文件中不会补全，如asm
-    - 代码块的补全插件
-    - mac下无法映射<A-->
-    - 许多<buffer>map是否把<Leader>改为<localleader>?
-    - nnoremap <A-u> 将当前单词变大写 gUaw
-    - inoremap <A-u> 将当前单词变大写
-    - abbr for^ ...
-    - Ultisnap安装了但还不清楚用法
-    - command模式下 Alt-w toggle cwindow
-    - 默认nofoldenable, 按Alt-f来toggle foldenable 不需要了，自带zi命令可实现
-    - using C-j/k move cursor in insert/command mode
-    - maping C-0/9/8/,/.
+    - YouCompleteMe编译配置
+        - 编译的文件类型,感觉在一些文件中不会补全(如asm)
+        - 自定义编译选项
+    - abbr
+    - 代码块补全插件Ultisnap安装了但还不清楚用法
+    - zi : toggle foldenable
+    - Make Use of <Fn> <S-Fn> \<Fn>
+    - Make Use of [a-z][0-9], <Leader>1
 - bash
 
 存在的疑问

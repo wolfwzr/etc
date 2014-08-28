@@ -1,3 +1,9 @@
+" vim config quick references:
+"
+" ~wolfwzr/.vim/vimrc
+" ~wolfwzr/.vim/vundle.vimrc
+" ~wolfwzr/.vim/mac-alt-map.vimrc
+
 " 变量定义 {{{1
 let s:WOLFWZR_colorscheme_applied = 0
 let s:WOLFWZR_color_scheme = "none"
@@ -6,6 +12,7 @@ let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'"
 " }}}1
 
 " 函数定义 {{{1
+
 " WOLFWZR_set_tabline_style: 设置Tab栏 {{{2
 function WOLFWZR_set_tabline_style()
     if ! has("gui_running") && $ITERM_PROFILE == "Dark"
@@ -15,6 +22,7 @@ function WOLFWZR_set_tabline_style()
     endif
 endfunction
 " }}}2
+
 " WOLFWZR_code_common_setting: 代码通用设置 {{{2
 function WOLFWZR_code_common_setting()
     syntax on
@@ -23,23 +31,17 @@ function WOLFWZR_code_common_setting()
     set shiftwidth=4 
     set expandtab 
 
-    if has("gui_running")
-        if s:WOLFWZR_cpu_info == "Atom"
-            set nocursorline
-        else
-            set columns=90
-            set lines=37
-            set cursorline
-            "set colorcolumn=80
-            "highlight WarningCols gui=undercurl
-            "match WarningCols /.\%>80v/
-        endif
-    endif
+    "set cursorline
+    "set colorcolumn=80
+    "highlight WarningCols gui=undercurl
+    "match WarningCols /.\%>80v/
 
-    " 按<Leader>c执行make并打开quickfix窗口然后跳到第一个错误处(如果有错误的话)
-    nnoremap <Leader>\ :make<CR><CR>:cw<CR>:cc<CR>
+    " 按<Leader><Leader>执行make并打开quickfix窗口
+    " 然后跳到第一个错误处(如果有错误的话)
+    nnoremap <Leader><SPACE> :make<CR><CR>:cw<CR>:cc<CR>
 endfunction
 "}}}2
+
 " WOLFWZR_set_guifont: 设置GUI字体{{{2
 function WOLFWZR_set_guifont()
     if !has("gui_running")
@@ -57,23 +59,27 @@ function WOLFWZR_set_guifont()
         set guifontwide=Kaiti\ SC\ Regular
     else
         if s:WOLFWZR_cpu_info == "Atom"
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 12
-                        \,YaHei\ Consolas\ Hybrid\ 12
+            "set guifont=YaHei\ Consolas\ Hybrid\ 12
+            set guifont=Source\ Code\ Pro\ 12
         else
-            set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
-                        \,YaHei\ Consolas\ Hybrid\ 14
+            "YaHei Consolas Hybrid字体不知为何会使状态栏占用命令栏
+            "set guifont=YaHei\ Consolas\ Hybrid\ 14
+            set guifont=Source\ Code\ Pro\ 14
         endif
     endif
 endfunction
 "}}}2
+
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
+
     " 条件检查 {{{3
     if (!has("gui_running")) || (s:WOLFWZR_color_scheme == a:color)
         return
     endif
     let s:WOLFWZR_color_scheme = a:color
     " }}}3
+
     " 为配合macosx夜间颜色反转，增加light主题{{{
     if has("macunix")
         let l:cur_hour = system("date +%H")
@@ -107,6 +113,7 @@ function WOLFWZR_set_colorscheme(color)
         endif
     endif
     "}}}
+
     " 设置配色方案及可能的修剪 {{{3
     " 备选配色方案："{{{
     " Monokai
@@ -173,37 +180,37 @@ function WOLFWZR_set_colorscheme(color)
     let s:WOLFWZR_colorscheme_applied = 1
 
     " 修剪{{{
-    hi Cursor NONE
-    hi Cursor gui=reverse
-
     if s:WOLFWZR_color_scheme == "Tomorrow-Night-Eighties"
-        highlight Folded gui=none guibg=#515151 guifg=#99CC99
+        hi Folded gui=none guibg=#515151 guifg=#99CC99
         if hlID("vimCommand") != 0
             highlight vimCommand guifg=#bbccaa
         endif
-    elseif s:WOLFWZR_color_scheme == "rainbow_neon" || a:color == "neon"
-        hi CursorLine guibg=Grey25
     elseif s:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-        hi CursorLine guibg=Grey25
-    elseif s:WOLFWZR_color_scheme == "peaksea"
-        hi CursorLine NONE 
-        "hi CursorLine guibg=Grey77
+    elseif s:WOLFWZR_color_scheme == "darktango"
+        hi Todo guibg=#5B562F
+        hi! link Search Todo
     endif
+
+    hi Cursor NONE
+    hi Cursor gui=reverse
+    hi CursorLine NONE 
 
     let l:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
     if l:WOLFWZR_tmp_color != ""
-        execute 'highlight LineNr guifg='.l:WOLFWZR_tmp_color
+        execute 'highlight LineNr guifg=' . l:WOLFWZR_tmp_color
     endif
     "}}}
     
     " }}}3
+
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
-    " 更新YouCompleteMe弹出菜单样式 {{{3
+
+    " 修改弹出菜单配色 {{{3
     let l:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
     if l:WOLFWZR_tmp_color != ""
         execute 'highlight Pmenu guibg='.l:WOLFWZR_tmp_color
@@ -224,8 +231,10 @@ function WOLFWZR_set_colorscheme(color)
         execute 'highlight PmenuSel gui=bold guifg='.l:WOLFWZR_tmp_color
     endif
     " }}}3
+
 endfunction
 " }}}2
+
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
     " C/CPP/H/NASL/LEX/YACC/BISON {{{3
@@ -247,11 +256,6 @@ function WOLFWZR_filetype_setting()
         " gruvbox (要使这个主题生效，得先设置主题为greyblue)
         call WOLFWZR_set_colorscheme("greyblue")
         call WOLFWZR_set_colorscheme("gruvbox")
-
-        if has("gui_running")
-            winpos 200 20
-            set lines=38
-        endif
     " ASM {{{3
     elseif &filetype == "asm"
         call WOLFWZR_code_common_setting()
@@ -285,7 +289,6 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_code_common_setting()
         set nocindent
         set autoindent
-        set nofoldenable
         call WOLFWZR_set_colorscheme("darktango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"
@@ -305,6 +308,7 @@ function WOLFWZR_filetype_setting()
     " }}}3
 endfunction
 " }}}2
+
 " WOLFWZR_winpos_adjust: 调整GVIM窗口坐标 {{{2
 function WOLFWZR_winpos_adjust(x_inc, y_inc)
     let l:winpos_x = getwinposx() + a:x_inc
@@ -312,6 +316,7 @@ function WOLFWZR_winpos_adjust(x_inc, y_inc)
     execute 'winpos '.l:winpos_x.' '.l:winpos_y
 endfunction
 " }}}2
+
 " WOLFWZR_dictionary_qurey: 单词字典查询 {{{2
 function WOLFWZR_dictionary_qurey(word)
     if a:word == ""
@@ -350,6 +355,7 @@ function WOLFWZR_dictionary_qurey(word)
     let @a = l:bakup_reg_a
 endfunction
 " }}}2
+
 " WOLFWZR_grep: grep {{{2
 function WOLFWZR_grep(word)
     call setqflist([])
@@ -357,6 +363,53 @@ function WOLFWZR_grep(word)
     botright cw
 endfunction
 " }}}2
+
+"临时在vim中预览字体效果 {{{2
+"用法，先创建一个快捷键Ctrl+Enter来执行当前行命令
+" nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
+" 再查找出当前系统字体，linux下可运行如下命令：
+" fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq| sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
+" 我是通过man -k font,在里面找到fc-list命令的。
+function WOLFWZR_FONT_REVIEW_TEST()
+    nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
+
+    " 比较好的字体
+    set guifont=YaHei\ Consolas\ Hybrid\ 14
+    set guifont=Courier\ 10\ Pitch\ 14
+    set guifont=Inconsolata\-dz\ for\ Powerline\ 14
+    set guifont=Source\ Code\ Pro\ 14
+    set guifont=SimSun\ 16
+    
+    " 一般的字体
+    set guifont=Anonymice\ Powerline\ 15
+    set guifont=Anonymous\ Pro\ for\ Powerline\ 15
+    set guifont=Inconsolata\ for\ Powerline\ 16
+    set guifont=Meslo\ LG\ L\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ L\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ M\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ S\ for\ Powerline\ 13
+    set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+    set guifont=Adobe\ Courier\ 14
+    set guifont=B&H\ LucidaTypewriter\ 13
+    set guifont=Bitstream\ Terminal\ 14
+    set guifont=Courier\ 14
+    set guifont=Droid\ Sans\ Mono\ 14
+    set guifont=DejaVu\ Sans\ Mono\ 14
+    set guifont=FreeMono\ 14
+    set guifont=Liberation\ Mono\ 14
+    set guifont=Luxi\ Mono\ 14
+    set guifont=Misc\ Fixed\ 15
+    set guifont=Sony\ Fixed\ 15
+    set guifont=Source\ Code\ Pro\ Black\ 14
+    set guifont=Source\ Code\ Pro\ ExtraLight\ 14
+    set guifont=Source\ Code\ Pro\ Light\ 14
+    set guifont=Source\ Code\ Pro\ Semibold\ 14
+    set guifont=Ubuntu\ Mono\ 14
+endfunction
+"}}}2
+
 " }}}1
 
 " 基础设置 {{{1
@@ -374,7 +427,7 @@ set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
 set nocp
 " }}}2
 " mapleader设置 {{{2
-let mapleader="s"
+let mapleader='\'
 " }}}2
 " 搜索效果设置 {{{2
 set hlsearch
@@ -411,6 +464,7 @@ endif
 " }}}2
 " 杂项设置{{{2
 set wrap
+set nocursorline
 " }}}2
 " }}}1
 
@@ -422,38 +476,46 @@ source ~wolfwzr/.vim/bundle/Vundle.vim/Vundle.vimrc
 " }}}1
 
 " 快捷键设置 {{{1
+
 " 重设字体 (Bug?){{{
 " 不知为何，当打开一些没有特殊处理的类型文件时
 " （不在 WOLFWZR_filetype_setting 函数处理的类型）
 " 偶尔会出现状态栏位于最底一行，把命令行给侵占了
 " 通过debug发现重现设置字体能解决这问题。于是有了这个快捷键
 " 但根本原因还是未找到，为何字体会造成这样的影响？
-" nnoremap <Leader>\ :call WOLFWZR_set_guifont()<CR>
+" !!!!!更新，最新观察，似乎是因为字体引起的，YaHei字体会出现这个问题
+" 换成其它字体后到目前为止没再出现过,且Mac上一直没有出现过。
+" nnoremap <Leader>1 :call WOLFWZR_set_guifont()<CR>
 " }}}
+
 " hardmode {{{2
 " 用 <C-h> 代替 <BS>, <C-w> 还可以直接删除一个word
 " 等熟练使用后可以将<BS>映射为删除整行 <ESC>^C
 inoremap <BS> <NOP>
 cnoremap <BS> <NOP>
 " }}}2
+
 " 翻页设置 {{{2
 nnoremap <SPACE> <C-f>
 nnoremap <TAB> <C-b>
 " }}}2
+
 " 快速查看QuickFix List的上一项/下一项 {{{2
-if has("gui_running") && ! has("macunix")
-    nnoremap <C-q> :botright cw<CR>
-    nnoremap <C-n> :cn<CR>
-    nnoremap <C-p> :cp<CR>
-    " 提示:
-    " :colder 查看上一个quickfix窗口
-    " :cnewer 查看下一个quickfix窗口
+if has("gui_running")
+    nnoremap <F2> :botright cw<CR>
+    nnoremap <F3> :cn<CR>
+    nnoremap <F4> :cp<CR>
+    " Tips:
+    "   :colder 查看上一个quickfix窗口
+    "   :cnewer 查看下一个quickfix窗口
 endif
 " }}}2
+
 " Tab跳转 {{{2
-nnoremap <Leader>j :tabnext<CR>
-nnoremap <Leader>k :tabprev<CR>
+" nnoremap <Leader>j :tabnext<CR>
+" nnoremap <Leader>k :tabprev<CR>
 " }}}2
+
 " Window/GUI窗口相关{{{2
 if has("gui_running") 
     " Window跳转 "{{{
@@ -489,96 +551,101 @@ if has("gui_running")
     endif
 endif
 " }}}
+
 " 复制/剪切/粘贴 {{{2
 if has("gui_running")
-    nnoremap <Leader>c viw"+y
-    vnoremap <Leader>c "+y
-    inoremap <Leader>c <ESC>viw"+yea
+    " Copy
+    vnoremap <S-Enter> "+y
 
-    nnoremap <Leader>x viw"+x
+    " Cut
     vnoremap <Leader>x "+x
-    inoremap <Leader>x <ESC>viw"+xea
-                     
-    nnoremap <Leader>v "+p
-    inoremap <Leader>v <C-r>+
-    cnoremap <Leader>v <C-r>+
 
-    if ! has("macunix")
-        nnoremap <A-c> viw"+y
-        vnoremap <A-c> "+y
-        inoremap <A-c> <ESC>viw"+yea
-                     
-        nnoremap <A-x> viw"+x
-        vnoremap <A-x> "+x
-        inoremap <A-x> <ESC>viw"+xea
-
-        nnoremap <A-v> "+p
-        inoremap <A-v> <C-r>+
-        cnoremap <A-v> <C-r>+
-    endif
+    " Paste
+    " nnoremap <Leader>v "+p
+    nnoremap <S-Enter> "+p
+    inoremap <S-Enter> <C-r>+
+    cnoremap <S-Enter> <C-r>+
 endif
 " }}}2
+
 " 代码折叠快捷键 {{{2
+" zi : set foldenable!
+" za : toggle fold
+" zo : open fold
+" zc : close fold
 " nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
 " nnoremap <Leader><SPACE> za
 " }}}2
+
 " 查看当前光标下单词的帮助信息 {{{2
+
 " VIM的帮助信息 {{{3
-nnoremap <Leader>hh :help <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hH :help <C-R>=expand("<cWORD>")<CR><CR>
+nnoremap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
+nnoremap <Leader>H :help <C-R>=expand("<cWORD>")<CR><CR>
+
+nnoremap <F1>   :help <C-R>=expand("<cword>")<CR><CR>
+nnoremap <S-F1> :help <C-R>=expand("<cWORD>")<CR><CR>
 " }}}3
+
 " linux的man手册 {{{3
 runtime ftplugin/man.vim
 nnoremap K :Man <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>hm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
+" use <Leader>[0-9] ?
+nnoremap <Leader>sm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
+nnoremap <Leader>sm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 " }}}3
+
 " 单词字典查询 {{{3
 command -nargs=1 Sdcv call WOLFWZR_dictionary_qurey("<args>")
-nnoremap <Leader>hd :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
+nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 " }}}3
+
 " Buffer Grep {{{3
 " 在当前Buffer中Grep
 command -nargs=1 Grep call WOLFWZR_grep("<args>")
-nnoremap <Leader>hg
+nnoremap <Leader>g
     \ :call WOLFWZR_grep('<C-R>=expand("<cword>")<CR>')<CR>
 " 在所有Buffer中Grep
-nnoremap <Leader>hG
+nnoremap <Leader>G
     \ :Bgrep <C-R>=expand("<cword>")<CR><CR>
 " }}}3
+
 " }}}2
+
 " 快速预览当前光标下的 ColorScheme {{{2
 noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
 " }}}2
-" VIMRC快速编辑及生效 {{{2
-"nnoremap <Leader>ve :split ~/.vim/vimrc<CR>
-"nnoremap <Leader>vs :source ~/.vim/vimrc<CR>
-" }}}2
+
 " cmdline模式下的光标移动 {{{2
 if has("gui_running")
-    cnoremap <C-j> <Down>
-    cnoremap <C-k> <Up>
-
-    if ! has("macunix")
-        cnoremap <A-h> <Left>
-        cnoremap <A-l> <Right>
-        cnoremap <A-H> <Home>
-        cnoremap <A-L> <End>
-
-        " 跳到cmdline窗口 
-        cnoremap <A-f> <C-f>
-    endif
-
+    " Tips:
+    "
+    " C-d : Show available completion
+    " C-f : go to command line window
+    "
+    " C-i : <Tab>
+    " C-n : <Tab> else <Down>
+    " C-p : <S-Tab> else <Up>
+    "
+    " C-h : backspace
+    " C-u : Clear line
+    "
+    " C-b : cursor to Begin of command-line
+    " C-e : cursor to End of command-line
+    cnoremap <C-j> <Right>
+    cnoremap <C-k> <Left>
+    cnoremap <C-l> <Del>
 endif
 " }}}2
+
 " MacVim alt键映射 {{{2
 if has("gui_running") && has("macunix")
     " MacVim无法映射alt键(<A-,<M-)都不行
@@ -589,6 +656,12 @@ if has("gui_running") && has("macunix")
     source ~wolfwzr/.vim/mac-alt-map.vimrc
 endif
 " }}}2
+
+" Quick Edit/Source vimrc{{{
+command EditRc   :tabnew ~wolfwzr/.vim/vimrc
+command SourceRc :source ~wolfwzr/.vim/vimrc
+"}}}
+
 " }}}1
 
 " 文件类型相关设置 {{{1
@@ -622,8 +695,9 @@ if has("autocmd")
             \ nnoremap <buffer> <BS> <C-o>
         autocmd FileType mkd
             \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
+            \ nnoremap <buffer> <C-t> :Toch<CR>|
             \ nnoremap <buffer> o    A<CR>|
-            \ inoremap <A-d> <CR><ESC>k:r !date +\%F<CR>kJJi<SPACE> |
+            \ inoremap <A-d> <CR><ESC>k:r !date +\%F<CR>kJJi<SPACE>|
             \ iabbrev <buffer> cdb^ ```<CR>```<ESC>ka|
             \ iabbrev <buffer> cd^ ``<ESC>i
         autocmd FileType qf
@@ -638,7 +712,6 @@ endif
 " }}}1
 
 " GUI设置 {{{1
-" GVIM {{{2
 if has("gui_running")
     " 去掉菜单栏、工具栏等
     set go=
@@ -649,10 +722,10 @@ if has("gui_running")
     if s:WOLFWZR_cpu_info == "Atom"
         winpos 120 0
     else
-        winpos 245 30
+        winpos 245 20
     endif
     set columns=85
-    set lines=37
+    set lines=39
 
     " 设置默认配色方案
     if s:WOLFWZR_colorscheme_applied == 0
@@ -667,11 +740,6 @@ if has("gui_running")
     set guicursor+=r-cr:hor20-Cursor/lCursor
     set guicursor+=sm:block-Cursor
     set guicursor+=a:blinkon0
-" TERMINAL {{{2
-else 
-    if s:WOLFWZR_colorscheme_applied == 0
-        call WOLFWZR_set_colorscheme("delek")
-    endif
 endif
 " }}}1
 

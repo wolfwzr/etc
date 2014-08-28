@@ -38,41 +38,41 @@ if has("gui_running") && has("macunix")
     
     " Copy/Cut/Paste {{{1
     " Copy <A-c>
-    nnoremap ç viw"+y
-    vnoremap ç "+y
-    inoremap ç <ESC>viw"+yea
+    " nnoremap ç viw"+y
+    " vnoremap ç "+y
+    " inoremap ç <ESC>viw"+yea
     " Cut <A-x>
-    nnoremap ≈ viw"+x
-    vnoremap ≈ "+x
-    inoremap ≈ <ESC>viw"+xea
+    " nnoremap ≈ viw"+x
+    " vnoremap ≈ "+x
+    " inoremap ≈ <ESC>viw"+xea
     " Paste <A-v>
-    nnoremap √ "+p
-    inoremap √ <C-r>+
-    cnoremap √ <C-r>+
+    " nnoremap √ "+p
+    " inoremap √ <C-r>+
+    " cnoremap √ <C-r>+
     "}}}1
     
     " Quick move in command line mode {{{1
     " <A-h>
-    cnoremap ˙ <Left>
+    " cnoremap ˙ <Left>
     " <A-l>
-    cnoremap ¬ <Right>
+    " cnoremap ¬ <Right>
     " <A-H>
-    cnoremap Ó <Home>
+    " cnoremap Ó <Home>
     " <A-L>
-    cnoremap Ò <End>
+    " cnoremap Ò <End>
     " <A-f>
-    cnoremap ƒ <C-f>
+    " cnoremap ƒ <C-f>
     " <A-j>
-    cnoremap ∆ <Down>
+    " cnoremap ∆ <Down>
     " <A-k>
-    cnoremap ˚ <Up>
+    " cnoremap ˚ <Up>
     "}}}1
     
     " QuickFix Next/Prev Item {{{1
     " <A-n>
-    nnoremap ˜ :cn<CR>
+    " nnoremap ˜ :cn<CR>
     " <A-n> 
-    nnoremap π :cp<CR>
+    " nnoremap π :cp<CR>
     " }}}1
     
 endif
