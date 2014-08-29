@@ -30,6 +30,7 @@ function WOLFWZR_code_common_setting()
     set tabstop=4 
     set shiftwidth=4 
     set expandtab 
+    set nofoldenable
 
     "set cursorline
     "set colorcolumn=80
@@ -49,7 +50,8 @@ function WOLFWZR_set_guifont()
     endif
 
     if has("macunix")
-        set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
+        "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
+        set guifont=Monaco:h16
         " 单独设置中文字体
         " 备用字体
         " Hannotate\ SC\ Regular
@@ -237,7 +239,7 @@ endfunction
 
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
-    " C/CPP/H/NASL/LEX/YACC/BISON {{{3
+    " C/CPP/H/NASL/LEX/YACC/BISON/JAVA {{{3
     if &filetype == "c" 
        \ || &filetype == "h"
        \ || &filetype == "cpp"
@@ -245,10 +247,10 @@ function WOLFWZR_filetype_setting()
        \ || &filetype == "lex"
        \ || &filetype == "yacc"
        \ || &filetype == "bison"
-        call WOLFWZR_code_common_setting()
+       \ || &filetype == "java"
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
         set foldmethod=syntax
-        set nofoldenable
+        call WOLFWZR_code_common_setting()
 
         " 用缩写(abbreivations)自定义代码块的补全
         " source ~/usr/etc/abbreviations.vim
@@ -258,32 +260,26 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_set_colorscheme("gruvbox")
     " ASM {{{3
     elseif &filetype == "asm"
-        call WOLFWZR_code_common_setting()
-        call WOLFWZR_set_colorscheme("rainbow_neon")
-        set syntax=nasm
         set foldmethod=marker
         set commentstring=;%s
-        set nofoldenable
+        call WOLFWZR_code_common_setting()
+
+        call WOLFWZR_set_colorscheme("rainbow_neon")
+        set syntax=nasm
     " PYTHON {{{3
     elseif &filetype == "python"
-        call WOLFWZR_code_common_setting()
         set foldmethod=indent
-        set nofoldenable
-    " JAVA {{{3
-    elseif &filetype == "java"
         call WOLFWZR_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
-        call WOLFWZR_code_common_setting()
         set foldmethod=indent
-        set nofoldenable
+        call WOLFWZR_code_common_setting()
         call WOLFWZR_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
+        set foldmethod=marker
         call WOLFWZR_code_common_setting()
         call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
-        set foldmethod=marker
-        set nofoldenable
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
@@ -722,10 +718,10 @@ if has("gui_running")
     if s:WOLFWZR_cpu_info == "Atom"
         winpos 120 0
     else
-        winpos 245 20
+        winpos 245 10
     endif
     set columns=85
-    set lines=39
+    set lines=40
 
     " 设置默认配色方案
     if s:WOLFWZR_colorscheme_applied == 0
