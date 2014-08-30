@@ -30,11 +30,13 @@ function append_to_path()
     [ $? -ne 0 ] && PATH="$PATH:$new_path"
     export PATH
 }
+
 function uniq_path()
 {
     eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
+
 append_to_path "/bin"
 append_to_path "/sbin"
 append_to_path "/usr/bin"
@@ -200,33 +202,44 @@ fi
 if [ "$OS_TYPE" = "osx" ]
 then
     # Github
-    gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
-    alias ggh='cd "$gh"'
-    # WorkSpace
-    ws="$gh/kernel_learning"
-    alias gws='cd "$ws"'
-    # WorkSpace2
-    ws2="/Users/wolfwzr/Books/My OS/x86汇编语言:从实模式到保护模式/booktool/code/c14"
-    alias gws2='cd "$ws2"'
+    _gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
+    alias ggh='cd "$_gh"'
+
+    # os develop
+    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
+    alias gos='cd "$_os"'
+
     # BrewHome
-    bh="/usr/local/Cellar/"
-    alias gbh='cd "$bh"'
+    _bh="/usr/local/Cellar/"
+    alias gbh='cd "$_bh"'
+
     # HomeBin(~/.local/bin)
-    hb="/Users/wolfwzr/.local/bin"
-    alias ghb='cd "$hb"'
+    _hb="/Users/wolfwzr/.local/bin"
+    alias ghb='cd "$_hb"'
+
     # MountFolder
-    mf="/Volumes/"
-    alias gmf='cd "$mf"'
+    _mf="/Volumes/"
+    alias gmf='cd "$_mf"'
+
     # SAE (Sina App Engine)
-    sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
-    alias gsae='cd $sae'
+    _sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
+    alias gsae='cd $_sae'
 else
-    hse='/home/wolfwzr/Documents/scanner/svn/scanner/user/modules/hse'
-    alias ghse='cd $hse'
-    ws='/windows/E/Documents/Computer/program/os/李忠系列/booktool/code/c14'
-    alias gws='cd $ws'
-    sae='/home/wolfwzr/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1'
-    alias gsae='cd $sae'
+    # hse
+    _hse='/home/wolfwzr/Documents/scanner/svn/scanner/user/modules/hse'
+    alias ghse='cd $_hse'
+
+    # github
+    _gh="/home/wolfwzr/Documents/myprojects/github"
+    alias ggh='cd "$_gh"'
+
+    # os develop
+    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
+    alias gos='cd "$_os"'
+
+    # sae
+    _sae='/home/wolfwzr/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1'
+    alias gsae='cd $_sae'
 fi
 
 ############################################################

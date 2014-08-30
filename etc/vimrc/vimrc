@@ -192,6 +192,9 @@ function WOLFWZR_set_colorscheme(color)
     elseif s:WOLFWZR_color_scheme == "darktango"
         hi Todo guibg=#5B562F
         hi! link Search Todo
+    elseif s:WOLFWZR_color_scheme == "codeschool"
+        hi Normal guibg=#1D2327
+        hi LineNr guibg=#1F252A
     endif
 
     hi Cursor NONE
@@ -211,6 +214,8 @@ function WOLFWZR_set_colorscheme(color)
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
+
+    return
 
     " 修改弹出菜单配色 {{{3
     let l:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
@@ -279,7 +284,6 @@ function WOLFWZR_filetype_setting()
     elseif &filetype == "vim"
         set foldmethod=marker
         call WOLFWZR_code_common_setting()
-        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
@@ -296,10 +300,6 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_code_common_setting()
         set nocindent
         set autoindent
-        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
-    " TEXT {{{3
-    elseif &filetype == "text"
-        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
     endif
     " }}}3
 endfunction
@@ -460,6 +460,11 @@ endif
 " }}}2
 " 杂项设置{{{2
 set wrap
+" 取消CursorLine
+" 因为我喜欢CursorLine有淡淡的背景色，但这样会有两个问题：
+"   1. 当前行被 mark.vim 加背景色的单词背景变全黑，非常难看
+"   2. 影响VIM效率
+" 因此取消了CursorLine
 set nocursorline
 " }}}2
 " }}}1
@@ -550,17 +555,18 @@ endif
 
 " 复制/剪切/粘贴 {{{2
 if has("gui_running")
-    " Copy
-    vnoremap <S-Enter> "+y
-
-    " Cut
-    vnoremap <Leader>x "+x
-
-    " Paste
-    " nnoremap <Leader>v "+p
+    " 省事，Copy/Cut/Past 统一用 Shift+Enter 来完成
     nnoremap <S-Enter> "+p
+    vnoremap <S-Enter> "+y
     inoremap <S-Enter> <C-r>+
     cnoremap <S-Enter> <C-r>+
+
+    if ! has("maxunix")
+        vnoremap <C-c> "+y
+        vnoremap <C-x> "+x
+        inoremap <C-v> <C-r>+
+        cnoremap <C-v> <C-r>+
+    endif
 endif
 " }}}2
 
@@ -725,7 +731,7 @@ if has("gui_running")
 
     " 设置默认配色方案
     if s:WOLFWZR_colorscheme_applied == 0
-        call WOLFWZR_set_colorscheme("Tomorrow-Night-Eighties")
+        call WOLFWZR_set_colorscheme("codeschool")
     endif
 
     " 光标设置 (:help 'guicursor')

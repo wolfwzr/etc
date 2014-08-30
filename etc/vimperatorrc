@@ -1,0 +1,76 @@
+"3.8.1 (created: 2013/11/21 23:49:14)
+
+source! ~wolfwzr/.vimperatorrc.local
+
+let mapleader='s'
+
+nnoremap j 2j
+nnoremap k 2k
+
+" for linux
+nnoremap <C-j> :tabnext<Return>
+nnoremap <C-k> :tabprev<Return>
+
+" for osx
+nnoremap <M-j> :tabnext<Return>
+nnoremap <M-k> :tabprev<Return>
+
+nnoremap <Leader>r :emenu Tools.Clearly<Return>
+nnoremap <Leader>d :emenu Tools.Web Developer.Network<Return>
+nnoremap <Leader>l :emenu View.Show All Tabs<Return>
+nnoremap <Leader>f :set fullscreen!<Return>
+nnoremap <Leader>y :tab downloads<Return>
+nnoremap <Leader>a :tab addons<Return>
+nnoremap <Leader>p :preferences<Return>
+nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
+" nnoremap <Leader>e :tabopen data:text/html, <html contenteditable><Return>
+
+nnoremap <BS> :back<Return>
+
+nnoremap <C-i> :emenu Tools.Page Info<Return>
+
+" linux
+inoremap <C-j> <Right>
+inoremap <C-k> <Left>
+inoremap <C-h> <BS>
+inoremap <C-l> <Del>
+inoremap <C-n> <Down>
+inoremap <C-p> <Up>
+
+" osx
+inoremap <M-j> <Right>
+inoremap <M-k> <Left>
+inoremap <M-h> <BS>
+inoremap <M-l> <Del>
+inoremap <M-n> <Down>
+inoremap <M-p> <Up>
+
+" linux
+cnoremap <C-j> <Right>
+cnoremap <C-k> <Left>
+cnoremap <C-h> <BS>
+cnoremap <C-l> <Del>
+cnoremap <C-n> <Down>
+cnoremap <C-p> <Up>
+
+" linux
+cnoremap <M-j> <Right>
+cnoremap <M-k> <Left>
+" cnoremap <M-h> <BS>
+" cnoremap <M-l> <Del>
+cnoremap <M-n> <Down>
+cnoremap <M-p> <Up>
+
+set defsearch=g
+
+set titlestring=wolfwzr
+
+" ]]
+set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
+" [[
+set nextpattern=\s*下一页|下一章|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b
+
+" press <C-]> to make complete
+iabbrev wcg wolfwzr.china@gmail.com
+
+" vim: set ft=vim:

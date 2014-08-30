@@ -34,6 +34,8 @@ $ bash install.sh
     - zi : toggle foldenable
     - Make Use of <Fn> <S-Fn> \<Fn>
     - Make Use of [a-z][0-9], <Leader>1
+    - hi Search NONE, hi Search underline
+    - hi PopMenu
 - bash
 
 存在的疑问
