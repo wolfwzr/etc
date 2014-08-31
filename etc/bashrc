@@ -209,6 +209,10 @@ then
     _os="$_gh/kernel_learning/real_mode_2_protected_mode"
     alias gos='cd "$_os"'
 
+    # etc in github
+    _etc="$_gh/etc/etc"
+    alias getc='cd "$_etc"'
+
     # BrewHome
     _bh="/usr/local/Cellar/"
     alias gbh='cd "$_bh"'

@@ -6,7 +6,6 @@
 
 " 变量定义 {{{1
 let s:WOLFWZR_colorscheme_applied = 0
-let s:WOLFWZR_color_scheme = "none"
 let s:WOLFWZR_backgroud = "light"
 let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 " }}}1
@@ -74,14 +73,7 @@ endfunction
 
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
-
-    " 条件检查 {{{3
-    if (!has("gui_running")) || (s:WOLFWZR_color_scheme == a:color)
-        return
-    endif
-    let s:WOLFWZR_color_scheme = a:color
-    " }}}3
-
+    let l:WOLFWZR_color_scheme = a:color
     " 为配合macosx夜间颜色反转，增加light主题{{{
     if has("macunix")
         let l:cur_hour = system("date +%H")
@@ -92,6 +84,7 @@ function WOLFWZR_set_colorscheme(color)
         else
             let s:WOLFWZR_backgroud = "dark"
         endif
+        let s:WOLFWZR_backgroud = "dark"
 
         if s:WOLFWZR_backgroud == "light"
             " biogoo
@@ -111,7 +104,7 @@ function WOLFWZR_set_colorscheme(color)
             " [*****] peaksea
             " [*****] pyte
             " [*****] Tomorrow
-            let s:WOLFWZR_color_scheme = "peaksea"
+            let l:WOLFWZR_color_scheme = "peaksea"
         endif
     endif
     "}}}
@@ -178,32 +171,35 @@ function WOLFWZR_set_colorscheme(color)
     " nazca
     " southwest-fog
     "}}}
-    execute 'colorscheme ' . s:WOLFWZR_color_scheme
+    execute 'colorscheme ' . l:WOLFWZR_color_scheme
     let s:WOLFWZR_colorscheme_applied = 1
 
     " 修剪{{{
-    if s:WOLFWZR_color_scheme == "Tomorrow-Night-Eighties"
+    if l:WOLFWZR_color_scheme == "codeschool"
+        "hi Normal guibg=#25282A
+        hi Normal guibg=#2d2d2d guifg=#cccccc
+        hi LineNr guibg=#333333 guifg=#888800
+    elseif l:WOLFWZR_color_scheme == "gruvbox"
+        hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
+        hi LineNr guibg=#2F2F2F guifg=#B37B4F
+    elseif l:WOLFWZR_color_scheme == "Tomorrow-Night-Eighties"
         hi Folded gui=none guibg=#515151 guifg=#99CC99
+        hi LineNr guifg=#888800
         if hlID("vimCommand") != 0
             highlight vimCommand guifg=#bbccaa
         endif
-    elseif s:WOLFWZR_color_scheme == "gruvbox"
-        hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-    elseif s:WOLFWZR_color_scheme == "darktango"
-        hi Todo guibg=#5B562F
-        hi! link Search Todo
-    elseif s:WOLFWZR_color_scheme == "codeschool"
-        hi Normal guibg=#1D2327
-        hi LineNr guibg=#1F252A
     endif
+
+    hi Search NONE
+    hi Search gui=reverse
 
     hi Cursor NONE
     hi Cursor gui=reverse
     hi CursorLine NONE 
 
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("Directory"), "fg", "gui")
+    let l:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "bg", "gui")
     if l:WOLFWZR_tmp_color != ""
-        execute 'highlight LineNr guifg=' . l:WOLFWZR_tmp_color
+        execute 'hi CursorLineNr guibg=' . l:WOLFWZR_tmp_color
     endif
     "}}}
     
@@ -215,19 +211,18 @@ function WOLFWZR_set_colorscheme(color)
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
 
-    return
-
     " 修改弹出菜单配色 {{{3
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("CursorLine"), "bg", "gui")
-    if l:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guibg='.l:WOLFWZR_tmp_color
-    endif
+    "let l:WOLFWZR_tmp_color = synIDattr(hlID("LineNr"), "bg", "gui")
+    "if l:WOLFWZR_tmp_color != ""
+    "    execute 'highlight Pmenu guibg='.l:WOLFWZR_tmp_color
+    "endif
 
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "fg", "gui")
-    if l:WOLFWZR_tmp_color != ""
-        execute 'highlight Pmenu guifg='.l:WOLFWZR_tmp_color
-    endif
-        
+    "let l:WOLFWZR_tmp_color = synIDattr(hlID("Comment"), "fg", "gui")
+    "if l:WOLFWZR_tmp_color != ""
+    "    execute 'highlight Pmenu guifg='.l:WOLFWZR_tmp_color
+    "endif
+    hi! link Pmenu LineNr
+
     let l:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
     if l:WOLFWZR_tmp_color != ""
         execute 'highlight PmenuSel gui=bold guibg='.l:WOLFWZR_tmp_color
@@ -284,6 +279,7 @@ function WOLFWZR_filetype_setting()
     elseif &filetype == "vim"
         set foldmethod=marker
         call WOLFWZR_code_common_setting()
+        call WOLFWZR_set_colorscheme("codeschool")
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
@@ -504,8 +500,8 @@ nnoremap <TAB> <C-b>
 " 快速查看QuickFix List的上一项/下一项 {{{2
 if has("gui_running")
     nnoremap <F2> :botright cw<CR>
-    nnoremap <F3> :cn<CR>
-    nnoremap <F4> :cp<CR>
+    nnoremap <F3> :cp<CR>
+    nnoremap <F4> :cn<CR>
     " Tips:
     "   :colder 查看上一个quickfix窗口
     "   :cnewer 查看下一个quickfix窗口
