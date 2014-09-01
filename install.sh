@@ -83,7 +83,6 @@ install_vimrc
 echo "install bashrc"
 install_bashrc
 
-# install vimperatorrc
 echo "install vimperatorrc"
 install_vimperatorrc
 

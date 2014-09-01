@@ -73,7 +73,9 @@ endfunction
 
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
+
     let l:WOLFWZR_color_scheme = a:color
+
     " 为配合macosx夜间颜色反转，增加light主题{{{
     if has("macunix")
         let l:cur_hour = system("date +%H")
@@ -179,11 +181,13 @@ function WOLFWZR_set_colorscheme(color)
         "hi Normal guibg=#25282A
         hi Normal guibg=#2d2d2d guifg=#cccccc
         hi LineNr guibg=#333333 guifg=#A1A100
+        hi Folded guibg=#444400 guifg=Grey65
     elseif l:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         hi LineNr guibg=#2F2F2F guifg=#B37B4F
     elseif l:WOLFWZR_color_scheme == "neon"
         hi LineNr guibg=#353535 guifg=#A1A100
+        hi Folded guibg=#505000 guifg=Grey
     endif
 
     hi Search NONE
