@@ -1,0 +1,18 @@
+" for osx
+inoremap <M-j> <Right>
+inoremap <M-k> <Left>
+inoremap <M-h> <BS>
+inoremap <M-l> <Del>
+inoremap <M-n> <Down>
+inoremap <M-p> <Up>
+inoremap <M-b> <Home>
+inoremap <M-e> <End>
+
+cnoremap <M-j> <Right>
+cnoremap <M-k> <Left>
+cnoremap <M-h> <BS>
+cnoremap <M-l> <Del>
+cnoremap <M-n> <Down>
+cnoremap <M-p> <Up>
+cnoremap <M-b> <Home>
+cnoremap <M-e> <End>

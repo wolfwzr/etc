@@ -22,52 +22,6 @@ nnoremap <Leader>p :preferences<Return>
 nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
 " nnoremap <Leader>e :tabopen data:text/html, <html contenteditable><Return>
 
-" for linux
-nnoremap <C-i> :emenu Tools.Page Info<Return>
-
-nnoremap <C-j> :tabnext<Return>
-nnoremap <C-k> :tabprev<Return>
-
-inoremap <C-j> <Right>
-inoremap <C-k> <Left>
-inoremap <C-h> <BS>
-inoremap <C-l> <Del>
-inoremap <C-n> <Down>
-inoremap <C-p> <Up>
-inoremap <C-b> <Home>
-inoremap <C-e> <End>
-
-cnoremap <C-j> <Right>
-cnoremap <C-k> <Left>
-cnoremap <C-h> <BS>
-cnoremap <C-l> <Del>
-cnoremap <C-n> <Down>
-cnoremap <C-p> <Up>
-cnoremap <C-b> <Home>
-cnoremap <C-e> <End>
-
-" for osx
-nnoremap <M-j> :tabnext<Return>
-nnoremap <M-k> :tabprev<Return>
-
-inoremap <M-j> <Right>
-inoremap <M-k> <Left>
-inoremap <M-h> <BS>
-inoremap <M-l> <Del>
-inoremap <M-n> <Down>
-inoremap <M-p> <Up>
-inoremap <M-b> <Home>
-inoremap <M-e> <End>
-
-cnoremap <M-j> <Right>
-cnoremap <M-k> <Left>
-cnoremap <M-h> <BS>
-cnoremap <M-l> <Del>
-cnoremap <M-n> <Down>
-cnoremap <M-p> <Up>
-cnoremap <M-b> <Home>
-cnoremap <M-e> <End>
-
 set defsearch=g
 
 set titlestring=wolfwzr

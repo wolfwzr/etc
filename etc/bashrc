@@ -111,8 +111,19 @@ fi
 ############################################################
 alias a='./a.out'
 alias c='clear'
-alias h='history | less +G'
 alias d='du -sh'
+alias h='history | less +G --'
+alias j='jobs -l'
+alias grep='grep --color=auto'
+alias pgrep='pgrep -lf'
+alias hgrep='history | grep -i'
+alias mkdir='mkdir -p'
+
+if type colordiff 1>/dev/null 2>/dev/null
+then
+    alias diff='colordiff'
+fi
+
 if [ "$OS_TYPE" = "osx" ] 
 then
     alias r='netstat -f inet -nr'
@@ -125,6 +136,7 @@ then
     alias cpwd='printf "$PWD" | pbcopy'
     alias df='df -Ph'
     alias ds='d * | sort -g'
+    alias pg='ps aux | grep -v $$ | grep -i'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
@@ -138,32 +150,40 @@ else
     alias wz='/home/wolfwzr/usr/src/WizNote/WizNote'
     alias df='df -PTh'
     alias ds='d * | sort -h'
+    alias pg='ps -elf | grep -v $$ | grep -i'
 fi
 alias o='open'
 alias lb='lsblk'
 alias ..='cd ..'
 alias ...='cd ../..'
-alias u='cd ..'
-alias uu='cd ../..'
-alias u3='cd ../../..'
-alias u4='cd ../../../..'
-alias u5='cd ../../../../..'
-alias u6='cd ../../../../../..'
+alias .4='cd ../../..'
+alias .5='cd ../../../..'
+alias .6='cd ../../../../..'
+alias .7='cd ../../../../../..'
 alias sdcv='sdcv --color --utf8-input --utf8-output'
 alias iconvcat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
-alias grep='grep --color=auto'
-alias hgrep='history | grep -i'
-alias h='history | less +G --'
-alias j='jobs -l'
 alias wget='wget -c'
+alias gpu='lspci | grep -i "vga\|3d\|2d"'
 
 alias o='open'
 alias g='grep'
-alias pg='pgrep -lif'
 
 alias s='source /etc/wolfwzr.bashrc'
+
+# ${var/pattern/string}
+# is pattern begin with /, all matchs of pattern are replaced with string
+alias path='echo -e ${PATH//:/\\n}'
+
+# list all tcp/udp ports
+#   -t : tcp
+#   -u : udp
+#   -l : listening
+#   -a : show all
+#   -n : show numberic
+#   -p : show process name
+alias ports='netstat -tulanp'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector
@@ -236,6 +256,10 @@ else
     # github
     _gh="/home/wolfwzr/Documents/myprojects/github"
     alias ggh='cd "$_gh"'
+
+    # etc in github
+    _etc="/home/wolfwzr/usr/etc/etc_in_github/etc"
+    alias getc='cd "$_etc"'
 
     # os develop
     _os="$_gh/kernel_learning/real_mode_2_protected_mode"
@@ -320,3 +344,4 @@ then
 fi
 
 # vim: set ft=sh:
+

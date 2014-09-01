@@ -178,16 +178,12 @@ function WOLFWZR_set_colorscheme(color)
     if l:WOLFWZR_color_scheme == "codeschool"
         "hi Normal guibg=#25282A
         hi Normal guibg=#2d2d2d guifg=#cccccc
-        hi LineNr guibg=#333333 guifg=#888800
+        hi LineNr guibg=#333333 guifg=#A1A100
     elseif l:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         hi LineNr guibg=#2F2F2F guifg=#B37B4F
-    elseif l:WOLFWZR_color_scheme == "Tomorrow-Night-Eighties"
-        hi Folded gui=none guibg=#515151 guifg=#99CC99
-        hi LineNr guifg=#888800
-        if hlID("vimCommand") != 0
-            highlight vimCommand guifg=#bbccaa
-        endif
+    elseif l:WOLFWZR_color_scheme == "neon"
+        hi LineNr guibg=#353535 guifg=#A1A100
     endif
 
     hi Search NONE

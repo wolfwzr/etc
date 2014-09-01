@@ -6,6 +6,7 @@ keycode 108 = Control_R
 keycode 105 = Alt_R Meta_R
 
 clear lock
+clear control
 clear mod1
 
 add control = Control_L Control_R

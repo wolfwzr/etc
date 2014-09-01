@@ -2,8 +2,8 @@
 
 GITHUB_ETC_DIR=$(cd $(dirname "$0") && pwd)/etc
 
-GITHUB_VIMRC_DIR="$GITHUB_ETC_DIR/vimrc"
-GITHUB_VIMPERATORRC="$GITHUB_ETC_DIR/vimperatorrc"
+GITHUB_VIMRC_DIR="$GITHUB_ETC_DIR/vim"
+GITHUB_VIMPERATOR_DIR="$GITHUB_ETC_DIR/vimperator"
 GITHUB_BASHRC="$GITHUB_ETC_DIR/bashrc"
 GITHUB_HOSTS="$GITHUB_ETC_DIR/hosts"
 
@@ -57,6 +57,26 @@ function install_bashrc()
     fi
 }
 
+function install_vimperatorrc()
+{
+    local target_rc=~wolfwzr/.vimperatorrc
+    local rc="common.vimperatorrc"
+
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
+
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        rc="osx.vimperatorrc"
+    else
+        rc="linux.vimperatorrc"
+    fi
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
+
+    [ -e $target_rc -o -L $target_rc ] && rm -f $target_rc
+    echo "source ~/.common.vimperatorrc" > $target_rc
+    echo "source ~/.$rc" >> $target_rc
+}
+
 echo "install vimrc"
 install_vimrc
 
@@ -65,7 +85,7 @@ install_bashrc
 
 # install vimperatorrc
 echo "install vimperatorrc"
-make_symlink "$GITHUB_VIMPERATORRC" ~wolfwzr/.vimperatorrc
+install_vimperatorrc
 
 # install hosts
 echo "install hosts"
