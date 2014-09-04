@@ -12,16 +12,6 @@ let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'"
 
 " 函数定义 {{{1
 
-" WOLFWZR_set_tabline_style: 设置Tab栏 {{{2
-function WOLFWZR_set_tabline_style()
-    if ! has("gui_running") && $ITERM_PROFILE == "Dark"
-        hi TabLine cterm=none ctermbg=black 
-        hi TabLineSel cterm=bold ctermbg=blue ctermfg=white
-        hi TabLineFill cterm=none ctermbg=black 
-    endif
-endfunction
-" }}}2
-
 " WOLFWZR_code_common_setting: 代码通用设置 {{{2
 function WOLFWZR_code_common_setting()
     syntax on
@@ -71,6 +61,40 @@ function WOLFWZR_set_guifont()
 endfunction
 "}}}2
 
+" WOLFWZR_color_modify: 颜色加减运算 {{{2
+function WOLFWZR_color_modify(color, oper, modify_value)
+    if a:color == ""
+        " 返回红色以做告警
+        return '#FF0000'
+    endif
+
+    if a:oper == 'add'
+        let l:col_r = '0x' . strpart(a:color, 1, 2) + a:modify_value
+        let l:col_g = '0x' . strpart(a:color, 3, 2) + a:modify_value
+        let l:col_b = '0x' . strpart(a:color, 5, 2) + a:modify_value
+    elseif a:oper == 'sub'
+        let l:col_r = '0x' . strpart(a:color, 1, 2) - a:modify_value
+        let l:col_g = '0x' . strpart(a:color, 3, 2) - a:modify_value
+        let l:col_b = '0x' . strpart(a:color, 5, 2) - a:modify_value
+    else
+        echom "WOLFWZR_color_modify: invalid oper"
+        return a:color
+    endif
+    
+    if l:col_r > 0xff | let l:col_r = 0xff | endif
+    if l:col_g > 0xff | let l:col_g = 0xff | endif
+    if l:col_b > 0xff | let l:col_b = 0xff | endif
+
+    if l:col_r < 0 | let l:col_r = 0 | endif
+    if l:col_g < 0 | let l:col_g = 0 | endif
+    if l:col_b < 0 | let l:col_b = 0 | endif
+
+    return '#' . printf("%02x", l:col_r)
+             \ . printf("%02x", l:col_g)
+             \ . printf("%02x", l:col_b)      
+endfunction
+"}}}2
+
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
 
@@ -111,7 +135,7 @@ function WOLFWZR_set_colorscheme(color)
     endif
     "}}}
 
-    " 设置配色方案及可能的修剪 {{{3
+    " 设置配色方案及调整 {{{3
     " 备选配色方案："{{{
     " Monokai
     " PapayaWhip
@@ -176,33 +200,73 @@ function WOLFWZR_set_colorscheme(color)
     execute 'colorscheme ' . l:WOLFWZR_color_scheme
     let s:WOLFWZR_colorscheme_applied = 1
 
-    " 修剪{{{
+    if &background != 'dark'
+        " 以下调整均针对 dark 类主题
+        " light 类主题很少用，所以不进行调整
+        return
+    endif
+
+    " 调整{{{
     if l:WOLFWZR_color_scheme == "codeschool"
-        "hi Normal guibg=#25282A
         hi Normal guibg=#2d2d2d guifg=#cccccc
-        hi LineNr guibg=#333333 guifg=#A1A100
-        hi Folded guibg=#444400 guifg=Grey65
+        hi Folded guibg=#353500 guifg=Grey65
     elseif l:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-        hi LineNr guibg=#2F2F2F guifg=#B37B4F
     elseif l:WOLFWZR_color_scheme == "neon"
-        hi LineNr guibg=#353535 guifg=#A1A100
-        hi Folded guibg=#505000 guifg=Grey
+        hi Folded guibg=#003040 guifg=Grey
     endif
 
+    " CursorLineNr
+    let l:tmp_color = synIDattr(hlID("Normal"), "bg", "gui")
+    if l:tmp_color != ""
+        execute 'hi CursorLineNr gui=NONE guibg=' . l:tmp_color
+    endif
+    execute 'hi CursorLineNr guifg=' . WOLFWZR_color_modify
+                \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x20)
+
+    " LineNr
+    execute 'hi LineNr guibg=' . WOLFWZR_color_modify
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x3)
+    execute 'hi LineNr guifg=' . WOLFWZR_color_modify
+                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
+
+    execute 'hi Folded guibg=' . WOLFWZR_color_modify
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x20)
+
+    " Pmenu/PmenuSel
+    "hi! link Pmenu LineNr
+    "hi! link PmenuSel Cursor
+    execute 'hi Pmenu gui=NONE guibg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "bg#", "gui"), "add", 0x10)
+            \ . ' guifg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'sub', 0x25)
+    execute 'hi PmenuSel guibg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
+            \ . ' guifg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'add', 0x30)
+    
+    " Visual
+    hi Visual NONE
+    execute 'hi Visual cterm=reverse term=reverse'
+            \. ' guibg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
+
+    " TabLine/TabLineSel/TabLineFill
+    execute 'hi TabLineSel gui=bold'
+            \ 'guibg=' . synIDattr(hlID("Normal"), "bg", "gui")
+            \ 'guifg=' . synIDattr(hlID("Normal"), "fg", "gui")
+    execute 'hi TabLine gui=NONE guibg=' . WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x27)
+    let l:tmp_color = WOLFWZR_color_modify
+            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
+    execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+   
     hi Search NONE
-    hi Search gui=reverse
+    hi Search term=reverse cterm=reverse gui=reverse
 
     hi Cursor NONE
-    hi Cursor gui=reverse
+    hi Cursor term=reverse cterm=reverse gui=reverse
     hi CursorLine NONE 
-
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("Normal"), "bg", "gui")
-    if l:WOLFWZR_tmp_color != ""
-        execute 'hi CursorLineNr guibg=' . l:WOLFWZR_tmp_color
-    endif
-    "}}}
-    
     " }}}3
 
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
@@ -210,30 +274,7 @@ function WOLFWZR_set_colorscheme(color)
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     " }}}3
-
-    " 修改弹出菜单配色 {{{3
-    "let l:WOLFWZR_tmp_color = synIDattr(hlID("LineNr"), "bg", "gui")
-    "if l:WOLFWZR_tmp_color != ""
-    "    execute 'highlight Pmenu guibg='.l:WOLFWZR_tmp_color
-    "endif
-
-    "let l:WOLFWZR_tmp_color = synIDattr(hlID("Comment"), "fg", "gui")
-    "if l:WOLFWZR_tmp_color != ""
-    "    execute 'highlight Pmenu guifg='.l:WOLFWZR_tmp_color
-    "endif
-    hi! link Pmenu LineNr
-
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "bg", "gui")
-    if l:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guibg='.l:WOLFWZR_tmp_color
-    endif
-
-    let l:WOLFWZR_tmp_color = synIDattr(hlID("Cursor"), "fg", "gui")
-    if l:WOLFWZR_tmp_color != ""
-        execute 'highlight PmenuSel gui=bold guifg='.l:WOLFWZR_tmp_color
-    endif
-    " }}}3
-
+    
 endfunction
 " }}}2
 
@@ -353,6 +394,44 @@ function WOLFWZR_grep(word)
     call setqflist([])
     silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
     botright cw
+endfunction
+" }}}2
+
+" WOLFWZR_cscope_update_db: update cscope database {{{2
+function WOLFWZR_cscope_update_db()
+    call system('cscope -Rbq')
+    cs reset
+endfunction
+" }}}2
+
+" WOLFWZR_cscope_load_db: find and load cscope database {{{2
+function WOLFWZR_cscope_load_db()
+    " kill all connections
+    cs kill -1
+
+    let l:cwd_bakup = getcwd()
+    let l:tmp_dir = ''
+
+    " search the first database from current directory up to '/'
+    " load the database and change CWD to that directory
+    while l:tmp_dir != '/'
+        let l:tmp_dir = getcwd()
+        if filereadable(l:tmp_dir . '/cscope.out')
+            cs add ./cscope.out
+            break
+        endif
+        " go to parrent directory
+        execute 'cd ' . l:tmp_dir . '/..'
+    endwhile
+
+    if l:tmp_dir == '/'
+        " go to origin directory if no database found
+        execute 'cd ' . l:cwd_bakup
+        if $CSCOPE_DB != ""
+            " add database pointed to by environment
+            cs add $CSCOPE_DB
+        endif
+    endif
 endfunction
 " }}}2
 
@@ -509,8 +588,8 @@ endif
 " }}}2
 
 " Tab跳转 {{{2
-" nnoremap <Leader>j :tabnext<CR>
-" nnoremap <Leader>k :tabprev<CR>
+nnoremap <Leader>j :tabnext<CR>
+nnoremap <Leader>k :tabprev<CR>
 " }}}2
 
 " Window/GUI窗口相关{{{2
@@ -749,13 +828,7 @@ if has("cscope")
 	set cscopequickfix=s-,c-,d-,i-,t-,e-
 
     set nocsverb
-    " add any database in current directory
-    if filereadable("cscope.out") 
-        cs add ./cscope.out
-    " else add database pointed to by environment
-    elseif $CSCOPE_DB != ""
-        cs add $CSCOPE_DB
-    endif
+    call WOLFWZR_cscope_load_db()
     set csverb
 
     nnoremap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -767,6 +840,9 @@ if has("cscope")
     nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
 
+    nnoremap <Leader>fu :call WOLFWZR_cscope_update_db()<CR>
+    nnoremap <Leader>fl :call WOLFWZR_cscope_load_db()<CR>
+
     command -nargs=1 Css cs find s <args>
     command -nargs=1 Csg cs find g <args>
     command -nargs=1 Csc cs find c <args>
@@ -775,6 +851,9 @@ if has("cscope")
     command -nargs=1 Csf cs find f <args>
     command -nargs=1 Csi cs find i <args>
     command -nargs=1 Csd cs find d <args>
+
+    command Csu call WOLFWZR_cscope_update_db()
+    command Csl call WOLFWZR_cscope_load_db()
 endif
 " }}}1
 

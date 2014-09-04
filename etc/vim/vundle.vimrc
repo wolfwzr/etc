@@ -34,6 +34,7 @@ Bundle 'vim-scripts/Mark'
 "    T  - 在新标签中打开文件但光标停留在浏览界面
 "    q  - 关闭浏览界面
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
+" :NERDTreeFind - 打开 NERDTree 窗口并定位到当前文件
 Bundle 'scrooloose/nerdtree'
 let g:NERDTreeWinSize=25
 " 本函数功能：
