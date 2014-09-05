@@ -29,13 +29,13 @@ $ bash install.sh
     - YouCompleteMe编译配置
         - 编译的文件类型,感觉在一些文件中不会补全(如asm)
         - 自定义编译选项
+        - 设置默认关闭实时编译
+        - 用编辑nmap的源代码（C++）时，补全特别特别慢，特别卡顿
     - abbr
     - 代码块补全插件Ultisnap安装了但还不清楚用法
     - zi : toggle foldenable
     - Make Use of <Fn> <S-Fn> \<Fn>
     - Make Use of [a-z][0-9], <Leader>1
-    - hi Search NONE, hi Search underline
-    - hi PopMenu
 - bash
 
 存在的疑问

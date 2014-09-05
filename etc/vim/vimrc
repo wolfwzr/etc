@@ -222,14 +222,15 @@ function WOLFWZR_set_colorscheme(color)
         execute 'hi CursorLineNr gui=NONE guibg=' . l:tmp_color
     endif
     execute 'hi CursorLineNr guifg=' . WOLFWZR_color_modify
-                \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x20)
+                \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x40)
 
     " LineNr
     execute 'hi LineNr guibg=' . WOLFWZR_color_modify
                 \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x3)
     execute 'hi LineNr guifg=' . WOLFWZR_color_modify
-                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
+                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x60)
 
+    " Folded
     execute 'hi Folded guibg=' . WOLFWZR_color_modify
                 \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x20)
 
@@ -262,11 +263,10 @@ function WOLFWZR_set_colorscheme(color)
     execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
    
     hi Search NONE
-    hi Search term=reverse cterm=reverse gui=reverse
+    hi Search term=reverse cterm=reverse gui=reverse,underline
 
     hi Cursor NONE
     hi Cursor term=reverse cterm=reverse gui=reverse
-    hi CursorLine NONE 
     " }}}3
 
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
@@ -326,6 +326,7 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_code_common_setting()
         set nocindent
         set autoindent
+        set foldenable
         call WOLFWZR_set_colorscheme("darktango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"
