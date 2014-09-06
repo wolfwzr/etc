@@ -281,9 +281,19 @@ function wolf_service_control()
 
     local service_name=$1
     local action=$2
-    local service_script="/etc/init.d/$service_name"
+    local service_script=""
 
-    [ "$OS_TYPE" != "linux" ] && echo "Only avaliable in linux" && return 1
+    if [ "$OS_TYPE" == "linux" ]
+    then
+        service_script="/etc/init.d/${service_name}"
+    elif [ "$OS_TYPE" == "osx" ]
+    then
+        service_script="/System/Library/LaunchDaemons/${service_name}.plist"
+    else
+        echo "Unknown System: $(uname -a)"
+        return 1
+    fi
+
     [ -z "$service_name" ] && echo "please specific a service name" && return 2
     if [ ! -e "$service_script" ]
     then
@@ -291,24 +301,47 @@ function wolf_service_control()
         return 3
     fi
 
-    case "$action" in
-        "status")
-            sudo $service_script status
-            ;;
-        "start")
-            sudo $service_script start
-            ;;
-        "stop")
-            sudo $service_script stop
-            ;;
-        "restart")
-            sudo $service_script stop
-            sudo $service_script start
-            ;;
-        *)
-            echo "$action: Invalid action, use [status|start|stop|restart]"
-            ;;
-    esac
+    if [ "$OS_TYPE" == "linux" ]
+    then
+        case "$action" in
+            "status")
+                sudo $service_script status
+                ;;
+            "start")
+                sudo $service_script start
+                ;;
+            "stop")
+                sudo $service_script stop
+                ;;
+            "restart")
+                sudo $service_script stop
+                sudo $service_script start
+                ;;
+            *)
+                echo "$action: Invalid action, use [status|start|stop|restart]"
+                ;;
+        esac
+    elif [ "$OS_TYPE" == "osx" ]
+    then
+        case "$action" in
+            "status")
+                sudo -s launchctl list | grep "$service_name"
+                ;;
+            "start")
+                sudo -s launchctl load -w $service_script
+                ;;
+            "stop")
+                sudo -s launchctl unload -w $service_script
+                ;;
+            "restart")
+                sudo -s launchctl unload -w $service_script
+                sudo -s launchctl load -w $service_script
+                ;;
+            *)
+                echo "$action: Invalid action, use [status|start|stop|restart]"
+                ;;
+        esac
+    fi
 }
 
 function wstatus()
@@ -344,4 +377,3 @@ then
 fi
 
 # vim: set ft=sh:
-

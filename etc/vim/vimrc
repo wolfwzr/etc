@@ -324,8 +324,6 @@ function WOLFWZR_filetype_setting()
     " MKD {{{3
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
-        set nocindent
-        set autoindent
         set foldenable
         call WOLFWZR_set_colorscheme("darktango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
@@ -336,8 +334,6 @@ function WOLFWZR_filetype_setting()
         \ || &filetype == "xsl"
         \ || &filetype == "xslt"
         call WOLFWZR_code_common_setting()
-        set nocindent
-        set autoindent
     endif
     " }}}3
 endfunction
@@ -718,6 +714,7 @@ if has("gui_running")
     "
     " C-b : cursor to Begin of command-line
     " C-e : cursor to End of command-line
+
     cnoremap <C-j> <Right>
     cnoremap <C-k> <Left>
     cnoremap <C-l> <Del>

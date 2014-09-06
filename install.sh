@@ -4,6 +4,8 @@ GITHUB_ETC_DIR=$(cd $(dirname "$0") && pwd)/etc
 
 GITHUB_VIMRC_DIR="$GITHUB_ETC_DIR/vim"
 GITHUB_VIMPERATOR_DIR="$GITHUB_ETC_DIR/vimperator"
+GITHUB_XMODMAP="$GITHUB_ETC_DIR/keyboard/xmodmap"
+GITHUB_KARABINER="$GITHUB_ETC_DIR/keyboard/karabiner.xml"
 GITHUB_BASHRC="$GITHUB_ETC_DIR/bashrc"
 GITHUB_HOSTS="$GITHUB_ETC_DIR/hosts"
 
@@ -77,6 +79,20 @@ function install_vimperatorrc()
     echo "source ~/.$rc" >> $target_rc
 }
 
+function install_keyboard_config()
+{
+    local target_conf=""
+
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        target_conf="/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"
+        make_symlink "$GITHUB_KARABINER" "$target_conf"
+    else
+        target_conf=~wolfwzr/.Xmodmap
+        make_symlink "$GITHUB_XMODMAP" "$target_conf"
+    fi
+}
+
 echo "install vimrc"
 install_vimrc
 
@@ -86,6 +102,8 @@ install_bashrc
 echo "install vimperatorrc"
 install_vimperatorrc
 
-# install hosts
 echo "install hosts"
 make_symlink "$GITHUB_HOSTS" /etc/hosts
+
+echo "install keyboard config"
+install_keyboard_config

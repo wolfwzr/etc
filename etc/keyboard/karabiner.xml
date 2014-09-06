@@ -1,0 +1,144 @@
+<?xml version="1.0"?>
+<root>
+<item> 
+  <name>wolfwzr</name>
+
+  <devicevendordef>
+    <vendorname>POCKERII</vendorname>
+    <vendorid>0x0f39</vendorid>
+    <productid>0x0611</productid>
+  </devicevendordef>
+
+  <devicevendordef>
+    <vendorname>APPLE_KEYBOARD_TRACKPAD</vendorname>
+    <vendorid>0x05ac</vendorid>
+    <productid>0x0259</productid>
+  </devicevendordef>
+
+  <appdef>
+    <appname>WIZNOTE</appname>
+    <equal>cn.wiz.wiznoteformac</equal>
+  </appdef>
+
+  <appdef>
+    <appname>READER2</appname>
+    <equal>com.reederapp.rkit2.mac</equal>
+  </appdef>
+
+  <appdef>
+    <appname>SKIM</appname>
+    <equal>net.sourceforge.skim-app.skim</equal>
+  </appdef>
+
+  <appdef>
+    <appname>VOX</appname>
+    <equal>com.coppertino.Vox</equal>
+  </appdef>
+
+  <item>
+    <name>F19 to Control_L</name>
+    <appendix>(+ When you type F19 only, send Escape)</appendix>
+    <appendix>(Caps Lock is mapped to F19 by Seil)</appendix>
+    <identifier>wolfwzr.f19_to_control_l</identifier>
+    <autogen>__KeyOverlaidModifier__ KeyCode::F19, KeyCode::CONTROL_L, KeyCode::ESCAPE</autogen>
+  </item>
+
+  <item>
+    <name>Modify for Pocker II</name>
+    <appendix>- Control_R to Option_R</appendix>
+    <appendix>- swap ESCAPE and `~ key</appendix>
+    <identifier>wolfwzr.control_r_to_option_r_on_pocker2</identifier>
+    <device_only>DeviceVendor::POCKERII</device_only>
+    <autogen>
+      __KeyToKey__
+      KeyCode::CONTROL_R,
+      KeyCode::OPTION_R
+    </autogen>
+    <autogen>
+      __KeyToKey__
+      KeyCode::BACKQUOTE,
+      KeyCode::ESCAPE
+    </autogen>
+    <autogen>
+       __KeyToKey__
+       KeyCode::ESCAPE,
+       KeyCode::BACKQUOTE
+    </autogen>
+  </item>
+
+  <item>
+    <name>
+      Reverse Vertical &amp; Horizontal Scrolling for not apple trackpad
+    </name>
+    <identifier>
+      wolfwzr.reverse_both_scrolling_except_for_apple_trackpad
+    </identifier>
+    <device_not>DeviceVendor::APPLE_KEYBOARD_TRACKPAD</device_not>
+    <autogen>
+      __FlipScrollWheel__
+      Option::FLIPSCROLLWHEEL_HORIZONTAL,
+      Option::FLIPSCROLLWHEEL_VERTICAL,
+    </autogen>
+  </item>
+
+  <item>
+    <name>Tab to PageUp in Reader2</name>
+    <identifier>wolfwzr.tab_to_pageup_in_reader2</identifier>
+    <only>READER2</only>
+    <uielementrole_only>AXWebArea</uielementrole_only>
+    <autogen>
+      __KeyToKey__ 
+      KeyCode::TAB, ModifierFlag::NONE,
+      KeyCode::SPACE, ModifierFlag::SHIFT_L
+    </autogen>
+  </item>
+
+  <item>
+    <name>Command + h/j/k/l to Left/Down/Up/Right in WizNote</name>
+    <identifier>wolfwzr.direction_in_wiznote</identifier>
+    <only>WIZNOTE</only>
+    <autogen>
+      __KeyToKey__
+      KeyCode::J, ModifierFlag::COMMAND_L,
+      KeyCode::CURSOR_DOWN
+    </autogen>
+    <autogen>
+      __KeyToKey__
+      KeyCode::K, ModifierFlag::COMMAND_L,
+      KeyCode::CURSOR_UP
+    </autogen>
+    <autogen>
+      __KeyToKey__
+      KeyCode::H, ModifierFlag::COMMAND_L,
+      KeyCode::CURSOR_LEFT
+    </autogen>
+    <autogen>
+      __KeyToKey__
+      KeyCode::L, ModifierFlag::COMMAND_L,
+      KeyCode::CURSOR_RIGHT
+    </autogen>
+  </item>
+
+  <item>
+    <name>hjkl to arrow if you are not editing text</name>
+    <appendix>Supported Applications:</appendix>
+    <appendix>- skim</appendix>
+    <appendix>- vox</appendix>
+    <identifier>wolfwzr.hjkl_arrow</identifier>
+    <block>
+      <only>SKIM, VOX</only>
+      <uielementrole_not>AXTextField, AXTextArea</uielementrole_not>
+      <modifier_only>
+        ModifierFlag::NONE,
+        ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+      </modifier_only>
+      <autogen>__KeyToKey__ KeyCode::H, KeyCode::CURSOR_LEFT</autogen>
+      <autogen>__KeyToKey__ KeyCode::J, KeyCode::CURSOR_DOWN</autogen>
+      <autogen>__KeyToKey__ KeyCode::K, KeyCode::CURSOR_UP</autogen>
+      <autogen>__KeyToKey__ KeyCode::L, KeyCode::CURSOR_RIGHT</autogen>
+    </block>
+  </item>
+
+</item>
+</root>
