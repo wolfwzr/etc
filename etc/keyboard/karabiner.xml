@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <root>
 <item> 
-  <name>wolfwzr</name>
+  <name>Wolfwzr</name>
 
   <devicevendordef>
     <vendorname>POCKERII</vendorname>
@@ -34,6 +34,11 @@
     <appname>VOX</appname>
     <equal>com.coppertino.Vox</equal>
   </appdef>
+
+  <windownamedef>
+    <name>MENU_HELP</name>
+    <regex>^Help$</regex>
+  </windownamedef>
 
   <item>
     <name>F19 to Control_L</name>
@@ -122,12 +127,12 @@
   <item>
     <name>hjkl to arrow if you are not editing text</name>
     <appendix>Supported Applications:</appendix>
-    <appendix>- skim</appendix>
     <appendix>- vox</appendix>
-    <identifier>wolfwzr.hjkl_arrow</identifier>
+    <appendix>- preview, skim</appendix>
+    <identifier>wolfwzr.hjkl_to_arrow</identifier>
     <block>
-      <only>SKIM, VOX</only>
-      <uielementrole_not>AXTextField, AXTextArea</uielementrole_not>
+      <only>VOX</only>
+      <uielementrole_not>AXTextField, AXTextArea, AXMenu</uielementrole_not>
       <modifier_only>
         ModifierFlag::NONE,
         ModifierFlag::SHIFT_L | ModifierFlag::NONE,
@@ -137,6 +142,65 @@
       <autogen>__KeyToKey__ KeyCode::J, KeyCode::CURSOR_DOWN</autogen>
       <autogen>__KeyToKey__ KeyCode::K, KeyCode::CURSOR_UP</autogen>
       <autogen>__KeyToKey__ KeyCode::L, KeyCode::CURSOR_RIGHT</autogen>
+    </block>
+    <block>
+      <only>PREVIEW, SKIM</only>
+      <uielementrole_not>AXTextField</uielementrole_not>
+      <modifier_only>
+        ModifierFlag::NONE,
+        ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+      </modifier_only>
+      <autogen>__KeyToKey__ KeyCode::H, KeyCode::CURSOR_LEFT</autogen>
+      <autogen>__KeyToKey__ KeyCode::J, KeyCode::CURSOR_DOWN</autogen>
+      <autogen>__KeyToKey__ KeyCode::K, KeyCode::CURSOR_UP</autogen>
+      <autogen>__KeyToKey__ KeyCode::L, KeyCode::CURSOR_RIGHT</autogen>
+    </block>
+  </item>
+
+  <item>
+    <name>hjkl to arrow in menu</name>
+    <appendix>HJKL to arrow in 'Help' Menu</appendix>
+    <appendix>other Menu use hjkl to arrow</appendix>
+    <appendix>Supported Applications:</appendix>
+    <appendix>- all</appendix>
+    <identifier>wolfwzr.hjkl_to_arrow_in_menu</identifier>
+    <block>
+      <uielementrole_only>AXMenu</uielementrole_only>
+      <windowname_not>MENU_HELP</windowname_not>
+      <modifier_only>
+        ModifierFlag::NONE,
+        ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+      </modifier_only>
+      <autogen>__KeyToKey__ KeyCode::H, KeyCode::CURSOR_LEFT</autogen>
+      <autogen>__KeyToKey__ KeyCode::J, KeyCode::CURSOR_DOWN</autogen>
+      <autogen>__KeyToKey__ KeyCode::K, KeyCode::CURSOR_UP</autogen>
+      <autogen>__KeyToKey__ KeyCode::L, KeyCode::CURSOR_RIGHT</autogen>
+    </block>
+    <block>
+      <uielementrole_only>AXMenu,AXWindow</uielementrole_only>
+      <windowname_only>MENU_HELP</windowname_only>
+      <autogen>
+        __KeyToKey__
+        KeyCode::H, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::CURSOR_LEFT
+      </autogen>
+      <autogen>
+        __KeyToKey__
+        KeyCode::J, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::CURSOR_DOWN
+      </autogen>
+      <autogen>
+        __KeyToKey__
+        KeyCode::K, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::CURSOR_UP
+      </autogen>
+      <autogen>
+        __KeyToKey__
+        KeyCode::L, ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::CURSOR_RIGHT
+      </autogen>
     </block>
   </item>
 

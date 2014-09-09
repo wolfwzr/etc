@@ -36,6 +36,7 @@ $ bash install.sh
     - zi : toggle foldenable
     - Make Use of <Fn> <S-Fn> \<Fn>
     - Make Use of [a-z][0-9], <Leader>1
+    - noft Search is still underline style(no effect in osx)
 - bash
 
 存在的疑问

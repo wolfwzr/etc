@@ -98,7 +98,7 @@ endfunction
 " WOLFWZR_set_colorscheme: 设置配色方案 {{{2
 function WOLFWZR_set_colorscheme(color)
 
-    let l:WOLFWZR_color_scheme = a:color
+    let g:WOLFWZR_color_scheme = a:color
 
     " 为配合macosx夜间颜色反转，增加light主题{{{
     if has("macunix")
@@ -130,7 +130,7 @@ function WOLFWZR_set_colorscheme(color)
             " [*****] peaksea
             " [*****] pyte
             " [*****] Tomorrow
-            let l:WOLFWZR_color_scheme = "peaksea"
+            let g:WOLFWZR_color_scheme = "peaksea"
         endif
     endif
     "}}}
@@ -197,7 +197,7 @@ function WOLFWZR_set_colorscheme(color)
     " nazca
     " southwest-fog
     "}}}
-    execute 'colorscheme ' . l:WOLFWZR_color_scheme
+    execute 'colorscheme ' . g:WOLFWZR_color_scheme
     let s:WOLFWZR_colorscheme_applied = 1
 
     if &background != 'dark'
@@ -207,12 +207,12 @@ function WOLFWZR_set_colorscheme(color)
     endif
 
     " 调整{{{
-    if l:WOLFWZR_color_scheme == "codeschool"
+    if g:WOLFWZR_color_scheme == "codeschool"
         hi Normal guibg=#2d2d2d guifg=#cccccc
         hi Folded guibg=#353500 guifg=Grey65
-    elseif l:WOLFWZR_color_scheme == "gruvbox"
+    elseif g:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-    elseif l:WOLFWZR_color_scheme == "neon"
+    elseif g:WOLFWZR_color_scheme == "neon"
         hi Folded guibg=#003040 guifg=Grey
     endif
 
@@ -263,7 +263,7 @@ function WOLFWZR_set_colorscheme(color)
     execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
    
     hi Search NONE
-    hi Search term=reverse cterm=reverse gui=reverse,underline
+    hi Search term=reverse cterm=reverse gui=reverse
 
     hi Cursor NONE
     hi Cursor term=reverse cterm=reverse gui=reverse
@@ -334,6 +334,7 @@ function WOLFWZR_filetype_setting()
         \ || &filetype == "xsl"
         \ || &filetype == "xslt"
         call WOLFWZR_code_common_setting()
+        call WOLFWZR_set_colorscheme("corn")
     endif
     " }}}3
 endfunction
@@ -736,7 +737,9 @@ endif
 command EditRc   :tabnew ~wolfwzr/.vim/vimrc
 command SourceRc :source ~wolfwzr/.vim/vimrc
 "}}}
-
+" 刷新ColorScheme {{{
+nmap <Leader>c :call WOLFWZR_set_colorscheme(g:WOLFWZR_color_scheme)<CR>
+"}}}
 " }}}1
 
 " 文件类型相关设置 {{{1
