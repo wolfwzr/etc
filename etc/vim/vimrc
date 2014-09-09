@@ -29,6 +29,8 @@ function WOLFWZR_code_common_setting()
     " 按<Leader><Leader>执行make并打开quickfix窗口
     " 然后跳到第一个错误处(如果有错误的话)
     nnoremap <Leader><SPACE> :make<CR><CR>:cw<CR>:cc<CR>
+
+    call WOLFWZR_set_colorscheme("codeschool")
 endfunction
 "}}}2
 
@@ -335,6 +337,9 @@ function WOLFWZR_filetype_setting()
         \ || &filetype == "xslt"
         call WOLFWZR_code_common_setting()
         call WOLFWZR_set_colorscheme("corn")
+    " ELSE {{{3
+    else
+        call WOLFWZR_set_colorscheme("codeschool")
     endif
     " }}}3
 endfunction
