@@ -17,6 +17,12 @@ nnoremap <Leader>a :A<CR>
 " Mark插件 {{{1
 " Mark different color with different string
 Bundle 'vim-scripts/Mark'
+" 注意，Mark 插件会使用 autocmd! 注册事件，如下：
+"   autocmd! BufWinEnter * call s:UpdateMark()
+" 这将会清除默认 group 的所有已注册 BufWinEnter 事件，所以应该将它放到组里
+"   augroup mark
+"       autocmd! BufWinEnter * call s:UpdateMark()
+"   augroup END
 " }}}1
 
 " NERDTree插件 {{{1

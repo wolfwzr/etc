@@ -41,11 +41,18 @@
   </windownamedef>
 
   <item>
-    <name>F19 to Control_L</name>
-    <appendix>(+ When you type F19 only, send Escape)</appendix>
-    <appendix>(Caps Lock is mapped to F19 by Seil)</appendix>
-    <identifier>wolfwzr.f19_to_control_l</identifier>
-    <autogen>__KeyOverlaidModifier__ KeyCode::F19, KeyCode::CONTROL_L, KeyCode::ESCAPE</autogen>
+    <name>Caps Lock(F19) to Control_L</name>
+    <appendix>(+ When you type Caps Lock only, send Escape)</appendix>
+    <appendix>
+      (You need to change the keycode of Caps Lock to 80(F19) on Seil)
+    </appendix>
+    <identifier>wolfwzr.caps_lock_to_control_l</identifier>
+    <autogen>
+      __KeyOverlaidModifier__
+      KeyCode::F19,
+      KeyCode::CONTROL_L,
+      KeyCode::ESCAPE
+    </autogen>
   </item>
 
   <item>
@@ -73,7 +80,7 @@
 
   <item>
     <name>
-      Reverse Vertical &amp; Horizontal Scrolling for not apple trackpad
+      Reverse Vertical and Horizontal Scrolling for not apple trackpad
     </name>
     <identifier>
       wolfwzr.reverse_both_scrolling_except_for_apple_trackpad
