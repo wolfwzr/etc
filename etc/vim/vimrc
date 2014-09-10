@@ -8,6 +8,7 @@
 let s:WOLFWZR_colorscheme_applied = 0
 let s:WOLFWZR_backgroud = "light"
 let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
+let s:WOLFWZR_last_filetype = ""
 " }}}1
 
 " 函数定义 {{{1
@@ -282,6 +283,13 @@ endfunction
 
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
+    " 避免重复设置{{{
+    if &filetype == "" || &filetype == s:WOLFWZR_last_filetype
+        return
+    endif
+    let s:WOLFWZR_last_filetype = &filetype
+    "}}}
+
     " C/CPP/H/NASL/LEX/YACC/BISON/JAVA {{{3
     if &filetype == "c" 
        \ || &filetype == "h"
@@ -327,7 +335,7 @@ function WOLFWZR_filetype_setting()
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
         set foldenable
-        call WOLFWZR_set_colorscheme("darktango")
+        call WOLFWZR_set_colorscheme("two2tango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"
         \ || &filetype == "xml"
@@ -342,6 +350,7 @@ function WOLFWZR_filetype_setting()
         call WOLFWZR_set_colorscheme("codeschool")
     endif
     " }}}3
+    silent! PowerlineReloadColorscheme
 endfunction
 " }}}2
 
@@ -412,13 +421,13 @@ function WOLFWZR_cscope_load_db()
     " kill all connections
     cs kill -1
 
-    let l:cwd_bakup = getcwd()
+    let l:cwd_bakup = fnameescape(getcwd())
     let l:tmp_dir = ''
 
     " search the first database from current directory up to '/'
     " load the database and change CWD to that directory
     while l:tmp_dir != '/'
-        let l:tmp_dir = getcwd()
+        let l:tmp_dir = fnameescape(getcwd())
         if filereadable(l:tmp_dir . '/cscope.out')
             cs add ./cscope.out
             break
@@ -757,7 +766,8 @@ if has("autocmd")
     autocmd BufRead,BufNewFile *.{md,mkd,markdown} set filetype=mkd
 
     " 根据不同的文件类型做不同的设置
-    autocmd VimEnter * call WOLFWZR_filetype_setting()
+    "autocmd VimEnter * call WOLFWZR_filetype_setting()
+    autocmd BufEnter * call WOLFWZR_filetype_setting()
     nnoremap <Leader>w :call WOLFWZR_filetype_setting()<CR>
 
     " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
@@ -860,6 +870,7 @@ if has("cscope")
 
     command Csu call WOLFWZR_cscope_update_db()
     command Csl call WOLFWZR_cscope_load_db()
+
 endif
 " }}}1
 
