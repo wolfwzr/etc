@@ -26,7 +26,7 @@ function append_to_path()
     local new_path=$1
 
     [ -z "$new_path" ] && return
-    grep -s -q ":${new_path}:" <<< "$PATH" || grep -s -q ":$new_path$" <<< "$PATH" 
+    echo $PATH | grep -s -q ":${new_path}[:$]"
     [ $? -ne 0 ] && PATH="$PATH:$new_path"
     export PATH
 }
@@ -209,6 +209,9 @@ else
     alias vimsmbconf='vim /etc/samba/smb.conf'
     alias vikbconf='gvim ~wolfwzr/.Xmodmap'
 fi
+# most usage of git
+alias gitpl='git pull origin dev'
+alias gitps='git push origin dev'
 
 ############################################################
 # z - a better cd

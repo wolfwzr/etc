@@ -335,6 +335,8 @@ function WOLFWZR_filetype_setting()
     elseif &filetype == "mkd"
         call WOLFWZR_code_common_setting()
         set foldenable
+        set nonu
+        set norelativenumber
         call WOLFWZR_set_colorscheme("two2tango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"

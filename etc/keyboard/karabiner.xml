@@ -173,7 +173,7 @@
     <appendix>- all</appendix>
     <identifier>wolfwzr.hjkl_to_arrow_in_menu</identifier>
     <block>
-      <uielementrole_only>AXMenu</uielementrole_only>
+      <uielementrole_only>AXMenu,AXMenuBar</uielementrole_only>
       <windowname_not>MENU_HELP</windowname_not>
       <modifier_only>
         ModifierFlag::NONE,
