@@ -169,6 +169,7 @@ alias gpu='lspci | grep -i "vga\|3d\|2d"'
 
 alias o='open'
 alias g='grep'
+alias f='find . -iname'
 
 alias s='source /etc/wolfwzr.bashrc'
 
