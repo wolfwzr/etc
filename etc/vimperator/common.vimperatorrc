@@ -15,7 +15,7 @@ nnoremap <BS> :back<Return>
 nnoremap <Leader>r :emenu Tools.Clearly<Return>
 nnoremap <Leader>d :emenu Tools.Web Developer.Network<Return>
 nnoremap <Leader>l :emenu View.Show All Tabs<Return>
-nnoremap <Leader>f :set fullscreen!<Return>
+"nnoremap <Leader>f :set fullscreen!<Return>
 nnoremap <Leader>y :tab downloads<Return>
 nnoremap <Leader>a :tab addons<Return>
 nnoremap <Leader>p :preferences<Return>

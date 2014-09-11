@@ -19,3 +19,7 @@ cnoremap <C-n> <Down>
 cnoremap <C-p> <Up>
 cnoremap <C-b> <Home>
 cnoremap <C-e> <End>
+
+nnoremap <C-Enter> :set fullscreen!<Return>
+
+" vim: set ft=vim:
