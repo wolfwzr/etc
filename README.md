@@ -50,6 +50,9 @@ $ bash install.sh
     - zi : toggle foldenable
     - Make Use of <Fn> <S-Fn> \<Fn>
     - Make Use of [a-z][0-9], <Leader>1
+    - 在 VimBufEnter 事件触发 filetype_setting 的基础上
+        - 根据文件行数来决定是否启用 CursorLine
+        - qf 类型中取消或定义淡淡的 Search
 - bash
 
 存在的疑问

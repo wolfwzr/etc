@@ -284,7 +284,10 @@ endfunction
 " WOLFWZR_filetype_setting: FileType处理 {{{2
 function WOLFWZR_filetype_setting()
     " 避免重复设置{{{
-    if &filetype == "" || &filetype == s:WOLFWZR_last_filetype
+    if &filetype == "" 
+        \ || &filetype == s:WOLFWZR_last_filetype
+        \ || &filetype == "man"
+        \ || &filetype == "qf"
         return
     endif
     let s:WOLFWZR_last_filetype = &filetype
