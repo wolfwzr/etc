@@ -8,8 +8,12 @@
 	co = checkout
 	ci = commit
 	br = branch
-	pl = pull origin dev
-	ps = push origin dev
+	pl = pull
+	ps = push
+	plod = pull origin dev
+	psod = push origin dev
+	plom = pull origin master
+	psom = push origin master
 	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
 	last = log -1
 	unstage = reset HEAD

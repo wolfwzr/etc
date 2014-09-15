@@ -210,9 +210,6 @@ else
     alias vimsmbconf='vim /etc/samba/smb.conf'
     alias vikbconf='gvim ~wolfwzr/.Xmodmap'
 fi
-# most usage of git
-alias gitpl='git pull origin dev'
-alias gitps='git push origin dev'
 
 ############################################################
 # z - a better cd
