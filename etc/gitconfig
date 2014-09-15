@@ -1,0 +1,15 @@
+[user]
+	name = wolfwzr
+	email = wolfwzr.china@gmail.com
+[color]
+	ui = true
+[alias]
+	st = status
+	co = checkout
+	ci = commit
+	br = branch
+	pl = pull origin dev
+	ps = push origin dev
+	lg = log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit
+	last = log -1
+	unstage = reset HEAD
