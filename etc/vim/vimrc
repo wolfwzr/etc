@@ -286,8 +286,10 @@ function WOLFWZR_filetype_setting()
     " 避免重复设置{{{
     if &filetype == "" 
         \ || &filetype == s:WOLFWZR_last_filetype
-        \ || &filetype == "man"
-        \ || &filetype == "qf"
+        \ || s:WOLFWZR_last_filetype == "man"       || &filetype == "man"
+        \ || s:WOLFWZR_last_filetype == "qf"        || &filetype == "qf"
+        \ || s:WOLFWZR_last_filetype == "tarbar"    || &filetype == "tagbar"
+        \ || s:WOLFWZR_last_filetype == "nerdtree"  || &filetype == "nerdtree"
         return
     endif
     let s:WOLFWZR_last_filetype = &filetype
@@ -756,8 +758,13 @@ endif
 command EditRc   :tabnew ~wolfwzr/.vim/vimrc
 command SourceRc :source ~wolfwzr/.vim/vimrc
 "}}}
-" 刷新ColorScheme {{{
+
+" 刷新 ColorScheme {{{
 nmap <Leader>c :call WOLFWZR_set_colorscheme(g:WOLFWZR_color_scheme)<CR>
+"}}}
+
+" 删除当前 buffer {{{
+nmap <Leader><BS> :bdelete %<CR>
 "}}}
 " }}}1
 
