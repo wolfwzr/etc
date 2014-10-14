@@ -1,4 +1,7 @@
 " for osx
+nnoremap <M-i> :pageinfo<Return>
+nnoremap <M-S-i> :emenu Tools.Page Info<Return>
+
 inoremap <M-j> <Right>
 inoremap <M-k> <Left>
 inoremap <M-h> <BS>
