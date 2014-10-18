@@ -85,7 +85,7 @@ function wolf_update_ps1()
     fi
     prefix="\[\033[37m\]["
     time="\[\033[36m\]\t"
-    if [ $(id -u) = '0' ]
+    if [ "$(id -u)" = '0' ]
     then
         username="\[\033[36m\]\u"
     else
