@@ -24,7 +24,7 @@ nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
 
 set defsearch=g
 
-set titlestring=wolfwzr
+"set titlestring=wolfwzr
 
 " ]]
 set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$

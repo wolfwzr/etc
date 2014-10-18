@@ -1,6 +1,8 @@
 " for linux
 
-nnoremap <C-i> :emenu Tools.Page Info<Return>
+nnoremap <C-i> :pageinfo<Return>
+nnoremap <C-S-i> :emenu Tools.Page Info<Return>
+nnoremap <C-p> :emenu File.Print Preview<Return>
 
 inoremap <C-j> <Right>
 inoremap <C-k> <Left>
