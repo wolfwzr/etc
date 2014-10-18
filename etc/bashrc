@@ -204,7 +204,7 @@ if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf='gvim /usr/local/etc/smb.conf'
     alias vimsmbconf='vim /usr/local/etc/smb.conf'
-    alias vikbconf='open "/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
+    alias vikbconf='vi "/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
 else
     alias vismbconf='gvim /etc/samba/smb.conf'
     alias vimsmbconf='vim /etc/samba/smb.conf'
