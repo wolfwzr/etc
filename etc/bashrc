@@ -43,6 +43,7 @@ append_to_path "/usr/bin"
 append_to_path "/usr/sbin"
 append_to_path "/usr/local/bin"
 append_to_path "/usr/local/sbin"
+append_to_path "/usr/libexec"
 if [ "$OS_TYPE" = "osx" ]
 then
     append_to_path "$WOLFWZR_HOME/.local/bin"
@@ -192,24 +193,25 @@ alias ports='netstat -tulanp'
 export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
-alias vi='gvim'
-alias vibashrc='gvim /etc/wolfwzr.bashrc'
-alias vimbashrc='vim /etc/wolfwzr.bashrc'
-alias virc="gvim $WOLFWZR_HOME/.vim/vimrc"
-alias vimrc="vim $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf='gvim ~wolfwzr/.ssh/config'
-alias vimsshconf='vim ~wolfwzr/.ssh/config'
-alias vihosts='gvim /etc/hosts'
-alias vimhosts='vim /etc/hosts'
+
+if [ -n "$DISPLAY" ]
+then
+    if which gvim 2>&1 >/dev/null; then alias vi='gvim'; fi
+else
+    if which vim 2>&1 >/dev/null; then alias vi='vim'; fi
+fi
+
+alias vibashrc='vi /etc/wolfwzr.bashrc'
+alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
+alias visshconf='vi ~wolfwzr/.ssh/config'
+alias vihosts='vi /etc/hosts'
 if [ "$OS_TYPE" = "osx" ]
 then
-    alias vismbconf='gvim /usr/local/etc/smb.conf'
-    alias vimsmbconf='vim /usr/local/etc/smb.conf'
-    alias vikbconf='vi "/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
+    alias vismbconf='vi /usr/local/etc/smb.conf'
+    alias vikbconf='vi "Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
 else
-    alias vismbconf='gvim /etc/samba/smb.conf'
-    alias vimsmbconf='vim /etc/samba/smb.conf'
-    alias vikbconf='gvim ~wolfwzr/.Xmodmap'
+    alias vismbconf='vi /etc/samba/smb.conf'
+    alias vikbconf='vi ~wolfwzr/.Xmodmap'
 fi
 
 ############################################################
