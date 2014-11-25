@@ -1,6 +1,7 @@
 " for osx
 nnoremap <M-i>   :pageinfo<Return>
 nnoremap <M-S-i> :emenu Tools.Page Info<Return>
+nnoremap <M-e> <M-S-e>
 
 " Group tabs
 nnoremap <M-e>   <M-S-e>

@@ -650,10 +650,10 @@ endif
 " 复制/剪切/粘贴 {{{2
 if has("gui_running")
     " 省事，Copy/Cut/Past 统一用 Shift+Enter 来完成
-    nnoremap <S-Enter> "+p
-    vnoremap <S-Enter> "+y
-    inoremap <S-Enter> <C-r>+
-    cnoremap <S-Enter> <C-r>+
+    "nnoremap <S-Enter> "+p
+    "vnoremap <S-Enter> "+y
+    "inoremap <S-Enter> <C-r>+
+    "cnoremap <S-Enter> <C-r>+
 
     if ! has("maxunix")
         vnoremap <C-c> "+y
@@ -824,11 +824,11 @@ if has("gui_running")
     call WOLFWZR_set_guifont()
 
     " 设置窗口位置
-    if s:WOLFWZR_cpu_info == "Atom"
-        winpos 120 0
-    else
-        winpos 245 10
-    endif
+    "if s:WOLFWZR_cpu_info == "Atom"
+    "    winpos 120 0
+    "else
+    "    winpos 245 10
+    "endif
     set columns=85
     set lines=40
 
