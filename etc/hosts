@@ -30,10 +30,7 @@ ff02::1         ipv6-allnodes
 ff02::2         ipv6-allrouters
 ff02::3         ipv6-allhosts
 
-172.152.254.200 rd_hz_bug.dptechnology.net
-172.153.254.55  sse.dptechnology.net
 # END OF COMPANY ONLY
-
 
 #######################################################
 # RMBP ONLY
@@ -55,13 +52,9 @@ ff02::3         ipv6-allhosts
 # COMMON
 #######################################################
 
-#203.208.46.200 www.google.com
-103.1.139.219 www.google.com
-103.1.139.219 accounts.google.com
-103.1.139.219 talk.google.com
-#74.125.130.106 www.google.com
-#209.116.186.231 www.google.com
-#103.1.139.219 www.google.com
-#209.85.225.97www.google.com
+209.116.186.231 www.google.com
+209.116.186.231 talk.google.com
+209.116.186.231 mail.google.com
+209.116.186.231 accounts.google.com
 
 162.159.255.4 www.feedly.com s3.feedly.com

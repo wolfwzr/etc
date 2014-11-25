@@ -1,15 +1,16 @@
 " for linux
 
-nnoremap <C-i> :pageinfo<Return>
+nnoremap <C-i>   :pageinfo<Return>
 nnoremap <C-S-i> :emenu Tools.Page Info<Return>
-nnoremap <C-p> :emenu File.Print Preview<Return>
+nnoremap <C-p>   :emenu File.Print Preview<Return>
 
-inoremap <C-j> <Right>
-inoremap <C-k> <Left>
-inoremap <C-h> <BS>
-inoremap <C-l> <Del>
-inoremap <C-n> <Down>
-inoremap <C-p> <Up>
+" Group tabs
+nnoremap <C-e>   <C-S-e>
+
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-h> <Left>
+inoremap <C-l> <Right>
 inoremap <C-b> <Home>
 inoremap <C-e> <End>
 

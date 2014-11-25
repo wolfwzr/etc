@@ -1,13 +1,14 @@
 " for osx
-nnoremap <M-i> :pageinfo<Return>
+nnoremap <M-i>   :pageinfo<Return>
 nnoremap <M-S-i> :emenu Tools.Page Info<Return>
 
-inoremap <M-j> <Right>
-inoremap <M-k> <Left>
-inoremap <M-h> <BS>
-inoremap <M-l> <Del>
-inoremap <M-n> <Down>
-inoremap <M-p> <Up>
+" Group tabs
+nnoremap <M-e>   <M-S-e>
+
+inoremap <M-j> <Down>
+inoremap <M-k> <Up>
+inoremap <M-h> <Left>
+inoremap <M-l> <Right>
 inoremap <M-b> <Home>
 inoremap <M-e> <End>
 

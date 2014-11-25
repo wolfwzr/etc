@@ -49,7 +49,7 @@ then
 else
     append_to_path "/opt/cross-mips32/bin"
 fi
-uniq_path
+#uniq_path
 
 export HISTTIMEFORMAT="[%m-%d %R] "
 
@@ -102,8 +102,12 @@ export PROMPT_COMMAND="wolf_update_ps1"
 ############################################################
 # BASH COMPLETION
 ############################################################
-if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
-    . "$(brew --prefix)/etc/bash_completion"
+if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
+then
+    if [ -f "$(brew --prefix)/etc/bash_completion" ]
+    then
+        . "$(brew --prefix)/etc/bash_completion"
+    fi
 fi
 
 ############################################################
@@ -137,6 +141,9 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias pg='ps aux | grep -v $$ | grep -i'
+    alias sdcv='sdcv --color --utf8-input --utf8-output'
+    alias srh='brew search'
+    alias ist='brew install'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
@@ -152,6 +159,20 @@ else
     alias ds='d * | sort -h'
     alias pg='ps -elf | grep -v $$ | grep -i'
     alias office='/usr/lib/libreoffice/program/soffice'
+    alias sdcv='sdcv --utf8-input --utf8-output'
+    if [ -n "$(which zypper 2>/dev/null)" ]
+    then
+        alias srh='zypper search -d'
+        alias ist='sudo zypper install'
+    elif [ -n "$(which yum 2>/dev/null)" ]
+    then
+        alias srh='yum search'
+        alias ist='sudo yum install'
+    elif [ -n "$(which apt-get 2>/dev/null)" ]
+    then
+        alias srh='apt-cache search'
+        alias ist='sudo apt-get install'
+    fi
 fi
 alias o='open'
 alias lb='lsblk'
@@ -161,11 +182,10 @@ alias .4='cd ../../..'
 alias .5='cd ../../../..'
 alias .6='cd ../../../../..'
 alias .7='cd ../../../../../..'
-alias sdcv='sdcv --color --utf8-input --utf8-output'
 alias iconvcat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
-alias wget='wget -c'
+alias wget='wget -c -L'
 alias gpu='lspci | grep -i "vga\|3d\|2d"'
 
 alias o='open'
@@ -254,8 +274,9 @@ then
     alias gsae='cd $_sae'
 else
     # hse
-    _hse='/home/wolfwzr/Documents/scanner/svn/scanner/user/modules/hse'
+    _hse='/home/wolfwzr/Documents/work/scanner/svn/scanner/user/modules/hse'
     alias ghse='cd $_hse'
+    alias hse='(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)'
 
     # github
     _gh="/home/wolfwzr/Documents/myprojects/github"
