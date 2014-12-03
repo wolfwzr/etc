@@ -79,6 +79,10 @@ function WOLFWZR_color_modify(color, oper, modify_value)
         let l:col_r = '0x' . strpart(a:color, 1, 2) - a:modify_value
         let l:col_g = '0x' . strpart(a:color, 3, 2) - a:modify_value
         let l:col_b = '0x' . strpart(a:color, 5, 2) - a:modify_value
+    elseif a:oper == 'invert'
+        let l:col_r = 0xff - ('0x' . strpart(a:color, 1, 2))
+        let l:col_g = 0xff - ('0x' . strpart(a:color, 3, 2))
+        let l:col_b = 0xff - ('0x' . strpart(a:color, 5, 2))
     else
         echom "WOLFWZR_color_modify: invalid oper"
         return a:color
@@ -264,6 +268,11 @@ function WOLFWZR_set_colorscheme(color)
     let l:tmp_color = WOLFWZR_color_modify
             \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
     execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+
+    " SpecialKey
+    execute 'hi SpecialKey guibg=' . synIDattr(hlID("Normal"), "bg#", "gui")
+    execute 'hi SpecialKey guifg=' . WOLFWZR_color_modify
+             \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'sub', 0x80)
    
     hi Search NONE
     hi Search term=reverse cterm=reverse gui=reverse
@@ -314,6 +323,8 @@ function WOLFWZR_filetype_setting()
         " gruvbox (要使这个主题生效，得先设置主题为greyblue)
         call WOLFWZR_set_colorscheme("greyblue")
         call WOLFWZR_set_colorscheme("gruvbox")
+
+        match Error /\s\+$/
     " ASM {{{3
     elseif &filetype == "asm"
         set foldmethod=marker
@@ -552,6 +563,18 @@ if has("autocmd")
       \ endif 
 endif
 " }}}2
+" 空格与Tab相关{{{2
+" Tab占四个空格的长度
+set ts=4
+" 显示特殊字符（listchars选项所配置的特殊字符）
+set list
+" 配置要显示的特殊字符
+set listchars=tab:\|\ ,nbsp:%,trail:-
+" 配置特殊字符显示配色
+" hi SpecialKey ...
+" 醒目显示行尾多余空格
+" match Error /\s\+$/
+" }}}2
 " 杂项设置{{{2
 set wrap
 " 取消CursorLine
@@ -604,6 +627,25 @@ if has("gui_running")
     "   :colder 查看上一个quickfix窗口
     "   :cnewer 查看下一个quickfix窗口
 endif
+" }}}2
+
+" {}()跳转 {{{2
+"   跳到上一个或下一个位于行首的{或}
+"   [[ 跳到上一个位于行首的{（默认行为）
+"   [] 跳到上一个位于行首的}（默认行为）
+"   ][ 跳到下一个位于行首的{（默认行为）
+"   ]] 跳到下一个位于行首的}（默认行为）
+" 补充：
+" 当光标在一个{}块内部时:
+"   [{ 上跳到{处（默认行为）
+"   ]} 下跳到}处（默认行为）
+" 当光标在一个()块内部时:
+"   [( 上跳到(处（默认行为）
+"   ]) 下跳到)处（默认行为）
+" 当光标在一个{}/()/[]的一边上时:
+"   % 跳到另一边（默认行为）
+nnoremap ][ ]]
+nnoremap ]] ][
 " }}}2
 
 " Tab跳转 {{{2
@@ -807,7 +849,8 @@ if has("autocmd")
             \ iabbrev <buffer> cd^ ``<ESC>i
         autocmd FileType qf
             \ nnoremap <buffer> o <CR>|
-            \ nnoremap <buffer> q :q<CR>
+            \ nnoremap <buffer> q :q<CR>|
+            \ resize 5
         autocmd FileType man
             \ nnoremap <buffer> q :q<CR>|
             \ nnoremap <buffer> o :Man <C-r>=expand("<cword>")<CR><CR>|
