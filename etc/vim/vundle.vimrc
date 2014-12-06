@@ -214,6 +214,29 @@ endif
 let g:Powerline_stl_path_style = 'short'
 "}}}
 
+" indentLine插件 {{{1
+" 在代码中显示垂直对齐线
+"   适合于空格缩进的代码，
+"   如果是Tab缩进则没必要使用插件，使用VIM自带的功能就好了：
+"       :set list
+"       :set listchars=tab:\|\ 
+" 使用方法
+" :IndentLinesEnable
+Bundle 'Yggdroot/indentLine'
+" IndentLinesEnable
+" 设置对齐线的背景色
+"   let g:indentLine_color_term = 239
+"   let g:indentLine_color_gui = '#A4E57E'
+"   hi Conceal ...
+" 设置对齐线字符(│,|,¦,┊,┆,︙)
+let g:indentLine_char = '┊'
+let g:indentLine_first_char = '┊'
+let g:indentLine_faster = 1
+"let g:indentLine_showFirstIndentLevel = 1
+"let g:indentLine_fileType = ['c', 'cpp', 'python', 'sh']
+let g:indentLine_fileTypeExclude = ['man', 'help', 'qf']
+" }}}1
+
 " 未启用插件
 
 " bufexplorer.zip插件(未启用) {{{1
