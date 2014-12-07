@@ -219,6 +219,7 @@ function WOLFWZR_set_colorscheme(color)
     if g:WOLFWZR_color_scheme == "codeschool"
         hi Normal guibg=#2d2d2d guifg=#cccccc
         hi Folded guibg=#353500 guifg=Grey65
+        hi NonText guibg=#2d2d2d
     elseif g:WOLFWZR_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
     elseif g:WOLFWZR_color_scheme == "neon"
@@ -238,8 +239,14 @@ function WOLFWZR_set_colorscheme(color)
     execute 'hi LineNr guibg=' . WOLFWZR_color_modify
                 \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x3)
     execute 'hi LineNr guifg=' . WOLFWZR_color_modify
-                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x60)
+                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
 
+    " SpecialKey/Conceal
+    execute 'hi SpecialKey guibg=' . synIDattr(hlID("Normal"), "bg#", "gui")
+    execute 'hi SpecialKey gui=NONE guifg=' . WOLFWZR_color_modify
+             \ (synIDattr(hlID("LineNr"), "fg#", "gui"), 'sub', 0x30)
+    " Conceal for indentlines plugin
+    hi! link Conceal SpecialKey
     " Folded
     execute 'hi Folded guibg=' . WOLFWZR_color_modify
                 \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x20)
@@ -272,13 +279,6 @@ function WOLFWZR_set_colorscheme(color)
     let l:tmp_color = WOLFWZR_color_modify
             \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
     execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
-
-    " SpecialKey/Conceal
-    execute 'hi SpecialKey guibg=' . synIDattr(hlID("Normal"), "bg#", "gui")
-    execute 'hi SpecialKey gui=NONE guifg=' . WOLFWZR_color_modify
-             \ (synIDattr(hlID("Comment"), "fg#", "gui"), 'sub', 0x40)
-    " Conceal for indentlines plugin
-    hi! link Conceal SpecialKey
 
     hi Search NONE
     hi Search term=reverse cterm=reverse gui=reverse
@@ -330,9 +330,6 @@ function WOLFWZR_filetype_setting()
         "set cc=80
         highlight WarningCols gui=undercurl
         match WarningCols /\%>80v/
-        IndentLinesDisable
-        let g:indentLine_showFirstIndentLevel = 0
-        IndentLinesEnable
     " ASM {{{3
     elseif &filetype == "asm"
         set foldmethod=marker
@@ -579,6 +576,14 @@ set listchars=tab:\|\ ,nbsp:%,trail:-
 " 醒目显示行尾多余空格
 " match Error /\s\+$/
 " }}}2
+" 输入法设置{{{2
+" 切换到Normal模式时自动使用英文输入法
+" 切换到Insert模式时自动使用上次在Insert模式下使用的输入法
+set noimdisable
+"set imi=1
+"autocmd! InsertLeave * set imdisable | set iminsert=0
+"autocmd! InsertEnter * set noimdisable | set iminsert=2
+"}}}2
 " 杂项设置{{{2
 set wrap
 " 取消CursorLine
