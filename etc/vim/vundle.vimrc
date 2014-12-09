@@ -47,7 +47,7 @@ let g:NERDTreeWinSize=25
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
 "   2. 关闭 NERDTree 窗口，并将 vim 窗口宽度减少 g:NERDTreeWinSize
-function WOLFWZR_nerdtree_toggle()
+function W_nerdtree_toggle()
     NERDTreeToggle
     if has("gui_running")
         let l:vim_window_width = &columns
@@ -60,10 +60,10 @@ function WOLFWZR_nerdtree_toggle()
         execute 'set columns='.l:vim_window_width
     endif
 endfunction
-nnoremap <Leader>e :call WOLFWZR_nerdtree_toggle()<CR>
+nnoremap <Leader>e :call W_nerdtree_toggle()<CR>
 "if has("autocmd")
 "    这个nnoremap未能生效，因为被nerdtree插件覆盖了吗？
-"    autocmd FileType nerdtree nnoremap <buffer> q :call WOLFWZR_nerdtree_toggle()<CR>
+"    autocmd FileType nerdtree nnoremap <buffer> q :call W_nerdtree_toggle()<CR>
 "endif
 " }}}1
 
@@ -77,7 +77,7 @@ let g:tagbar_width=28
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
 "   2. 关闭 Tagbar 窗口，并将 vim 窗口宽度减少 g:tagbar_width
-function WOLFWZR_tagbar_toggle()
+function W_tagbar_toggle()
     if has("gui_running")
         let l:vim_window_width = &columns
         " Tagbar now is opened
@@ -94,9 +94,9 @@ function WOLFWZR_tagbar_toggle()
         TagbarToggle
     endif
 endfunction
-nnoremap <Leader>t :call WOLFWZR_tagbar_toggle()<CR>
+nnoremap <Leader>t :call W_tagbar_toggle()<CR>
 augroup tagbar_autocmd
-    autocmd FileType tagbar 
+    autocmd FileType tagbar
         \ nnoremap <buffer> J <C-d>|
         \ nnoremap <buffer> K <C-u>
 augroup end
@@ -120,10 +120,10 @@ let g:ctrlp_working_path_mode = 'c'
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*.a,*.so,*.swp,*.zip,*.o,a.out
 let g:ctrlp_custom_ignore = {
-  \ 'dir':  '\v[\/]\.(git|hg|svn)$',
-  \ 'file': '\v\.(exe|so|dll)$',
-  \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
-  \ }
+    \ 'dir':  '\v[\/]\.(git|hg|svn)$',
+    \ 'file': '\v\.(exe|so|dll)$',
+    \ 'link': 'SOME_BAD_SYMBOLIC_LINKS',
+    \ }
 " }}}1
 
 " vim-markdown插件 {{{1

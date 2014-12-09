@@ -2,20 +2,19 @@
 " Please ***DO NOT USE CHINESE*** in this file
 
 if has("gui_running") && has("macunix")
-
     " Alt(Opt) Key was used ad GM, so avoid use it
-    
+
     " GUI Window Position Adjust {{{1
     " <A-j>
-    "nnoremap ∆ :call WOLFWZR_winpos_adjust(0,10)<CR>
+    "nnoremap ∆ :call W_winpos_adjust(0,10)<CR>
     " <A-k>
-    "nnoremap ˚ :call WOLFWZR_winpos_adjust(0,-10)<CR>
+    "nnoremap ˚ :call W_winpos_adjust(0,-10)<CR>
     " <A-h>
-    "nnoremap ˙ :call WOLFWZR_winpos_adjust(-20,0)<CR>
+    "nnoremap ˙ :call W_winpos_adjust(-20,0)<CR>
     " <A-l>
-    "nnoremap ¬ :call WOLFWZR_winpos_adjust(20,0)<CR>
+    "nnoremap ¬ :call W_winpos_adjust(20,0)<CR>
     " }}}1
-    
+
     " GUI Window Size Adjust {{{1
     " <A-S-j>
     "nnoremap Ô :set lines+=1<CR>

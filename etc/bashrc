@@ -188,6 +188,7 @@ alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
 alias wget='wget -c -L'
 alias gpu='lspci | grep -i "vga\|3d\|2d"'
+alias p8='ping 8.8.8.8'
 
 alias o='open'
 alias g='grep'
