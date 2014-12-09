@@ -143,7 +143,7 @@ let g:ctrlp_custom_ignore = {
 Bundle 'plasticboy/vim-markdown'
 " let g:vim_markdown_no_default_key_mappings=1
 " let g:vim_markdown_folding_disabled=1
-let g:vim_markdown_initial_foldlevel=1
+let g:vim_markdown_initial_foldlevel=2
 " }}}1
 
 " YouCompleteMe插件 {{{1

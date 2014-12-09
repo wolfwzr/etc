@@ -9,10 +9,10 @@ let s:WOLFWZR_colorscheme_applied = 0
 let s:WOLFWZR_backgroud = "light"
 let s:WOLFWZR_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 let s:WOLFWZR_last_filetype = ""
+let s:W_last_insert_im_status = 0
 " }}}1
 
 " 函数定义 {{{1
-
 " WOLFWZR_code_common_setting: 代码通用设置 {{{2
 function WOLFWZR_code_common_setting()
     syntax on
@@ -514,7 +514,25 @@ function WOLFWZR_FONT_REVIEW_TEST()
     set guifont=Ubuntu\ Mono\ 14
 endfunction
 "}}}2
-
+" W_set_fcitx: Insert/Normal模式切换时自动切换fcitx状态{{{2
+function W_set_fcitx(event)
+    if a:event == "InsertEnter"
+        if s:W_last_insert_im_status == 1       " fcitx is inactive
+            call system("fcitx-remote -c")      " inactive fcitx
+        elseif s:W_last_insert_im_status == 2   " fcitx is active
+            call system("fcitx-remote -o")      " active fcitx
+        endif
+    elseif a:event == "InsertLeave"
+        if executable("fcitx-remote")
+            let s:W_last_insert_im_status =
+                \ system("fcitx-remote | tr -d '\r\n'")
+        endif
+        if s:W_last_insert_im_status == 2       " fcitx is active
+            call system("fcitx-remote -c")      " inactive fcitx
+        endif
+    endif
+endfunction
+"}}}2
 " }}}1
 
 " 基础设置 {{{1
@@ -579,6 +597,14 @@ set listchars=tab:\|\ ,nbsp:%,trail:-
 " 醒目显示行尾多余空格
 " match Error /\s\+$/
 " }}}2
+" 输入法切换设置{{{2
+if has("macunix")
+    set noimd
+elseif has("unix")
+    au InsertEnter * call W_set_fcitx("InsertEnter")
+    au InsertLeave * call W_set_fcitx("InsertLeave")
+endif
+"}}}2
 " 杂项设置{{{2
 set wrap
 " 取消CursorLine
