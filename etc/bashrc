@@ -72,25 +72,29 @@ function wolf_update_ps1()
     local prefix
     local suffix
 
-    if [ $exit_code -eq 0 ] 
+    if [ $exit_code -ne 0 ]
     then
-        if [ "$TERMINAL_PROFILE" = "Light" ]
-        then
-            last_cmd_exit_code="\[\033[47;37m\]"
-        else
-            last_cmd_exit_code="\[\033[40;37m\]"
-        fi
-    else
-        # reverse on error
-        last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
+        # reverse on error ✘
+        #last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
+
+        # warnning in PS1 head
+        last_cmd_exit_code="\[\033[35;40m\]${exit_code}✘\[\033[0m\]"
     fi
-    prefix="\[\033[37m\]["
-    time="\[\033[36m\]\t"
-    if [ "$(id -u)" = '0' ]
+
+    if [ "$TERMINAL_PROFILE" = "Light" ]
     then
-        username="\[\033[36m\]\u"
+        prefix="\[\033[47;37m\]"
     else
-        username="\[\033[37m\]\u"
+        prefix="\[\033[40;37m\]"
+    fi
+    prefix="$prefix\[\033[37m\]["
+
+    time="\[\033[37m\]\t"
+    if [ "$UID" = '0' ]
+    then
+        username="\[\033[35m\]\u"
+    else
+        username="\[\033[38m\]\u"
     fi
     work_dir="\[\033[33m\]\W"
     suffix="\[\033[37m\]]\[\033[0m\] "
@@ -229,7 +233,7 @@ alias vihosts='vi /etc/hosts'
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf='vi /usr/local/etc/smb.conf'
-    alias vikbconf='vi "Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
+    alias vikbconf='vi "/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
 else
     alias vismbconf='vi /etc/samba/smb.conf'
     alias vikbconf='vi ~wolfwzr/.Xmodmap'
@@ -276,10 +280,16 @@ then
     _sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
     alias gsae='cd $_sae'
 else
-    # hse
+    # scn/hse/plug
+    _scn='/home/wolfwzr/Documents/work/scanner'
+    alias gscn='cd $_scn'
+
     _hse='/home/wolfwzr/Documents/work/scanner/svn/scanner/user/modules/hse'
     alias ghse='cd $_hse'
     alias hse='(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)'
+
+    _plg='/home/wolfwzr/Documents/work/scanner/svn/signature/tr/sig/plugins'
+    alias gplg='cd $_plg'
 
     # github
     _gh="/home/wolfwzr/Documents/myprojects/github"

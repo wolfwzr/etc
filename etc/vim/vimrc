@@ -242,11 +242,13 @@ function W_set_colorscheme(color)
                 \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
 
     " SpecialKey/Conceal
+    " SpecialKey for chars setting by (:set listchars)
     execute 'hi SpecialKey guibg=' . synIDattr(hlID("Normal"), "bg#", "gui")
     execute 'hi SpecialKey gui=NONE guifg=' . W_color_modify
-             \ (synIDattr(hlID("LineNr"), "fg#", "gui"), 'sub', 0x30)
-    " Conceal for indentlines plugin
+                    \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x18)
+    " Conceal for indentline plugin
     hi! link Conceal SpecialKey
+
     " Folded
     execute 'hi Folded guibg=' . W_color_modify
                 \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x20)
@@ -255,29 +257,29 @@ function W_set_colorscheme(color)
     "hi! link Pmenu LineNr
     "hi! link PmenuSel Cursor
     execute 'hi Pmenu gui=NONE guibg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "bg#", "gui"), "add", 0x10)
-            \ . ' guifg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'sub', 0x25)
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), "add", 0x10)
+                \ . ' guifg=' . W_color_modify
+                \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'sub', 0x25)
     execute 'hi PmenuSel guibg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
-            \ . ' guifg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'add', 0x30)
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
+                \ . ' guifg=' . W_color_modify
+                \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'add', 0x30)
     hi! link ColorColumn Pmenu
 
     " Visual
     hi Visual NONE
     execute 'hi Visual cterm=reverse term=reverse'
-            \. ' guibg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
+                \. ' guibg=' . W_color_modify
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
 
     " TabLine/TabLineSel/TabLineFill
     execute 'hi TabLineSel gui=bold'
-            \ 'guibg=' . synIDattr(hlID("Normal"), "bg", "gui")
-            \ 'guifg=' . synIDattr(hlID("Normal"), "fg", "gui")
+                \ 'guibg=' . synIDattr(hlID("Normal"), "bg", "gui")
+                \ 'guifg=' . synIDattr(hlID("Normal"), "fg", "gui")
     execute 'hi TabLine gui=NONE guibg=' . W_color_modify
-            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x27)
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x27)
     let l:tmp_color = W_color_modify
-            \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
+                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
     execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
 
     hi Search NONE
@@ -438,20 +440,26 @@ function W_cscope_init_db()
 
     let l:cwd_bakup = fnameescape(getcwd())
     let l:tmp_dir = ''
+    let l:find_db = 0
 
     " search the first database from current directory up to '/'
     " load the database and change CWD to that directory
     while l:tmp_dir != '/'
         let l:tmp_dir = fnameescape(getcwd())
-        if filereadable(l:tmp_dir . '/cscope.out')
-            cs add ./cscope.out
+        if isdirectory(l:tmp_dir)
+            if filereadable(l:tmp_dir . '/cscope.out')
+                cs add ./cscope.out
+                let l:find_db = 1
+                break
+            endif
+        else
             break
         endif
         " go to parrent directory
         execute 'cd ' . l:tmp_dir . '/..'
     endwhile
 
-    if l:tmp_dir == '/'
+    if find_db == 0
         " go to origin directory if no database found
         execute 'cd ' . l:cwd_bakup
         if $CSCOPE_DB != ""
@@ -531,7 +539,7 @@ function W_set_fcitx(event)
     endif
 endfunction
 "}}}2
-" }}}1
+"}}}1
 
 " 基础设置 {{{1
 " 设置显示相对行号，方便jk跳转 "{{{
