@@ -6,7 +6,6 @@
 
 " 变量定义 {{{1
 let s:W_colorscheme_applied = 0
-let s:W_backgroud = "light"
 let s:W_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 let s:W_last_filetype = ""
 let s:W_last_insert_im_status = 0
@@ -22,16 +21,18 @@ function W_code_common_setting()
     set expandtab
     set nofoldenable
 
-    "set cursorline
-    "set colorcolumn=80
+    if has("gui_running")
+        "set cursorline
+        "set colorcolumn=80
 
-    " 显示特殊字符
-    set list
-    set listchars=tab:\|\ ,trail:-,nbsp:%
-    " 警示行尾多余空格
-    " match Error /\s\+$/
-    " 显示缩进垂直对齐线
-    IndentLinesEnable
+        " 显示特殊字符
+        set list
+        set listchars=tab:\|\ ,trail:-,nbsp:%
+        " 警示行尾多余空格
+        " match Error /\s\+$/
+        " 显示缩进垂直对齐线
+        IndentLinesEnable
+    endif
 
     " 按<Leader><Leader>执行make并打开quickfix窗口
     " 然后跳到第一个错误处(如果有错误的话)
@@ -110,42 +111,26 @@ function W_set_colorscheme(color)
 
     let g:W_color_scheme = a:color
 
-    " 为配合macosx夜间颜色反转，增加light主题{{{
-    if has("macunix")
-        let l:cur_hour = system("date +%H")
-
-        if l:cur_hour >= 22 || l:cur_hour <= 8
-            " 深夜OSX反转颜色，所有选用亮色背景，反转变成暗背景
-            let s:W_backgroud = "light"
-        else
-            let s:W_backgroud = "dark"
-        endif
-        let s:W_backgroud = "dark"
-
-        if s:W_backgroud == "light"
-            " biogoo
-            " bmichaelsen
-            " cleanphp
-            " colorful
-            " colorzone
-            " d8g_02
-            " nedit
-            " nedit2
-            " pspad
-            " smp
-            " soso
-            " [*****] neutron
-            " [*****] newspaper
-            " [*****] oceanlight
-            " [*****] peaksea
-            " [*****] pyte
-            " [*****] Tomorrow
-            let g:W_color_scheme = "peaksea"
-        endif
-    endif
-    "}}}
     " 设置配色方案{{{3
-    " 备选配色方案：{{{
+    " 还可以的 light 主题 {{{
+    " biogoo
+    " bmichaelsen
+    " cleanphp
+    " colorful
+    " colorzone
+    " d8g_02
+    " nedit
+    " nedit2
+    " pspad
+    " smp
+    " soso
+    " [*****] neutron
+    " [*****] newspaper
+    " [*****] oceanlight
+    " [*****] peaksea
+    " [*****] pyte
+    " [*****] Tomorrow
+    " 备选配色方案：
     " Monokai
     " PapayaWhip
     " Tomorrow-Night-Eighties
@@ -208,14 +193,15 @@ function W_set_colorscheme(color)
     "}}}
     execute 'colorscheme ' . g:W_color_scheme
     let s:W_colorscheme_applied = 1
+    "}}}3
 
+    " 调整配色方案{{{3
     if &background != 'dark'
         " 以下调整均针对 dark 类主题
         " light 类主题很少用，所以不进行调整
         return
     endif
-    "}}}3
-    " 调整配色方案{{{3
+
     if g:W_color_scheme == "codeschool"
         hi Normal guibg=#2d2d2d guifg=#cccccc
         hi Folded guibg=#353500 guifg=Grey65
@@ -227,66 +213,77 @@ function W_set_colorscheme(color)
         hi Comment guifg=#909090
     endif
 
-    " CursorLineNr
-    let l:tmp_color = synIDattr(hlID("Normal"), "bg", "gui")
-    if l:tmp_color != ""
-        execute 'hi CursorLineNr gui=NONE guibg=' . l:tmp_color
-    endif
-    execute 'hi CursorLineNr guifg=' . W_color_modify
-                \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x40)
+    if has("gui_running")
+        let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
+        let l:normal_fg = synIDattr(hlID("Normal"), "fg#", "gui")
 
-    " LineNr
-    execute 'hi LineNr guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x3)
-    execute 'hi LineNr guifg=' . W_color_modify
+        " CursorLineNr
+        execute 'hi CursorLineNr gui=NONE guibg=' . l:normal_bg
+        execute 'hi CursorLineNr guifg=' . W_color_modify
+                    \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x40)
+
+        " LineNr
+        execute 'hi LineNr guibg=' . W_color_modify(l:normal_bg, 'add', 0x3)
+        execute 'hi LineNr guifg=' . W_color_modify
                 \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
 
-    " SpecialKey/Conceal
-    " SpecialKey for chars setting by (:set listchars)
-    execute 'hi SpecialKey guibg=' . synIDattr(hlID("Normal"), "bg#", "gui")
-    execute 'hi SpecialKey gui=NONE guifg=' . W_color_modify
-                    \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x18)
-    " Conceal for indentline plugin
-    hi! link Conceal SpecialKey
+        " SpecialKey/Conceal
+        " SpecialKey for chars setting by (:set listchars)
+        execute 'hi SpecialKey gui=NONE guibg=' . l:normal_bg
+        execute 'hi SpecialKey guifg=' .
+                        \ W_color_modify(l:normal_bg, 'add', 0x18)
+        " Conceal for indentline plugin
+        hi! link Conceal SpecialKey
 
-    " Folded
-    execute 'hi Folded guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x20)
+        " Folded
+        execute 'hi Folded guibg=' . W_color_modify(l:normal_bg, 'add', 0x20)
 
-    " Pmenu/PmenuSel/ColorColumn
-    "hi! link Pmenu LineNr
-    "hi! link PmenuSel Cursor
-    execute 'hi Pmenu gui=NONE guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), "add", 0x10)
-                \ . ' guifg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'sub', 0x25)
-    execute 'hi PmenuSel guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
-                \ . ' guifg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "fg#", "gui"), 'add', 0x30)
-    hi! link ColorColumn Pmenu
+        " Pmenu/PmenuSel/ColorColumn
+        "hi! link Pmenu LineNr
+        "hi! link PmenuSel Cursor
+        execute 'hi Pmenu gui=NONE guibg=' . W_color_modify
+                    \ (l:normal_bg, "add", 0x10) .
+                    \ ' guifg=' . W_color_modify(l:normal_fg, 'sub', 0x25)
+        execute 'hi PmenuSel guibg=' . W_color_modify
+                    \ (l:normal_bg, 'add', 0x25) .
+                    \ ' guifg=' . W_color_modify(l:normal_fg, 'add', 0x30)
+        hi! link ColorColumn Pmenu
 
-    " Visual
-    hi Visual NONE
-    execute 'hi Visual cterm=reverse term=reverse'
-                \. ' guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x25)
+        " Visual
+        hi Visual NONE
+        execute 'hi Visual guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
 
-    " TabLine/TabLineSel/TabLineFill
-    execute 'hi TabLineSel gui=bold'
-                \ 'guibg=' . synIDattr(hlID("Normal"), "bg", "gui")
-                \ 'guifg=' . synIDattr(hlID("Normal"), "fg", "gui")
-    execute 'hi TabLine gui=NONE guibg=' . W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x27)
-    let l:tmp_color = W_color_modify
-                \ (synIDattr(hlID("Normal"), "bg#", "gui"), 'add', 0x17)
-    execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+        " TabLine/TabLineSel/TabLineFill
+        let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x17)
+        execute 'hi TabLineSel gui=bold guibg=' . l:normal_bg .
+                                    \ ' guifg=' . l:normal_fg
+        execute 'hi TabLine gui=NONE guibg=' . W_color_modify
+                                            \ (l:normal_bg, 'add', 0x27)
+        execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
 
-    hi Search NONE
-    hi Search term=reverse cterm=reverse gui=reverse
+        " Search/Cursor
+        "hi Search NONE
+        "hi Search gui=reverse
+        let l:tmp_color = synIDattr(hlID("String"), "fg#", "gui")
+        if l:tmp_color != ""
+            execute 'hi Search gui=NONE guifg=#222222 guibg=' . l:tmp_color
+        endif
+        "hi Cursor NONE
+        "hi Cursor gui=reverse
+    else
+        hi Pmenu    ctermbg=0 ctermfg=7
+        hi PmenuSel ctermbg=1 ctermfg=8
 
-    hi Cursor NONE
-    hi Cursor term=reverse cterm=reverse gui=reverse
+        hi Visual NONE
+        hi Visual cterm=reverse term=reverse
+
+        "hi Search NONE
+        "hi Search term=reverse cterm=reverse
+
+        "hi Cursor NONE
+        "hi Cursor term=reverse cterm=reverse
+    endif
+
     " }}}3
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
@@ -340,8 +337,10 @@ function W_filetype_setting()
 
         call W_set_colorscheme("rainbow_neon")
         set syntax=nasm
-        IndentLinesDisable
-        set nolist
+        if has("gui_running")
+            IndentLinesDisable
+            set nolist
+        endif
     " PYTHON {{{3
     elseif &filetype == "python"
         set foldmethod=indent
@@ -372,6 +371,9 @@ function W_filetype_setting()
          \ &filetype == "xslt"
         call W_code_common_setting()
         call W_set_colorscheme("corn")
+    " CONF {{{3
+    elseif &filetype == "conf"
+        call W_code_common_setting()
     " ELSE {{{3
     else
         call W_set_colorscheme("codeschool")
@@ -387,8 +389,8 @@ function W_winpos_adjust(x_inc, y_inc)
     execute 'winpos '.l:winpos_x.' '.l:winpos_y
 endfunction
 " }}}2
-" W_dictionary_qurey: 单词字典查询 {{{2
-function W_dictionary_qurey(word)
+" W_dict_qurey: 单词字典查询 {{{2
+function W_dict_qurey(word)
     if a:word == ""
         return
     endif
@@ -418,9 +420,9 @@ function W_dictionary_qurey(word)
 
     nnoremap <buffer> q :q!<CR>
     nnoremap <buffer> <CR>
-                \ :call W_dictionary_qurey('<C-r>=expand("<cword>")<CR>')<CR>
+                \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
     nnoremap <buffer> o
-                \ :call W_dictionary_qurey('<C-r>=expand("<cword>")<CR>')<CR>
+                \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
     " 恢复寄存器a
     let @a = l:bakup_reg_a
 endfunction
@@ -702,16 +704,16 @@ if has("gui_running")
 
     if ! has("macunix")
         " 调整GVIM窗口位置 {{{
-        nmap <A-j> :call W_winpos_adjust(0,10)<CR>
-        nmap <A-k> :call W_winpos_adjust(0,-10)<CR>
-        nmap <A-h> :call W_winpos_adjust(-20,0)<CR>
-        nmap <A-l> :call W_winpos_adjust(20,0)<CR>
+        nmap <A-S-j> :call W_winpos_adjust(0,10)<CR>
+        nmap <A-S-k> :call W_winpos_adjust(0,-10)<CR>
+        nmap <A-S-h> :call W_winpos_adjust(-20,0)<CR>
+        nmap <A-S-l> :call W_winpos_adjust(20,0)<CR>
         " }}}
         " 调整GVIM窗口大小 {{{
-        nmap <A-S-j> :set lines+=1<CR>
-        nmap <A-S-k> :set lines-=1<CR>
-        nmap <A-S-h> :set columns-=2<CR>
-        nmap <A-S-l> :set columns+=2<CR>
+        nmap <A-j> :set lines+=1<CR>
+        nmap <A-k> :set lines-=1<CR>
+        nmap <A-h> :set columns-=3<CR>
+        nmap <A-l> :set columns+=3<CR>
         "}}}
     endif
 endif
@@ -719,12 +721,6 @@ endif
 
 " 复制/剪切/粘贴 {{{2
 if has("gui_running")
-    " 省事，Copy/Cut/Past 统一用 Shift+Enter 来完成
-    "nnoremap <S-Enter> "+p
-    "vnoremap <S-Enter> "+y
-    "inoremap <S-Enter> <C-r>+
-    "cnoremap <S-Enter> <C-r>+
-
     if ! has("maxunix")
         vnoremap <C-c> "+y
         vnoremap <C-x> "+x
@@ -770,7 +766,7 @@ nnoremap <Leader>sm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 " }}}3
 
 " 单词字典查询 {{{3
-command -nargs=1 Sdcv call W_dictionary_qurey("<args>")
+command -nargs=1 Sdcv call W_dict_qurey("<args>")
 nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 " }}}3
 
@@ -857,12 +853,14 @@ if has("autocmd")
     augroup filetype_autocmd
         autocmd FileType c,cpp,h,flex,bison,yacc
             \ nnoremap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <S-CR> :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <BS> <C-t>
         autocmd FileType help
             \ nnoremap <buffer> <CR> <C-]>|
             \ nnoremap <buffer> o    <C-]>|
             \ nnoremap <buffer> <BS> <C-t>|
-            \ nnoremap <buffer> q :q<CR>
+            \ nnoremap <buffer> q :q<CR>|
+            \ set ts=4
         autocmd FileType vim
             \ nnoremap <buffer> <CR> gf|
             \ nnoremap <buffer> <BS> <C-o>
@@ -918,6 +916,9 @@ endif
 " }}}1
 
 " cscope设置 {{{1
+" See more:
+"   :help cscope
+"   http://vim.wikia.com/wiki/Cscope
 if has("cscope")
     set csprg=/usr/bin/cscope
     set csto=0
