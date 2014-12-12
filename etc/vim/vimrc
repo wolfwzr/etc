@@ -835,7 +835,8 @@ nmap <Leader><BS> :bdelete %<CR>
 " 文件类型相关设置 {{{1
 if has("autocmd")
     " 指定某些后缀的文件类型
-    autocmd BufRead,BufNewFile *.{nasl,inc} set filetype=nasl
+    autocmd BufRead,BufNewFile *.nasl set filetype=nasl
+    autocmd BufRead,BufNewFile *.inc set filetype=asm
     autocmd BufRead,BufNewFile *.wsgi set filetype=python
     autocmd BufRead,BufNewFile *.bashrc set filetype=sh
     autocmd BufRead,BufNewFile *.vimrc set filetype=vim
