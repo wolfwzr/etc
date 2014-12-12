@@ -268,8 +268,8 @@ function W_set_colorscheme(color)
         if l:tmp_color != ""
             execute 'hi Search gui=NONE guifg=#222222 guibg=' . l:tmp_color
         endif
-        "hi Cursor NONE
-        "hi Cursor gui=reverse
+        hi Cursor NONE
+        hi Cursor gui=reverse
     else
         hi Pmenu    ctermbg=0 ctermfg=7
         hi PmenuSel ctermbg=1 ctermfg=8
@@ -277,11 +277,11 @@ function W_set_colorscheme(color)
         hi Visual NONE
         hi Visual cterm=reverse term=reverse
 
-        "hi Search NONE
-        "hi Search term=reverse cterm=reverse
+        hi Search NONE
+        hi Search term=reverse cterm=reverse
 
-        "hi Cursor NONE
-        "hi Cursor term=reverse cterm=reverse
+        hi Cursor NONE
+        hi Cursor term=reverse cterm=reverse
     endif
 
     " }}}3
