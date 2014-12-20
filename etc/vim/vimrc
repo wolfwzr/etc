@@ -702,19 +702,26 @@ if has("gui_running")
     nnoremap <C-l> <C-w>l
     "}}}
 
-    if ! has("macunix")
-        " 调整GVIM窗口位置 {{{
-        nmap <A-S-j> :call W_winpos_adjust(0,10)<CR>
-        nmap <A-S-k> :call W_winpos_adjust(0,-10)<CR>
-        nmap <A-S-h> :call W_winpos_adjust(-20,0)<CR>
-        nmap <A-S-l> :call W_winpos_adjust(20,0)<CR>
+    if has("macunix")
+        " 调整GVIM窗口大小 {{{
+        nmap <C-j> :set lines+=1<CR>
+        nmap <C-k> :set lines-=1<CR>
+        nmap <C-h> :set columns-=3<CR>
+        nmap <C-l> :set columns+=3<CR>
         " }}}
+    else
         " 调整GVIM窗口大小 {{{
         nmap <A-j> :set lines+=1<CR>
         nmap <A-k> :set lines-=1<CR>
         nmap <A-h> :set columns-=3<CR>
         nmap <A-l> :set columns+=3<CR>
         "}}}
+        " 调整GVIM窗口位置 {{{
+        nmap <A-S-j> :call W_winpos_adjust(0,10)<CR>
+        nmap <A-S-k> :call W_winpos_adjust(0,-10)<CR>
+        nmap <A-S-h> :call W_winpos_adjust(-20,0)<CR>
+        nmap <A-S-l> :call W_winpos_adjust(20,0)<CR>
+        " }}}
     endif
 endif
 " }}}

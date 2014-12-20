@@ -402,6 +402,16 @@ function wrestart()
     wolf_service_control "$1" restart
 }
 
+get_website_favicon()
+{
+    local host=$1
+    local h=$(echo $host | awk -F '.' '{print $1}')
+    if [ -n "$host" -a -n "$h" ]
+    then
+        wget "http://$host/favicon.ico" -O "$h.ico"
+    fi
+}
+
 ############################################################
 # MISCS
 ############################################################
