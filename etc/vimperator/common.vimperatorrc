@@ -18,7 +18,6 @@ nnoremap <Leader>l :emenu View.Show All Tabs<Return>
 "nnoremap <Leader>f :set fullscreen!<Return>
 nnoremap <Leader>y :tab downloads<Return>
 nnoremap <Leader>a :tab addons<Return>
-nnoremap <Leader>p :preferences<Return>
 nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
 " nnoremap <Leader>e :tabopen data:text/html, <html contenteditable><Return>
 

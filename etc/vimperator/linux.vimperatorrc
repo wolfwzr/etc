@@ -3,6 +3,7 @@
 nnoremap <C-i>   :pageinfo<Return>
 nnoremap <C-S-i> :emenu Tools.Page Info<Return>
 nnoremap <C-p>   :emenu File.Print Preview<Return>
+nnoremap <C-,>   :preferences<Return>
 
 " Group tabs
 nnoremap <C-e>   <C-S-e>
