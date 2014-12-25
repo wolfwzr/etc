@@ -2,10 +2,13 @@
 
 source! ~wolfwzr/.vimperatorrc.local
 
-let mapleader='s'
+let mapleader='\'
 
-nnoremap j 2j
-nnoremap k 2k
+nnoremap j 3j
+nnoremap k 3k
+
+nnoremap J <C-f>
+nnoremap K <C-b>
 
 nnoremap h gT
 nnoremap l gt
@@ -14,11 +17,20 @@ nnoremap <BS> :back<Return>
 
 nnoremap <Leader>r :emenu Tools.Clearly<Return>
 nnoremap <Leader>d :emenu Tools.Web Developer.Network<Return>
-nnoremap <Leader>l :emenu View.Show All Tabs<Return>
-"nnoremap <Leader>f :set fullscreen!<Return>
-nnoremap <Leader>y :tab downloads<Return>
-nnoremap <Leader>a :tab addons<Return>
 nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
+nnoremap <Leader>e :!gvim ~/.vimperatorrc<Return>
+
+" Tips:
+" Ctrl-Shift-n - next tabgroup
+" Ctrl-Shift-p - prev tabgroup
+" Ctrl-Shift-a - addons
+" Ctrl-Shift-y - downloads
+" b            - buffer list
+
+" nnoremap <Leader>a :tab addons<Return>
+" nnoremap <Leader>y :tab downloads<Return>
+
+" nnoremap <Leader>f :set fullscreen!<Return>
 " nnoremap <Leader>e :tabopen data:text/html, <html contenteditable><Return>
 
 set defsearch=g
@@ -30,7 +42,7 @@ set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|
 " [[
 set nextpattern=\s*下一页|下一章|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b
 
-" press <C-]> to make complete
+" press <C-]> to complete
 iabbrev wcg wolfwzr.china@gmail.com
 
 " vim: set ft=vim:
