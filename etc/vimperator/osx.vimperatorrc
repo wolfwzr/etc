@@ -1,27 +1,37 @@
 " for osx
-nnoremap <M-i>   :pageinfo<Return>
-nnoremap <M-S-i> :emenu Tools.Page Info<Return>
-nnoremap <M-e> <M-S-e>
+nnoremap <M-S-i>    :emenu Tools.Page Info<Return>
+nnoremap <M-j>      gt
+nnoremap <M-k>      gT
+nnoremap <M-e>      <M-S-e>
+" M-d duplicate tab
+"nnoremap <M-d>      :tabduplicate<Return>
+" c copy current tab url
+nnoremap C          c
+nnoremap c          <M-l><M-c><Esc>
+" v open url from clipboard in new tab
+nnoremap v          t <M-v><Return>
+" V open url from clipboard in current tab
+nnoremap V          o <M-v><Return>
 
 " Group tabs
-nnoremap <M-e>   <M-S-e>
+nnoremap <M-e>      <M-S-e>
 
-inoremap <M-j> <Down>
-inoremap <M-k> <Up>
-inoremap <M-h> <Left>
-inoremap <M-l> <Right>
-inoremap <M-b> <Home>
-inoremap <M-e> <End>
+inoremap <M-j>      <Down>
+inoremap <M-k>      <Up>
+inoremap <M-h>      <Left>
+inoremap <M-l>      <Right>
+inoremap <M-b>      <Home>
+inoremap <M-e>      <End>
 
-cnoremap <M-j> <Right>
-cnoremap <M-k> <Left>
-cnoremap <M-h> <BS>
-cnoremap <M-l> <Del>
-cnoremap <M-n> <Down>
-cnoremap <M-p> <Up>
-cnoremap <M-b> <Home>
-cnoremap <M-e> <End>
+cnoremap <M-j>      <Right>
+cnoremap <M-k>      <Left>
+cnoremap <M-h>      <BS>
+cnoremap <M-l>      <Del>
+cnoremap <M-n>      <Down>
+cnoremap <M-p>      <Up>
+cnoremap <M-b>      <Home>
+cnoremap <M-e>      <End>
 
-nnoremap <M-Enter> :set fullscreen!<Return>
+"nnoremap <M-Enter> :set fullscreen!<Return>
 
 " vim: set ft=vim:

@@ -13,12 +13,13 @@ nnoremap K <C-b>
 nnoremap h gT
 nnoremap l gt
 
-nnoremap <BS> :back<Return>
+nnoremap i          :pageinfo<Return>
+nnoremap <BS>       :back<Return>
 
-nnoremap <Leader>r :emenu Tools.Clearly<Return>
-nnoremap <Leader>d :emenu Tools.Web Developer.Network<Return>
-nnoremap <Leader>s :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e :!gvim ~/.vimperatorrc<Return>
+nnoremap <Leader>r  :emenu Tools.Clearly<Return>
+nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
+nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
+nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
 
 " Tips:
 " Ctrl-Shift-n - next tabgroup

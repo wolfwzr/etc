@@ -704,10 +704,10 @@ if has("gui_running")
 
     if has("macunix")
         " 调整GVIM窗口大小 {{{
-        nmap <C-j> :set lines+=1<CR>
-        nmap <C-k> :set lines-=1<CR>
-        nmap <C-h> :set columns-=3<CR>
-        nmap <C-l> :set columns+=3<CR>
+        "nmap <C-j> :set lines+=1<CR>
+        "nmap <C-k> :set lines-=1<CR>
+        "nmap <C-h> :set columns-=3<CR>
+        "nmap <C-l> :set columns+=3<CR>
         " }}}
     else
         " 调整GVIM窗口大小 {{{
