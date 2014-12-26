@@ -803,7 +803,8 @@ if has("gui_running")
     " C-p : <S-Tab> else <Up>
     "
     " C-h : backspace
-    " C-u : Clear line
+    " C-u : delete whole line
+    " C-w : delete one word
     "
     " C-b : cursor to Begin of command-line
     " C-e : cursor to End of command-line

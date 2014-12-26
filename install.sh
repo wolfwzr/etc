@@ -64,19 +64,16 @@ function install_vimperatorrc()
     local target_rc=~wolfwzr/.vimperatorrc
     local rc="common.vimperatorrc"
 
+    [ -e $target_rc -o -L $target_rc ] && rm -f $target_rc
     make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
+    echo "source ~/.$rc" > $target_rc
 
     if [ "$OS_TYPE" = "osx" ]
     then
         rc="osx.vimperatorrc"
-    else
-        rc="linux.vimperatorrc"
+        make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
+        echo "source ~/.$rc" >> $target_rc
     fi
-    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
-
-    [ -e $target_rc -o -L $target_rc ] && rm -f $target_rc
-    echo "source ~/.common.vimperatorrc" > $target_rc
-    echo "source ~/.$rc" >> $target_rc
 }
 
 function install_keyboard_config()

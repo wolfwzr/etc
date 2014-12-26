@@ -1,17 +1,12 @@
 " for osx
+
 nnoremap <M-S-i>    :emenu Tools.Page Info<Return>
 nnoremap <M-j>      gt
 nnoremap <M-k>      gT
 nnoremap <M-e>      <M-S-e>
-" M-d duplicate tab
-"nnoremap <M-d>      :tabduplicate<Return>
+
 " c copy current tab url
-nnoremap C          c
 nnoremap c          <M-l><M-c><Esc>
-" v open url from clipboard in new tab
-nnoremap v          t <M-v><Return>
-" V open url from clipboard in current tab
-nnoremap V          o <M-v><Return>
 
 " Group tabs
 nnoremap <M-e>      <M-S-e>
