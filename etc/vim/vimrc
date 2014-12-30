@@ -4,6 +4,7 @@
 " ~wolfwzr/.vim/vundle.vimrc
 " ~wolfwzr/.vim/mac-alt-map.vimrc
 
+nmap <2-LeftMouse> <Leader>m
 " 变量定义 {{{1
 let s:W_colorscheme_applied = 0
 let s:W_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
@@ -294,6 +295,10 @@ endfunction
 " }}}2
 " W_filetype_setting: FileType处理 {{{2
 function W_filetype_setting()
+    if &filetype == "help"
+        "setlocal ts=8
+    endif
+
     " 避免重复设置{{{
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
@@ -316,7 +321,7 @@ function W_filetype_setting()
        \ &filetype == "bison" ||
        \ &filetype == "java"
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
-        set foldmethod=syntax
+        setlocal foldmethod=syntax
         call W_code_common_setting()
 
         " 用缩写(abbreivations)自定义代码块的补全
@@ -326,41 +331,41 @@ function W_filetype_setting()
         call W_set_colorscheme("greyblue")
         call W_set_colorscheme("gruvbox")
 
-        "set cc=80
+        "setlocal cc=80
         highlight WarningCols gui=undercurl
         match WarningCols /\%>80v/
     " ASM {{{3
     elseif &filetype == "asm"
-        set foldmethod=marker
-        set commentstring=;%s
+        setlocal foldmethod=marker
+        setlocal commentstring=;%s
         call W_code_common_setting()
 
         call W_set_colorscheme("rainbow_neon")
-        set syntax=nasm
+        setlocal syntax=nasm
         if has("gui_running")
             IndentLinesDisable
-            set nolist
+            setlocal nolist
         endif
     " PYTHON {{{3
     elseif &filetype == "python"
-        set foldmethod=indent
+        setlocal foldmethod=indent
         call W_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
-        set foldmethod=indent
+        setlocal foldmethod=indent
         call W_code_common_setting()
         call W_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
-        set foldmethod=marker
+        setlocal foldmethod=marker
         call W_code_common_setting()
         call W_set_colorscheme("codeschool")
     " MKD {{{3
     elseif &filetype == "mkd"
         call W_code_common_setting()
-        set foldenable
-        set nonu
-        set norelativenumber
+        setlocal foldenable
+        setlocal nonu
+        setlocal norelativenumber
         call W_set_colorscheme("two2tango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"  ||
@@ -376,7 +381,7 @@ function W_filetype_setting()
         call W_code_common_setting()
     " ELSE {{{3
     else
-        call W_set_colorscheme("codeschool")
+        "call W_set_colorscheme("codeschool")
     endif
     " }}}3
     silent! PowerlineReloadColorscheme
@@ -852,7 +857,7 @@ if has("autocmd")
 
     " 根据不同的文件类型做不同的设置
     "autocmd VimEnter * call W_filetype_setting()
-    autocmd BufEnter * call W_filetype_setting()
+    autocmd BufEnter  * call W_filetype_setting()
     nnoremap <Leader>w :call W_filetype_setting()<CR>
 
     " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
