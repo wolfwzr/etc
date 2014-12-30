@@ -112,7 +112,7 @@ augroup end
 Bundle 'kien/ctrlp.vim'
 " let g:ctrlp_map = ''
 " nnoremap <Leader>b :CtrlPBuffer<CR>
-nnoremap <Leader><Leader> :CtrlPBuffer<CR>
+nnoremap \| :CtrlPBuffer<CR>
 " CtrlP查找的文件列表
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
@@ -236,6 +236,16 @@ let g:indentLine_faster = 1
 "let g:indentLine_fileType = ['c', 'cpp', 'python', 'sh']
 let g:indentLine_fileTypeExclude = ['man', 'help', 'qf']
 " }}}1
+
+" vim-easymotion插件 {{{
+Bundle 'Lokaltog/vim-easymotion'
+"nmap j <Plug><easymotion-j>
+"nmap k <Plug><easymotion-k>
+"nmap f <Plug><easymotion-f>
+"nmap F <Plug><easymotion-F>
+"nmap s <Plug><easymotion-s>
+"nmap  / <Plug>(easymotion-sn)
+"}}}
 
 " 未启用插件
 

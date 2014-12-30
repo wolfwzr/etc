@@ -298,9 +298,11 @@ function W_filetype_setting()
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
         \ s:W_last_filetype == "man"        || &filetype == "man"       ||
+        \ s:W_last_filetype == "help"       || &filetype == "help"      ||
         \ s:W_last_filetype == "qf"         || &filetype == "qf"        ||
         \ s:W_last_filetype == "tarbar"     || &filetype == "tagbar"    ||
         \ s:W_last_filetype == "nerdtree"   || &filetype == "nerdtree"
+        let s:W_last_filetype = &filetype
         return
     endif
     let s:W_last_filetype = &filetype
@@ -615,6 +617,20 @@ elseif has("unix")
     au InsertLeave * call W_set_fcitx("InsertLeave")
 endif
 "}}}2
+" 鼠标设置{{{2
+set mouse=a
+" mousemodel 设置为 popup 时：
+" 单击左键 - 光标跳转
+" 单击右键 - 弹出菜单
+" 拖动左键 - 选择文本
+" 双击左键 - 选择单词
+" Ctrl+左键 - Ctrl+]
+" Ctrl+右键 - Ctrl+t
+" Shift+左键 - 拓展选区
+" Shift+右键 - 搜索单词
+set mousemodel=popup
+"nmap <C-LeftMouse> <CR>
+"}}}2
 " 杂项设置{{{2
 set wrap
 " 取消CursorLine
@@ -887,7 +903,8 @@ if has("autocmd")
         autocmd FileType man
             \ nnoremap <buffer> q :q<CR>|
             \ nnoremap <buffer> o :Man <C-r>=expand("<cword>")<CR><CR>|
-            \ nnoremap <buffer> <CR> :Man <C-r>=expand("<cword>")<CR><CR>
+            \ nnoremap <buffer> <CR> :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ setlocal ts=8
     augroup end
 endif
 " }}}1
@@ -961,6 +978,8 @@ if has("cscope")
 
     command Csu call W_cscope_update_db()
     command Csl call W_cscope_init_db()
+
+    nnoremap <C-CR> :Csg <C-r>+<CR>
 endif
 " }}}1
 
