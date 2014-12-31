@@ -7,6 +7,9 @@ nnoremap <M-e>      <M-S-e>
 
 " c copy current tab url
 nnoremap c          <M-l><M-c><Esc>
+nnoremap d          <M-w>
+nnoremap v          <M-l><M-v><Return>
+nnoremap V          <M-t><M-l><M-v><Return>
 
 " Group tabs
 nnoremap <M-e>      <M-S-e>

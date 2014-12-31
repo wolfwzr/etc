@@ -110,9 +110,10 @@ augroup end
 " 文件匹配不必连续，但要顺序，如abc可匹配文件
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
-" let g:ctrlp_map = ''
+let g:ctrlp_map = '<C-p>'
+let g:ctrlp_cmd = 'CtrlPBuffer'
 " nnoremap <Leader>b :CtrlPBuffer<CR>
-nnoremap \| :CtrlPBuffer<CR>
+" nnoremap \| :CtrlPBuffer<CR>
 " CtrlP查找的文件列表
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
@@ -239,12 +240,10 @@ let g:indentLine_fileTypeExclude = ['man', 'help', 'qf']
 
 " vim-easymotion插件 {{{
 Bundle 'Lokaltog/vim-easymotion'
-"nmap j <Plug><easymotion-j>
-"nmap k <Plug><easymotion-k>
-"nmap f <Plug><easymotion-f>
-"nmap F <Plug><easymotion-F>
-"nmap s <Plug><easymotion-s>
-"nmap  / <Plug>(easymotion-sn)
+map <C-j> <Plug>(easymotion-j)
+map <C-k> <Plug>(easymotion-k)
+map s     <Plug>(easymotion-s)
+map <C-/> <Plug>(easymotion-sn)
 "}}}
 
 " 未启用插件

@@ -1,6 +1,6 @@
 " vim config quick references:
 "
-" ~wolfwzr/.vim/vimrc
+" ~wlfwzr/.vim/vimrc
 " ~wolfwzr/.vim/vundle.vimrc
 " ~wolfwzr/.vim/mac-alt-map.vimrc
 
@@ -294,6 +294,10 @@ endfunction
 " }}}2
 " W_filetype_setting: FileType处理 {{{2
 function W_filetype_setting()
+    if &filetype == "help"
+        "setlocal ts=8
+    endif
+
     " 避免重复设置{{{
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
@@ -318,7 +322,7 @@ function W_filetype_setting()
        \ &filetype == "bison" ||
        \ &filetype == "java"
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
-        set foldmethod=syntax
+        setlocal foldmethod=syntax
         call W_code_common_setting()
 
         " 用缩写(abbreivations)自定义代码块的补全
@@ -328,41 +332,41 @@ function W_filetype_setting()
         call W_set_colorscheme("greyblue")
         call W_set_colorscheme("gruvbox")
 
-        "set cc=80
+        "setlocal cc=80
         highlight WarningCols gui=undercurl
         match WarningCols /\%>80v/
     " ASM {{{3
     elseif &filetype == "asm"
-        set foldmethod=marker
-        set commentstring=;%s
+        setlocal foldmethod=marker
+        setlocal commentstring=;%s
         call W_code_common_setting()
 
         call W_set_colorscheme("rainbow_neon")
-        set syntax=nasm
+        setlocal syntax=nasm
         if has("gui_running")
             IndentLinesDisable
-            set nolist
+            setlocal nolist
         endif
     " PYTHON {{{3
     elseif &filetype == "python"
-        set foldmethod=indent
+        setlocal foldmethod=indent
         call W_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
-        set foldmethod=indent
+        setlocal foldmethod=indent
         call W_code_common_setting()
         call W_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
-        set foldmethod=marker
+        setlocal foldmethod=marker
         call W_code_common_setting()
         call W_set_colorscheme("codeschool")
     " MKD {{{3
     elseif &filetype == "mkd"
         call W_code_common_setting()
-        set foldenable
-        set nonu
-        set norelativenumber
+        setlocal foldenable
+        setlocal nonu
+        setlocal norelativenumber
         call W_set_colorscheme("two2tango")
     " HTML/XML/CSS/JS/XSL/XSLT {{{3
     elseif &filetype == "html"  ||
@@ -378,7 +382,7 @@ function W_filetype_setting()
         call W_code_common_setting()
     " ELSE {{{3
     else
-        call W_set_colorscheme("codeschool")
+        "call W_set_colorscheme("codeschool")
     endif
     " }}}3
     silent! PowerlineReloadColorscheme
@@ -421,7 +425,7 @@ function W_dict_qurey(word)
     normal "ap
 
     nnoremap <buffer> q :q!<CR>
-    nnoremap <buffer> <CR>
+    nnoremap <buffer> <SPACE>
                 \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
     nnoremap <buffer> o
                 \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
@@ -620,16 +624,17 @@ endif
 " 鼠标设置{{{2
 set mouse=a
 " mousemodel 设置为 popup 时：
-" 单击左键 - 光标跳转
-" 单击右键 - 弹出菜单
-" 拖动左键 - 选择文本
-" 双击左键 - 选择单词
-" Ctrl+左键 - Ctrl+]
-" Ctrl+右键 - Ctrl+t
+" 单击左键   - 光标跳转
+" 单击右键   - 弹出菜单
+" 拖动左键   - 选择文本
+" 双击左键   - 选择单词
+" Ctrl+左键  - Ctrl+]
+" Ctrl+右键  - Ctrl+t
 " Shift+左键 - 拓展选区
 " Shift+右键 - 搜索单词
 set mousemodel=popup
-"nmap <C-LeftMouse> <CR>
+" double click
+nmap <2-LeftMouse> <Leader>m
 "}}}2
 " 杂项设置{{{2
 set wrap
@@ -670,8 +675,8 @@ cnoremap <BS> <NOP>
 " }}}2
 
 " 翻页设置 {{{2
-nnoremap <SPACE> <C-f>
-nnoremap <TAB> <C-b>
+"nnoremap <SPACE> <C-f>
+"nnoremap <TAB> <C-b>
 " }}}2
 
 " 快速查看QuickFix List的上一项/下一项 {{{2
@@ -679,6 +684,11 @@ if has("gui_running")
     nnoremap <F2> :botright cw<CR>
     nnoremap <F3> :cp<CR>
     nnoremap <F4> :cn<CR>
+
+    nnoremap <Leader>q :botright cw<CR>
+    nnoremap <Leader>] :cn<CR>
+    nnoremap <Leader>[ :cp<CR>
+
     " Tips:
     "   :colder 查看上一个quickfix窗口
     "   :cnewer 查看下一个quickfix窗口
@@ -704,18 +714,13 @@ nnoremap ][ ]]
 nnoremap ]] ][
 " }}}2
 
-" Tab跳转 {{{2
-nnoremap <Leader>j :tabnext<CR>
-nnoremap <Leader>k :tabprev<CR>
-" }}}2
-
 " Window/GUI窗口相关{{{2
 if has("gui_running")
     " Window跳转 {{{
-    nnoremap <C-j> <C-w>j
-    nnoremap <C-k> <C-w>k
-    nnoremap <C-h> <C-w>h
-    nnoremap <C-l> <C-w>l
+    nnoremap <Leader>j <C-w>j
+    nnoremap <Leader>k <C-w>k
+    nnoremap <Leader>h <C-w>h
+    nnoremap <Leader>l <C-w>l
     "}}}
 
     if has("macunix")
@@ -868,7 +873,7 @@ if has("autocmd")
 
     " 根据不同的文件类型做不同的设置
     "autocmd VimEnter * call W_filetype_setting()
-    autocmd BufEnter * call W_filetype_setting()
+    autocmd BufEnter  * call W_filetype_setting()
     nnoremap <Leader>w :call W_filetype_setting()<CR>
 
     " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
@@ -877,17 +882,17 @@ if has("autocmd")
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
         autocmd FileType c,cpp,h,flex,bison,yacc
-            \ nnoremap <buffer> <CR> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <SPACE> :cs find g <C-R>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <S-CR> :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <BS> <C-t>
         autocmd FileType help
-            \ nnoremap <buffer> <CR> <C-]>|
+            \ nnoremap <buffer> <SPACE> <C-]>|
             \ nnoremap <buffer> o    <C-]>|
             \ nnoremap <buffer> <BS> <C-t>|
             \ nnoremap <buffer> q :q<CR>|
             \ set ts=4
         autocmd FileType vim
-            \ nnoremap <buffer> <CR> gf|
+            \ nnoremap <buffer> <SPACE> gf|
             \ nnoremap <buffer> <BS> <C-o>
         autocmd FileType mkd
             \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
@@ -903,7 +908,7 @@ if has("autocmd")
         autocmd FileType man
             \ nnoremap <buffer> q :q<CR>|
             \ nnoremap <buffer> o :Man <C-r>=expand("<cword>")<CR><CR>|
-            \ nnoremap <buffer> <CR> :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <SPACE> :Man <C-r>=expand("<cword>")<CR><CR>|
             \ setlocal ts=8
     augroup end
 endif
@@ -922,7 +927,7 @@ if has("gui_running")
     "else
     "    winpos 245 10
     "endif
-    set columns=85
+    set columns=90
     set lines=40
 
     " 设置默认配色方案

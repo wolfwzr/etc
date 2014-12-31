@@ -46,10 +46,10 @@ nnoremap c          <C-l><C-c><Esc>
 
 " v open url from clipboard in new tab
 " V open url from clipboard in current tab
-" nnoremap v t <C-v><Return>
-" nnoremap V o <C-v><Return>
 nnoremap v          <C-l><C-v><Return>
 nnoremap V          <C-t><C-l><C-v><Return>
+" nnoremap v          P
+" nnoremap V          p
 "}}}
 "Other Tools {{{
 nnoremap e          :emenu Tools.Clearly<Return>
