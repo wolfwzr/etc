@@ -246,6 +246,58 @@ map s     <Plug>(easymotion-s)
 map <C-/> <Plug>(easymotion-sn)
 "}}}
 
+" rainbow_parentheses插件 {{{
+"Bundle 'kien/rainbow_parentheses.vim'
+Bundle 'oblitum/rainbow'
+"let g:rainbow_guifgs : [
+"    \ '#458588',
+"    \ '#b16286',
+"    \ '#cc241d',
+"    \ '#d65d0e',
+"    \ '#458588',
+"    \ '#b16286',
+"    \ '#cc241d',
+"    \ '#d65d0e',
+"    \ '#458588',
+"    \ '#b16286',
+"    \ '#cc241d',
+"    \ '#d65d0e',
+"    \ '#458588',
+"    \ '#b16286',
+"    \ '#cc241d',
+"    \ '#d65d0e',
+"    \ ]
+let g:rainbow_guifgs = [
+    \ '#DCC6AE',
+    \ '#b8bb26',
+    \ '#8ccbea',
+    \ '#8ec07c',
+    \ '#c3e5d8',
+    \ '#afd700',
+    \ '#fabd2f',
+    \ '#68CDEC',
+    \ '#a4e57e',
+    \ '#ffdb72',
+    \ '#9999ff',
+    \ '#ffb3ff',
+    \ '#C8EC98',
+    \ '#fc5a4d',
+    \ '#ff7272',
+    \ '#fb4934',
+    \ ]
+
+"au FileType c,cpp,objc,objcpp call rainbow#load()
+"let g:rainbow_active = 1
+":RainbowToggle  --you can use it to toggle this plugin.
+":RainbowLoad    --you can use it to load/reload this plugin.
+" See: https://github.com/kien/rainbow_parentheses.vim
+" }}}
+
+" tabular插件 {{{
+Bundle 'godlygeek/tabular'
+" See: https://github.com/godlygeek/tabular
+" }}}
+
 " 未启用插件
 
 " bufexplorer.zip插件(未启用) {{{1

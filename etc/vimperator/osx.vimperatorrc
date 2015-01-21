@@ -10,9 +10,15 @@ nnoremap c          <M-l><M-c><Esc>
 nnoremap d          <M-w>
 nnoremap v          <M-l><M-v><Return>
 nnoremap V          <M-t><M-l><M-v><Return>
+nnoremap <C-v>      <M-l>b<Space><M-v><Return>
+nnoremap <C-S-V>    <M-t><M-l>b<Space><M-v><Return>
+
+nnoremap <M-d>      :tabduplicate<Return>
 
 " Group tabs
 nnoremap <M-e>      <M-S-e>
+
+inoremap <M-Enter>  <A-Enter>
 
 inoremap <M-j>      <Down>
 inoremap <M-k>      <Up>
