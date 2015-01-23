@@ -323,10 +323,6 @@ endfunction
 " }}}2
 " W_filetype_setting: FileType处理 {{{2
 function W_filetype_setting()
-    if &filetype == "help"
-        "setlocal ts=8
-    endif
-
     " 避免重复设置{{{
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
@@ -338,18 +334,28 @@ function W_filetype_setting()
         let s:W_last_filetype = &filetype
         return
     endif
-    let s:W_last_filetype = &filetype
     "}}}
 
     " C/CPP/H/NASL/LEX/YACC/BISON/JAVA {{{3
-    if &filetype == "c"       ||
-       \ &filetype == "h"     ||
-       \ &filetype == "cpp"   ||
-       \ &filetype == "nasl"  ||
-       \ &filetype == "lex"   ||
-       \ &filetype == "yacc"  ||
-       \ &filetype == "bison" ||
-       \ &filetype == "java"
+    if &filetype == "c"     ||
+     \ &filetype == "h"     ||
+     \ &filetype == "cpp"   ||
+     \ &filetype == "nasl"  ||
+     \ &filetype == "lex"   ||
+     \ &filetype == "yacc"  ||
+     \ &filetype == "bison" ||
+     \ &filetype == "java"
+        if s:W_last_filetype == "c"     ||
+         \ s:W_last_filetype == "h"     ||
+         \ s:W_last_filetype == "cpp"   ||
+         \ s:W_last_filetype == "nasl"  ||
+         \ s:W_last_filetype == "lex"   ||
+         \ s:W_last_filetype == "yacc"  ||
+         \ s:W_last_filetype == "bison" ||
+         \ s:W_last_filetype == "java"
+            let s:W_last_filetype = &filetype
+            return
+        endif
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
         setlocal foldmethod=syntax
         call W_code_common_setting()
@@ -406,16 +412,23 @@ function W_filetype_setting()
          \ &filetype == "js"    ||
          \ &filetype == "xsl"   ||
          \ &filetype == "xslt"
+        if s:W_last_filetype == "html"  ||
+         \ s:W_last_filetype == "xml"   ||
+         \ s:W_last_filetype == "css"   ||
+         \ s:W_last_filetype == "js"    ||
+         \ s:W_last_filetype == "xsl"   ||
+         \ s:W_last_filetype == "xslt"
+            let s:W_last_filetype = &filetype
+            return
+        endif
         call W_code_common_setting()
         call W_set_colorscheme("corn")
     " CONF {{{3
     elseif &filetype == "conf"
         call W_code_common_setting()
-    " ELSE {{{3
-    else
-        "call W_set_colorscheme("codeschool")
     endif
     " }}}3
+    let s:W_last_filetype = &filetype
     silent! PowerlineReloadColorscheme
 endfunction
 " }}}2

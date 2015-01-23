@@ -285,12 +285,11 @@ let g:rainbow_guifgs = [
     \ '#ff7272',
     \ '#fb4934',
     \ ]
-
 "au FileType c,cpp,objc,objcpp call rainbow#load()
 "let g:rainbow_active = 1
 ":RainbowToggle  --you can use it to toggle this plugin.
 ":RainbowLoad    --you can use it to load/reload this plugin.
-" See: https://github.com/kien/rainbow_parentheses.vim
+" See: https://github.com/oblitum/rainbow
 " }}}
 
 " tabular插件 {{{

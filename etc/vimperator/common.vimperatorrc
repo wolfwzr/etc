@@ -22,12 +22,17 @@ nnoremap l          gt
 nnoremap e          :emenu Tools.Clearly<Return>
 nnoremap i          :pageinfo<Return>
 
-nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
+" Use default shortkey C-S-q instead
+"nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
+
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
 nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
 
 " use C to instead origial c function (switch to Cursor/Caret mode)
-nnoremap C          c
+" nnoremap C          c
+
+" use C to copy current url in markdown link formart
+nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
 
 " press <C-]> to complete
 iabbrev ww wolfwzr
