@@ -62,18 +62,17 @@ function install_bashrc()
 function install_vimperatorrc()
 {
     local target_rc=~wolfwzr/.vimperatorrc
-    local rc="common.vimperatorrc"
+    local rc=""
 
     [ -e $target_rc -o -L $target_rc ] && rm -f $target_rc
+
+    rc="common.vimperatorrc"
     make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
     echo "source ~/.$rc" > $target_rc
 
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        rc="osx.vimperatorrc"
-        make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
-        echo "source ~/.$rc" >> $target_rc
-    fi
+    rc="${OS_TYPE}.vimperatorrc"
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
+    echo "source ~/.$rc" >> $target_rc
 }
 
 function install_keyboard_config()

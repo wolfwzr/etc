@@ -12,6 +12,28 @@ let s:W_last_insert_im_status = 0
 " }}}1
 
 " 函数定义 {{{1
+" W_eatchar: 吃掉一个字符 {{{2
+function W_eatchar(char)
+    let c = nr2char(getchar())
+    return (c =~ a:char) ? '' : c
+endfunction
+" }}}2
+" W_common_abbrev: 通用自动替换 {{{2
+function W_common_abbrev()
+    iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
+    iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
+    iabbrev { {<CR>}<Esc>%a
+endfunction
+" }}}2
+" W_C_abbrev: C语言自动替换 {{{2
+function W_C_abbrev()
+    iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
+    iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev fore for ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev doo do<CR>{<CR>}<CR>while ();<Left><Left><C-r>=W_eatchar(' ')<CR>
+endfunction
+" }}}2
 " W_code_common_setting: 代码通用设置 {{{2
 function W_code_common_setting()
     syntax on
@@ -38,6 +60,10 @@ function W_code_common_setting()
     " 然后跳到第一个错误处(如果有错误的话)
     nnoremap <Leader><SPACE> :make<CR><CR>:cw<CR>:cc<CR>
 
+    " 将选中的代码按 '=' 对齐
+    vnoremap <Leader>= :Tabularize /=<CR>
+
+    call W_common_abbrev()
     call W_set_colorscheme("codeschool")
 endfunction
 "}}}2
@@ -208,6 +234,7 @@ function W_set_colorscheme(color)
         hi NonText guibg=#2d2d2d
     elseif g:W_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
+        hi Normal guibg=#303030
     elseif g:W_color_scheme == "neon"
         hi Folded guibg=#003040 guifg=Grey
         hi Comment guifg=#909090
@@ -289,15 +316,13 @@ function W_set_colorscheme(color)
     " 下面的autocmd命令无预期效果, why?
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
     source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
+    source ~wolfwzr/.vim/bundle/rainbow/plugin/rainbow.vim
+    RainbowLoad
     " }}}3
 endfunction
 " }}}2
 " W_filetype_setting: FileType处理 {{{2
 function W_filetype_setting()
-    if &filetype == "help"
-        "setlocal ts=8
-    endif
-
     " 避免重复设置{{{
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
@@ -309,18 +334,28 @@ function W_filetype_setting()
         let s:W_last_filetype = &filetype
         return
     endif
-    let s:W_last_filetype = &filetype
     "}}}
 
     " C/CPP/H/NASL/LEX/YACC/BISON/JAVA {{{3
-    if &filetype == "c"       ||
-       \ &filetype == "h"     ||
-       \ &filetype == "cpp"   ||
-       \ &filetype == "nasl"  ||
-       \ &filetype == "lex"   ||
-       \ &filetype == "yacc"  ||
-       \ &filetype == "bison" ||
-       \ &filetype == "java"
+    if &filetype == "c"     ||
+     \ &filetype == "h"     ||
+     \ &filetype == "cpp"   ||
+     \ &filetype == "nasl"  ||
+     \ &filetype == "lex"   ||
+     \ &filetype == "yacc"  ||
+     \ &filetype == "bison" ||
+     \ &filetype == "java"
+        if s:W_last_filetype == "c"     ||
+         \ s:W_last_filetype == "h"     ||
+         \ s:W_last_filetype == "cpp"   ||
+         \ s:W_last_filetype == "nasl"  ||
+         \ s:W_last_filetype == "lex"   ||
+         \ s:W_last_filetype == "yacc"  ||
+         \ s:W_last_filetype == "bison" ||
+         \ s:W_last_filetype == "java"
+            let s:W_last_filetype = &filetype
+            return
+        endif
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
         setlocal foldmethod=syntax
         call W_code_common_setting()
@@ -335,6 +370,8 @@ function W_filetype_setting()
         "setlocal cc=80
         highlight WarningCols gui=undercurl
         match WarningCols /\%>80v/
+
+        call W_C_abbrev()
     " ASM {{{3
     elseif &filetype == "asm"
         setlocal foldmethod=marker
@@ -375,16 +412,23 @@ function W_filetype_setting()
          \ &filetype == "js"    ||
          \ &filetype == "xsl"   ||
          \ &filetype == "xslt"
+        if s:W_last_filetype == "html"  ||
+         \ s:W_last_filetype == "xml"   ||
+         \ s:W_last_filetype == "css"   ||
+         \ s:W_last_filetype == "js"    ||
+         \ s:W_last_filetype == "xsl"   ||
+         \ s:W_last_filetype == "xslt"
+            let s:W_last_filetype = &filetype
+            return
+        endif
         call W_code_common_setting()
         call W_set_colorscheme("corn")
     " CONF {{{3
     elseif &filetype == "conf"
         call W_code_common_setting()
-    " ELSE {{{3
-    else
-        "call W_set_colorscheme("codeschool")
     endif
     " }}}3
+    let s:W_last_filetype = &filetype
     silent! PowerlineReloadColorscheme
 endfunction
 " }}}2
@@ -427,8 +471,8 @@ function W_dict_qurey(word)
     nnoremap <buffer> q :q!<CR>
     nnoremap <buffer> <SPACE>
                 \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
-    nnoremap <buffer> o
-                \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
+    nnoremap <buffer> <S-SPACE> <C-o>
+
     " 恢复寄存器a
     let @a = l:bakup_reg_a
 endfunction
@@ -883,16 +927,18 @@ if has("autocmd")
     augroup filetype_autocmd
         autocmd FileType c,cpp,h,flex,bison,yacc
             \ nnoremap <buffer> <SPACE> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <S-CR> :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <BS> <C-t>
         autocmd FileType help
             \ nnoremap <buffer> <SPACE> <C-]>|
-            \ nnoremap <buffer> o    <C-]>|
+            \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <BS> <C-t>|
             \ nnoremap <buffer> q :q<CR>|
             \ set ts=4
         autocmd FileType vim
-            \ nnoremap <buffer> <SPACE> gf|
+            \ nmap <buffer> <SPACE> <Leader>h|
+            \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <BS> <C-o>
         autocmd FileType mkd
             \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
@@ -907,7 +953,6 @@ if has("autocmd")
             \ resize 5
         autocmd FileType man
             \ nnoremap <buffer> q :q<CR>|
-            \ nnoremap <buffer> o :Man <C-r>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <SPACE> :Man <C-r>=expand("<cword>")<CR><CR>|
             \ setlocal ts=8
     augroup end

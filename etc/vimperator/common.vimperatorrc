@@ -2,105 +2,42 @@
 
 source! ~wolfwzr/.vimperatorrc.local
 
-"Basic Settings {{{
 let mapleader='\'
 set defsearch=g
 " set titlestring=wolfwzr
-"Next/Prev Page {{{
 " ]]
 set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
 " [[
 set nextpattern=\s*下一页|下一章|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b
-"}}}
-"}}}
 
-"Normal mode key-mapping {{{
-"Page Navigate {{{
 nnoremap j          3j
 nnoremap k          3k
 
-nnoremap J          <C-f>
-nnoremap K          <C-b>
+"nnoremap <BS>       :back<Return>
+"nnoremap <BS>       :tabclose<Return>
 
-nnoremap <BS>       :back<Return>
-"}}}
-"Tab Navigate {{{
-nnoremap <C-j>      gt
-nnoremap <C-k>      gT
 nnoremap h          gT
 nnoremap l          gt
-nnoremap d          <C-w>
 
-" Group tabs
-nnoremap <C-e>      <C-S-e>
-
-" duplicate tab
-" nnoremap <C-d>   <C-l><A-Enter>
-nnoremap <C-d>      :tabduplicate<Return>
-"}}}
-"Copy/Paste {{{
-" use c to copy current tab url
-" use C to instead origial c function (switch to Cursor/Caret mode)
-nnoremap C          c
-nnoremap c          <C-l><C-c><Esc>
-
-" v open url from clipboard in new tab
-" V open url from clipboard in current tab
-nnoremap v          <C-l><C-v><Return>
-nnoremap V          <C-t><C-l><C-v><Return>
-" nnoremap v          P
-" nnoremap V          p
-"}}}
-"Other Tools {{{
 nnoremap e          :emenu Tools.Clearly<Return>
 nnoremap i          :pageinfo<Return>
-nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
-nnoremap <C-S-o>    :dialog openfile<Return>
-nnoremap <C-p>      :emenu File.Print Preview<Return>
-nnoremap <C-,>      :preferences<Return>
-nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
+
+" Use default shortkey C-S-q instead
+"nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
+
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
 nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
-"}}}
-" Tips {{{
-" Ctrl-Shift-n - next tabgroup
-" Ctrl-Shift-p - prev tabgroup
-" Ctrl-Shift-a - addons
-" Ctrl-Shift-y - downloads
-" b            - buffer list
-"}}}
-"}}}
+nnoremap <S-Return> :set fullscreen!<Return>
 
-"Insert mode key-mapping {{{
-inoremap <C-Enter>  <A-Enter>
+" use C to instead origial c function (switch to Cursor/Caret mode)
+" nnoremap C c
 
-inoremap <C-j>      <Down>
-inoremap <C-k>      <Up>
-inoremap <C-h>      <Left>
-inoremap <C-l>      <Right>
-inoremap <C-b>      <Home>
-inoremap <C-e>      <End>
-"}}}
+" use C to copy current url in markdown link formart
+nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
 
-"Command-line mode key-mapping {{{
-cnoremap <C-j>      <Right>
-cnoremap <C-k>      <Left>
-cnoremap <C-l>      <Del>
-
-cnoremap <C-i>      <Down>
-cnoremap <C-o>      <Up>
-cnoremap <C-n>      <S-Down>
-cnoremap <C-p>      <S-Up>
-
-cnoremap <C-b>      <Home>
-cnoremap <C-e>      <End>
-"}}}
-
-"Inesert mode abbrev {{{
 " press <C-]> to complete
 iabbrev ww wolfwzr
 iabbrev wq wolfwzr@qq.com
 iabbrev wg wolfwzr.china@gmail.com
-"}}}
 
 " vim: set ft=vim:

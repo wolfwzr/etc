@@ -13,8 +13,12 @@ nnoremap V          <M-t><M-l><M-v><Return>
 nnoremap <M-v>      <M-l>b<space><M-v><Return>
 nnoremap <M-S-v>    <M-t><M-l>b<space><M-v><Return>
 
+nnoremap <M-d>      :tabduplicate<Return>
+
 " Group tabs
 nnoremap <M-e>      <M-S-e>
+
+inoremap <M-Enter>  <A-Enter>
 
 inoremap <M-j>      <Down>
 inoremap <M-k>      <Up>
