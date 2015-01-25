@@ -18,15 +18,23 @@ function W_eatchar(char)
     return (c =~ a:char) ? '' : c
 endfunction
 " }}}2
-" W_common_abbrev: 通用自动替换 {{{2
-function W_common_abbrev()
-    iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
-    iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
-    iabbrev { {<CR>}<Esc>%a
+" W_common_replace: 通用自动替换 {{{2
+function W_common_replace()
+    "iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
+    "iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
+    "iabbrev { {<CR>}<Esc>%a
+
+    inoremap " ""<Left>
+    inoremap ' ''<Left>
+    inoremap ` ``<Left>
+    inoremap ( ()<Left>
+    inoremap [ []<Left>
+    inoremap { {<CR>}<Esc>O
+    inoremap <C-l> <Right>
 endfunction
 " }}}2
-" W_C_abbrev: C语言自动替换 {{{2
-function W_C_abbrev()
+" W_C_replace: C语言自动替换 {{{2
+function W_C_replace()
     iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
     iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
     iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
@@ -63,7 +71,7 @@ function W_code_common_setting()
     " 将选中的代码按 '=' 对齐
     vnoremap <Leader>= :Tabularize /=<CR>
 
-    call W_common_abbrev()
+    call W_common_replace()
     call W_set_colorscheme("codeschool")
 endfunction
 "}}}2
@@ -371,7 +379,7 @@ function W_filetype_setting()
         highlight WarningCols gui=undercurl
         match WarningCols /\%>80v/
 
-        call W_C_abbrev()
+        call W_C_replace()
     " ASM {{{3
     elseif &filetype == "asm"
         setlocal foldmethod=marker
@@ -487,12 +495,12 @@ endfunction
 " }}}2
 " W_cscope_init_db: init cscope database {{{2
 function W_cscope_init_db()
-    " kill all connections
-    cs kill -1
-
     let l:cwd_bakup = fnameescape(getcwd())
     let l:tmp_dir = ''
     let l:find_db = 0
+
+    " kill all connections
+    cs kill -1
 
     " search the first database from current directory up to '/'
     " load the database and change CWD to that directory
@@ -795,7 +803,9 @@ endif
 if has("gui_running")
     if ! has("maxunix")
         vnoremap <C-c> "+y
+        vnoremap Y     "+y
         vnoremap <C-x> "+x
+        vnoremap X     "+x
         inoremap <C-v> <C-r>+
         cnoremap <C-v> <C-r>+
     endif
@@ -908,11 +918,11 @@ nmap <Leader><BS> :bdelete %<CR>
 " 文件类型相关设置 {{{1
 if has("autocmd")
     " 指定某些后缀的文件类型
-    autocmd BufRead,BufNewFile *.nasl set filetype=nasl
-    autocmd BufRead,BufNewFile *.inc set filetype=asm
-    autocmd BufRead,BufNewFile *.wsgi set filetype=python
+    autocmd BufRead,BufNewFile *.nasl   set filetype=nasl
+    autocmd BufRead,BufNewFile *.inc    set filetype=asm
+    autocmd BufRead,BufNewFile *.wsgi   set filetype=python
     autocmd BufRead,BufNewFile *.bashrc set filetype=sh
-    autocmd BufRead,BufNewFile *.vimrc set filetype=vim
+    autocmd BufRead,BufNewFile *.vimrc  set filetype=vim
     autocmd BufRead,BufNewFile *.{md,mkd,markdown} set filetype=mkd
 
     " 根据不同的文件类型做不同的设置
@@ -926,34 +936,33 @@ if has("autocmd")
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
         autocmd FileType c,cpp,h,flex,bison,yacc
-            \ nnoremap <buffer> <SPACE> :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <SPACE>   :cs find g <C-R>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <S-CR> :Csg .*.*<Left><Left>|
-            \ nnoremap <buffer> <BS> <C-t>
+            \ nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>|
+            \ nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>|
+            \ nnoremap <buffer> <BS>      <C-t>
         autocmd FileType help
-            \ nnoremap <buffer> <SPACE> <C-]>|
+            \ nnoremap <buffer> <SPACE>   <C-]>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <BS> <C-t>|
-            \ nnoremap <buffer> q :q<CR>|
+            \ nnoremap <buffer> <BS>      <C-t>|
+            \ nnoremap <buffer> q         :q<CR>|
             \ set ts=4
         autocmd FileType vim
-            \ nmap <buffer> <SPACE> <Leader>h|
+            \ nmap     <buffer> <SPACE>   <Leader>h|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <BS> <C-o>
+            \ nnoremap <buffer> <BS>      <C-o>|
+            \ nnoremap <buffer> <C-CR>    :<C-r>+<CR>
         autocmd FileType mkd
-            \ nnoremap <buffer> <F5> :!mkd_preview.sh %<CR>|
-            \ nnoremap <buffer> <C-t> :Toch<CR>|
-            \ nnoremap <buffer> o    A<CR>|
-            \ inoremap <A-d> <CR><ESC>k:r !date +\%F<CR>kJJi<SPACE>|
-            \ iabbrev <buffer> cdb^ ```<CR>```<ESC>ka|
-            \ iabbrev <buffer> cd^ ``<ESC>i
+            \ nnoremap <buffer> <F5>      :!mkd_preview.sh %<CR>|
+            \ nnoremap <buffer> <C-t>     :Toch<CR>|
+            \ nnoremap <buffer> o         A<CR>
         autocmd FileType qf
-            \ nnoremap <buffer> o <CR>|
-            \ nnoremap <buffer> q :q<CR>|
+            \ nnoremap <buffer> o         <CR>|
+            \ nnoremap <buffer> q         :q<CR>|
             \ resize 5
         autocmd FileType man
-            \ nnoremap <buffer> q :q<CR>|
-            \ nnoremap <buffer> <SPACE> :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> q         :q<CR>|
+            \ nnoremap <buffer> <SPACE>   :Man <C-r>=expand("<cword>")<CR><CR>|
             \ setlocal ts=8
     augroup end
 endif
@@ -1028,8 +1037,6 @@ if has("cscope")
 
     command Csu call W_cscope_update_db()
     command Csl call W_cscope_init_db()
-
-    nnoremap <C-CR> :Csg <C-r>+<CR>
 endif
 " }}}1
 
