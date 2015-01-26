@@ -27,9 +27,10 @@ nnoremap i          :pageinfo<Return>
 
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
 nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
+nnoremap <S-Return> :set fullscreen!<Return>
 
 " use C to instead origial c function (switch to Cursor/Caret mode)
-" nnoremap C          c
+" nnoremap C c
 
 " use C to copy current url in markdown link formart
 nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>

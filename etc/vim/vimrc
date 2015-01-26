@@ -365,7 +365,7 @@ function W_filetype_setting()
             return
         endif
         " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
-        setlocal foldmethod=syntax
+        set foldmethod=syntax
         call W_code_common_setting()
 
         " 用缩写(abbreivations)自定义代码块的补全
@@ -382,8 +382,8 @@ function W_filetype_setting()
         call W_C_replace()
     " ASM {{{3
     elseif &filetype == "asm"
-        setlocal foldmethod=marker
-        setlocal commentstring=;%s
+        set foldmethod=marker
+        set commentstring=;%s
         call W_code_common_setting()
 
         call W_set_colorscheme("rainbow_neon")
@@ -394,16 +394,16 @@ function W_filetype_setting()
         endif
     " PYTHON {{{3
     elseif &filetype == "python"
-        setlocal foldmethod=indent
+        set foldmethod=indent
         call W_code_common_setting()
     " SH {{{3
     elseif &filetype == "sh"
-        setlocal foldmethod=indent
+        set foldmethod=indent
         call W_code_common_setting()
         call W_set_colorscheme("neon")
     " VIM {{{3
     elseif &filetype == "vim"
-        setlocal foldmethod=marker
+        set foldmethod=marker
         call W_code_common_setting()
         call W_set_colorscheme("codeschool")
     " MKD {{{3

@@ -251,8 +251,7 @@ map s     <Plug>(easymotion-s)
 map <C-/> <Plug>(easymotion-sn)
 "}}}
 
-" rainbow_parentheses插件 {{{
-"Bundle 'kien/rainbow_parentheses.vim'
+" rainbow插件 {{{
 Bundle 'oblitum/rainbow'
 "let g:rainbow_guifgs : [
 "    \ '#458588',
