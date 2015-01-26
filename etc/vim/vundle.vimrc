@@ -43,6 +43,12 @@ Bundle 'vim-scripts/Mark'
 " :NERDTreeFind - 打开 NERDTree 窗口并定位到当前文件
 Bundle 'scrooloose/nerdtree'
 let g:NERDTreeWinSize=25
+" 检测NERDTree是否打开
+"if exists('t:NERDTreeBufName')
+"    let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
+"else
+"    let nerdtree_open = 0
+"endif
 " 本函数功能：
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
@@ -72,34 +78,33 @@ nnoremap <Leader>e :call W_nerdtree_toggle()<CR>
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
+" 检测Tagbar是否打开
+"let tagbar_open = bufwinnr('__Tagbar__') != -1
 let g:tagbar_width=28
-" 本函数功能：
+" 本函数功能：（发现g:tagbar_expand参数可解决该问题，不再自己实现）
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
 "   2. 关闭 Tagbar 窗口，并将 vim 窗口宽度减少 g:tagbar_width
-function W_tagbar_toggle()
-    if has("gui_running")
-        let l:vim_window_width = &columns
-        " Tagbar now is opened
-        if bufwinnr("__Tagbar__") != -1
-            TagbarToggle
-            let l:vim_window_width -= g:tagbar_width + 1
-            execute 'set columns='.l:vim_window_width
-        else " Tagbar now is closed
-            let l:vim_window_width += g:tagbar_width + 1
-            execute 'set columns='.l:vim_window_width
-            TagbarToggle
-        endif
-    else
-        TagbarToggle
-    endif
-endfunction
-nnoremap <Leader>t :call W_tagbar_toggle()<CR>
-augroup tagbar_autocmd
-    autocmd FileType tagbar
-        \ nnoremap <buffer> J <C-d>|
-        \ nnoremap <buffer> K <C-u>
-augroup end
+"function W_tagbar_toggle()
+"    if has("gui_running")
+"        let l:vim_window_width = &columns
+"        " Tagbar now is opened
+"        if bufwinnr("__Tagbar__") != -1
+"            TagbarToggle
+"            let l:vim_window_width -= g:tagbar_width + 1
+"            execute 'set columns='.l:vim_window_width
+"        else " Tagbar now is closed
+"            let l:vim_window_width += g:tagbar_width + 1
+"            execute 'set columns='.l:vim_window_width
+"            TagbarToggle
+"        endif
+"    else
+"        TagbarToggle
+"    endif
+"endfunction
+"nnoremap <Leader>t :call W_tagbar_toggle()<CR>
+let g:tagbar_expand = 1
+nnoremap <Leader>t :TagbarToggle<CR>
 " }}}1
 
 " ctrlp插件 {{{1
