@@ -13,13 +13,13 @@ let s:W_last_insert_im_status = 0
 
 " 函数定义 {{{1
 " W_eatchar: 吃掉一个字符 {{{2
-function W_eatchar(char)
+function! W_eatchar(char)
     let c = nr2char(getchar())
     return (c =~ a:char) ? '' : c
 endfunction
 " }}}2
 " W_common_replace: 通用自动替换 {{{2
-function W_common_replace()
+function! W_common_replace()
     "iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
     "iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
     "iabbrev { {<CR>}<Esc>%a
@@ -34,7 +34,7 @@ function W_common_replace()
 endfunction
 " }}}2
 " W_C_replace: C语言自动替换 {{{2
-function W_C_replace()
+function! W_C_replace()
     iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
     iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
     iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
@@ -43,7 +43,7 @@ function W_C_replace()
 endfunction
 " }}}2
 " W_code_common_setting: 代码通用设置 {{{2
-function W_code_common_setting()
+function! W_code_common_setting()
     syntax on
     set cindent
     set tabstop=4
@@ -71,12 +71,19 @@ function W_code_common_setting()
     " 将选中的代码按 '=' 对齐
     vnoremap <Leader>= :Tabularize /=<CR>
 
+    " 快速插入函数注释头
+    command! Ifhc call W_insert_function_header('cn')
+    command! Ifhe call W_insert_function_header('en')
+    " 不知道为什么会多输出一个0,所以用<BS>删除
+    inoremap <Leader>ifhc <C-r>=W_insert_function_header('cn')<CR><BS><Space>
+    inoremap <Leader>ifhe <C-r>=W_insert_function_header('en')<CR><BS><Space>
+
     call W_common_replace()
     call W_set_colorscheme("codeschool")
 endfunction
 "}}}2
 " W_set_guifont: 设置GUI字体{{{2
-function W_set_guifont()
+function! W_set_guifont()
     if !has("gui_running")
         return
     endif
@@ -104,7 +111,7 @@ function W_set_guifont()
 endfunction
 "}}}2
 " W_color_modify: 颜色加减运算 {{{2
-function W_color_modify(color, oper, modify_value)
+function! W_color_modify(color, oper, modify_value)
     if a:color == ""
         " 返回红色以做告警
         return '#FF0000'
@@ -141,7 +148,7 @@ function W_color_modify(color, oper, modify_value)
 endfunction
 "}}}2
 " W_set_colorscheme: 设置配色方案 {{{2
-function W_set_colorscheme(color)
+function! W_set_colorscheme(color)
 
     let g:W_color_scheme = a:color
 
@@ -330,7 +337,7 @@ function W_set_colorscheme(color)
 endfunction
 " }}}2
 " W_filetype_setting: FileType处理 {{{2
-function W_filetype_setting()
+function! W_filetype_setting()
     " 避免重复设置{{{
     if &filetype == ""                      ||
         \ &filetype == s:W_last_filetype    ||
@@ -440,15 +447,57 @@ function W_filetype_setting()
     silent! PowerlineReloadColorscheme
 endfunction
 " }}}2
+" W_insert_function_header: 设置GUI字体{{{2
+function! W_insert_function_header(lang)
+    let b:reg_bakup = @a
+    "中文版{{{
+    if a:lang == 'cn' 
+        let @a="
+\/*************************************************************************\n
+\ 函数名称: \n
+\ 功能描述: \n
+\ 输入参数: \n
+\ 输出参数: \n
+\ 返 回 值: \n
+\-----------------------------------------------------------------------\n
+\ 最近一次修改记录:\n
+\ 修改作者: \n
+\ 修改目的: \n
+\ 修改日期: \n
+\*************************************************************************/\n
+\"
+    "}}}
+    "英文版{{{
+    elseif a:lang == 'en'
+        let @a="
+\/*************************************************************************\n
+\ Name        : \n
+\ Function    : \n
+\ Input Args  : \n
+\ Output Args : \n
+\ Return Value: \n
+\-----------------------------------------------------------------------\n
+\ Lastest Modify Record:\n
+\ Author : \n
+\ Purpose: \n
+\ Date   : \n
+\*************************************************************************/\n
+\"
+    endif
+    "}}}
+    normal "apj$
+    let @a = b:reg_bakup
+endfunction
+"}}}2
 " W_winpos_adjust: 调整GVIM窗口坐标 {{{2
-function W_winpos_adjust(x_inc, y_inc)
+function! W_winpos_adjust(x_inc, y_inc)
     let l:winpos_x = getwinposx() + a:x_inc
     let l:winpos_y = getwinposy() + a:y_inc
     execute 'winpos '.l:winpos_x.' '.l:winpos_y
 endfunction
 " }}}2
 " W_dict_qurey: 单词字典查询 {{{2
-function W_dict_qurey(word)
+function! W_dict_qurey(word)
     if a:word == ""
         return
     endif
@@ -487,14 +536,14 @@ endfunction
 " }}}2
 " W_grep: grep in current buffer{{{2
 " Use Bgrep command(in Bgrep plugin) to grep with all buffers
-function W_grep(word)
+function! W_grep(word)
     call setqflist([])
     silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
     botright cw
 endfunction
 " }}}2
 " W_cscope_init_db: init cscope database {{{2
-function W_cscope_init_db()
+function! W_cscope_init_db()
     let l:cwd_bakup = fnameescape(getcwd())
     let l:tmp_dir = ''
     let l:find_db = 0
@@ -530,7 +579,7 @@ function W_cscope_init_db()
 endfunction
 " }}}2
 " W_cscope_update_db: update cscope database {{{2
-function W_cscope_update_db()
+function! W_cscope_update_db()
     call system('cscope -Rbq')
     cs reset
 endfunction
@@ -541,7 +590,7 @@ endfunction
 " 再查找出当前系统字体，linux下可运行如下命令：
 " fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq| sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
 " 我是通过man -k font,在里面找到fc-list命令的。
-function W_font_review()
+function! W_font_review()
     nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
 
     " 比较好的字体
@@ -581,7 +630,7 @@ function W_font_review()
 endfunction
 "}}}2
 " W_set_fcitx: Insert/Normal模式切换时自动切换fcitx状态{{{2
-function W_set_fcitx(event)
+function! W_set_fcitx(event)
     if a:event == "InsertEnter"
         if s:W_last_insert_im_status == 1       " fcitx is inactive
             call system("fcitx-remote -c")      " inactive fcitx
@@ -848,13 +897,13 @@ nnoremap <Leader>sm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 " }}}3
 
 " 单词字典查询 {{{3
-command -nargs=1 Sdcv call W_dict_qurey("<args>")
+command! -nargs=1 Sdcv call W_dict_qurey("<args>")
 nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 " }}}3
 
 " Buffer Grep {{{3
 " 在当前Buffer中Grep
-command -nargs=1 Grep call W_grep("<args>")
+command! -nargs=1 Grep call W_grep("<args>")
 nnoremap <Leader>g :call W_grep('<C-R>=expand("<cword>")<CR>')<CR>
 " 在所有Buffer中Grep
 nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
@@ -902,8 +951,8 @@ endif
 " }}}2
 
 " Quick Edit/Source vimrc{{{
-command EditRc   :tabnew ~wolfwzr/.vim/vimrc
-command SourceRc :source ~wolfwzr/.vim/vimrc
+command! EditRc   :tabnew ~wolfwzr/.vim/vimrc
+command! SourceRc :source ~wolfwzr/.vim/vimrc
 "}}}
 
 " 刷新 ColorScheme {{{
@@ -1026,17 +1075,17 @@ if has("cscope")
     nnoremap <Leader>fu :call W_cscope_update_db()<CR>
     nnoremap <Leader>fl :call W_cscope_init_db()<CR>
 
-    command -nargs=1 Css cs find s <args>
-    command -nargs=1 Csg cs find g <args>
-    command -nargs=1 Csc cs find c <args>
-    command -nargs=1 Cst cs find t <args>
-    command -nargs=1 Cse cs find e <args>
-    command -nargs=1 Csf cs find f <args>
-    command -nargs=1 Csi cs find i <args>
-    command -nargs=1 Csd cs find d <args>
+    command! -nargs=1 Css cs find s <args>
+    command! -nargs=1 Csg cs find g <args>
+    command! -nargs=1 Csc cs find c <args>
+    command! -nargs=1 Cst cs find t <args>
+    command! -nargs=1 Cse cs find e <args>
+    command! -nargs=1 Csf cs find f <args>
+    command! -nargs=1 Csi cs find i <args>
+    command! -nargs=1 Csd cs find d <args>
 
-    command Csu call W_cscope_update_db()
-    command Csl call W_cscope_init_db()
+    command! Csu call W_cscope_update_db()
+    command! Csl call W_cscope_init_db()
 endif
 " }}}1
 

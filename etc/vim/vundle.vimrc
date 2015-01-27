@@ -53,7 +53,7 @@ let g:NERDTreeWinSize=25
 "   打开或关闭 NERDTree 窗口 **并且调整窗口宽度**
 "   1. 打开 NERDTree 窗口，并将 vim 窗口宽度增加 g:NERDTreeWinSize
 "   2. 关闭 NERDTree 窗口，并将 vim 窗口宽度减少 g:NERDTreeWinSize
-function W_nerdtree_toggle()
+function! W_nerdtree_toggle()
     NERDTreeToggle
     if has("gui_running")
         let l:vim_window_width = &columns
@@ -85,7 +85,7 @@ let g:tagbar_width=28
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
 "   2. 关闭 Tagbar 窗口，并将 vim 窗口宽度减少 g:tagbar_width
-"function W_tagbar_toggle()
+"function! W_tagbar_toggle()
 "    if has("gui_running")
 "        let l:vim_window_width = &columns
 "        " Tagbar now is opened
