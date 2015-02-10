@@ -3,7 +3,7 @@
 source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
-set defsearch=g
+set defsearch=gf
 " set titlestring=wolfwzr
 " ]]
 set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
@@ -21,6 +21,9 @@ nnoremap l          gt
 
 nnoremap e          :emenu Tools.Clearly<Return>
 nnoremap i          :pageinfo<Return>
+
+" Use https
+nnoremap s  		<C-L><Left>https://<Return>
 
 " Use default shortkey C-S-q instead
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>

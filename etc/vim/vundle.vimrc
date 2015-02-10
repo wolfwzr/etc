@@ -14,17 +14,6 @@ nnoremap <Leader>a :A<CR>
 " endif
 " }}}1
 
-" Mark插件 {{{1
-" Mark different color with different string
-Bundle 'vim-scripts/Mark'
-" 注意，Mark 插件会使用 autocmd! 注册事件，如下：
-"   autocmd! BufWinEnter * call s:UpdateMark()
-" 这将会清除默认 group 的所有已注册 BufWinEnter 事件，所以应该将它放到组里
-"   augroup mark
-"       autocmd! BufWinEnter * call s:UpdateMark()
-"   augroup END
-" }}}1
-
 " NERDTree插件 {{{1
 " 优雅地文件浏览
 " 使用方法：
@@ -152,19 +141,6 @@ Bundle 'plasticboy/vim-markdown'
 let g:vim_markdown_initial_foldlevel=2
 " }}}1
 
-" YouCompleteMe插件 {{{1
-" 根据语义自动补全代码
-" 还能实时编译，显示编译告警
-" 使用方法：
-" 1. 输入过程中有可选匹配项时会自动弹出下拉列表，可使用tab选择
-" 2. 匹配过程中不必从头完全匹配
-"    如输入hw，下拉列表中可能出现oh_hello_world选项
-Bundle 'Valloric/YouCompleteMe'
-if has("macunix")
-    let g:ycm_global_ycm_extra_conf = '/Users/wolfwzr/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_c_conf.py'
-endif
-" }}}1
-
 " colorselector插件 {{{1
 " 优雅的挑选配色方案
 " 使用方法：
@@ -180,15 +156,159 @@ Bundle 'c9s/colorselector.vim'
 Bundle 'flazz/vim-colorschemes'
 " }}}1
 
-" Buffer-grep插件 {{{1
-" 在所有Buffer中搜索并放到新的quickfix窗口中然后打开quickfix窗口
+" tabular插件 {{{
+Bundle 'godlygeek/tabular'
+" See: https://github.com/godlygeek/tabular
+" }}}
+
+" neocomplete插件{{{1
+Bundle 'Shougo/neocomplete.vim'
+" ignore case
+let g:neocomplete#enable_ignore_case = 1
+"Configs from https://github.com/Shougo/neocomplete.vim
+"Note: This option must set it in .vimrc(_vimrc).  NOT IN .gvimrc(_gvimrc)!
+" Disable AutoComplPop.
+let g:acp_enableAtStartup = 0
+" Use neocomplete.
+let g:neocomplete#enable_at_startup = 1
+" Use smartcase.
+let g:neocomplete#enable_smart_case = 1
+" Set minimum syntax keyword length.
+let g:neocomplete#sources#syntax#min_keyword_length = 3
+let g:neocomplete#lock_buffer_name_pattern = '\*ku\*'
+
+" Define dictionary.
+let g:neocomplete#sources#dictionary#dictionaries = {
+    \ 'default' : '',
+    \ 'vimshell' : $HOME.'/.vimshell_hist',
+    \ 'scheme' : $HOME.'/.gosh_completions'
+        \ }
+
+" Define keyword.
+if !exists('g:neocomplete#keyword_patterns')
+    let g:neocomplete#keyword_patterns = {}
+endif
+let g:neocomplete#keyword_patterns['default'] = '\h\w*'
+
+" Plugin key-mappings.
+inoremap <expr><C-g>     neocomplete#undo_completion()
+inoremap <expr><C-l>     neocomplete#complete_common_string()
+
+" Recommended key-mappings.
+" <CR>: close popup and save indent.
+inoremap <silent> <CR> <C-r>=<SID>my_cr_function()<CR>
+function! s:my_cr_function()
+  return neocomplete#close_popup() . "\<CR>"
+  " For no inserting <CR> key.
+  "return pumvisible() ? neocomplete#close_popup() : "\<CR>"
+endfunction
+" <TAB>: completion.
+inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
+" <C-h>, <BS>: close popup and delete backword char.
+inoremap <expr><C-h> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><BS> neocomplete#smart_close_popup()."\<C-h>"
+inoremap <expr><C-y>  neocomplete#close_popup()
+inoremap <expr><C-e>  neocomplete#cancel_popup()
+" Close popup by <Space>.
+"inoremap <expr><Space> pumvisible() ? neocomplete#close_popup() : "\<Space>"
+
+" For cursor moving in insert mode(Not recommended)
+"inoremap <expr><Left>  neocomplete#close_popup() . "\<Left>"
+"inoremap <expr><Right> neocomplete#close_popup() . "\<Right>"
+"inoremap <expr><Up>    neocomplete#close_popup() . "\<Up>"
+"inoremap <expr><Down>  neocomplete#close_popup() . "\<Down>"
+" Or set this.
+"let g:neocomplete#enable_cursor_hold_i = 1
+" Or set this.
+"let g:neocomplete#enable_insert_char_pre = 1
+
+" AutoComplPop like behavior.
+"let g:neocomplete#enable_auto_select = 1
+
+" Shell like behavior(not recommended).
+"set completeopt+=longest
+"let g:neocomplete#enable_auto_select = 1
+"let g:neocomplete#disable_auto_complete = 1
+"inoremap <expr><TAB>  pumvisible() ? "\<Down>" : "\<C-x>\<C-u>"
+
+" Enable omni completion.
+autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
+autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
+autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
+
+" Enable heavy omni completion.
+if !exists('g:neocomplete#sources#omni#input_patterns')
+  let g:neocomplete#sources#omni#input_patterns = {}
+endif
+"let g:neocomplete#sources#omni#input_patterns.php = '[^. \t]->\h\w*\|\h\w*::'
+"let g:neocomplete#sources#omni#input_patterns.c = '[^.[:digit:] *\t]\%(\.\|->\)'
+"let g:neocomplete#sources#omni#input_patterns.cpp = '[^.[:digit:] *\t]\%(\.\|->\)\|\h\w*::'
+
+" For perlomni.vim setting.
+" https://github.com/c9s/perlomni.vim
+let g:neocomplete#sources#omni#input_patterns.perl = '\h\w*->\h\w*\|\h\w*::'
+"}}}1
+
+" vim-cpp-enhanced-highlight插件{{{
+" C与C++语法高亮加强版
+Bundle 'octol/vim-cpp-enhanced-highlight'
+" See: https://github.com/octol/vim-cpp-enhanced-highlight
+" similar plugin: https://github.com/justinmk/vim-syntax-extra
+" 未启用插件
+" }}}
+
+" 未启动的插件
+
+" bufexplorer.zip插件(未启用) {{{1
+" 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
+" Bundle 'vim-scripts/bufexplorer.zip'
+" let g:bufExplorerShowNoName = 1
+" let g:bufExplorerDisableDefaultKeyMapping = 1
+" nnoremap <Leader>e :BufExplorer<CR>
+" nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
+" }}}1
+
+" UltiSnip插件(未启用) {{{
+" 代码块的补全
+" Bundle 'sirver/UltiSnips'
+"}}}
+
+" vim-easymotion插件 (性能问题){{{
+"Bundle 'Lokaltog/vim-easymotion'
+"map <C-j> <Plug>(easymotion-j)
+"map <C-k> <Plug>(easymotion-k)
+"map s     <Plug>(easymotion-s)
+"map <C-/> <Plug>(easymotion-sn)
+"}}}
+
+" indentLine插件 (性能问题){{{1
+" 在代码中显示垂直对齐线
+"   适合于空格缩进的代码，
+"   如果是Tab缩进则没必要使用插件，使用VIM自带的功能就好了：
+"       :set list
+"       :set listchars=tab:\|\ 
 " 使用方法
-" :Bgrep pattern
-Bundle 'vim-scripts/Buffer-grep'
+"   :IndentLinesEnable
+"Bundle 'Yggdroot/indentLine'
+" IndentLinesEnable
+" 设置对齐线的背景色
+"   let g:indentLine_color_term = 239
+"   let g:indentLine_color_gui = '#A4E57E'
+"   hi Conceal ...
+" 设置对齐线字符(│,|,¦,┊,┆,︙)
+"let g:indentLine_char = '┊'
+"let g:indentLine_first_char = '┊'
+"let g:indentLine_faster = 1
+"let g:indentLine_showFirstIndentLevel = 1
+"let g:indentLine_fileType = ['c', 'cpp', 'python', 'sh']
+"let g:indentLine_fileTypeExclude = ['man', 'help', 'qf']
+"nnoremap <Leader>i :IndentLinesToggle<CR>
 " }}}1
 
 " powerline插件 "{{{
-Bundle 'Lokaltog/vim-powerline'
+"Bundle 'Lokaltog/vim-powerline'
 " fancy最漂亮，但要求字体支持一些特殊字符
 " 若当前使用的字体不支持这些字符，给字体打个补丁就行了,具体如下：
 " 1. linux 系统
@@ -211,84 +331,55 @@ Bundle 'Lokaltog/vim-powerline'
 " 本地版: ~/.vim/bundle/vim-powerline/fontpatcher/fontpatcher
 " 在线版: https://powerline.readthedocs.org/en/latest/fontpatching.html
 "
-if has("gui_running")
-    let g:Powerline_symbols = 'fancy'
-else
-    let g:Powerline_symbols = 'unicode'
-    "let g:Powerline_symbols = 'compatible'
-endif
-let g:Powerline_stl_path_style = 'short'
+"if has("gui_running")
+"    let g:Powerline_symbols = 'fancy'
+"else
+"    let g:Powerline_symbols = 'unicode'
+"    "let g:Powerline_symbols = 'compatible'
+"endif
+"let g:Powerline_stl_path_style = 'short'
 "}}}
 
-" indentLine插件 {{{1
-" 在代码中显示垂直对齐线
-"   适合于空格缩进的代码，
-"   如果是Tab缩进则没必要使用插件，使用VIM自带的功能就好了：
-"       :set list
-"       :set listchars=tab:\|\ 
+" Buffer-grep插件 {{{1
+" 在所有Buffer中搜索并放到新的quickfix窗口中然后打开quickfix窗口
 " 使用方法
-" :IndentLinesEnable
-Bundle 'Yggdroot/indentLine'
-" IndentLinesEnable
-" 设置对齐线的背景色
-"   let g:indentLine_color_term = 239
-"   let g:indentLine_color_gui = '#A4E57E'
-"   hi Conceal ...
-" 设置对齐线字符(│,|,¦,┊,┆,︙)
-let g:indentLine_char = '┊'
-let g:indentLine_first_char = '┊'
-let g:indentLine_faster = 1
-"let g:indentLine_showFirstIndentLevel = 1
-"let g:indentLine_fileType = ['c', 'cpp', 'python', 'sh']
-let g:indentLine_fileTypeExclude = ['man', 'help', 'qf']
+" :Bgrep pattern
+"Bundle 'vim-scripts/Buffer-grep'
 " }}}1
 
-" vim-easymotion插件 {{{
-Bundle 'Lokaltog/vim-easymotion'
-map <C-j> <Plug>(easymotion-j)
-map <C-k> <Plug>(easymotion-k)
-map s     <Plug>(easymotion-s)
-map <C-/> <Plug>(easymotion-sn)
-"}}}
+" YouCompleteMe插件 （性能问题，配置复杂）{{{1
+" 根据语义自动补全代码
+" 还能实时编译，显示编译告警
+" 使用方法：
+" 1. 输入过程中有可选匹配项时会自动弹出下拉列表，可使用tab选择
+" 2. 匹配过程中不必从头完全匹配
+"    如输入hw，下拉列表中可能出现oh_hello_world选项
+"Bundle 'Valloric/YouCompleteMe'
+"if has("macunix")
+"    let g:ycm_global_ycm_extra_conf = '/Users/wolfwzr/.vim/bundle/YouCompleteMe/third_party/ycmd/cpp/ycm/.ycm_c_conf.py'
+"endif
+" }}}1
 
-" rainbow插件 {{{
-Bundle 'oblitum/rainbow'
-"let g:rainbow_guifgs : [
-"    \ '#458588',
-"    \ '#b16286',
-"    \ '#cc241d',
-"    \ '#d65d0e',
-"    \ '#458588',
-"    \ '#b16286',
-"    \ '#cc241d',
-"    \ '#d65d0e',
-"    \ '#458588',
-"    \ '#b16286',
-"    \ '#cc241d',
-"    \ '#d65d0e',
-"    \ '#458588',
-"    \ '#b16286',
-"    \ '#cc241d',
-"    \ '#d65d0e',
+" rainbow插件（性能问题）{{{
+"Bundle 'oblitum/rainbow'
+"let g:rainbow_guifgs = [
+"    \ '#DCC6AE',
+"    \ '#b8bb26',
+"    \ '#8ccbea',
+"    \ '#8ec07c',
+"    \ '#c3e5d8',
+"    \ '#afd700',
+"    \ '#fabd2f',
+"    \ '#68CDEC',
+"    \ '#a4e57e',
+"    \ '#ffdb72',
+"    \ '#9999ff',
+"    \ '#ffb3ff',
+"    \ '#C8EC98',
+"    \ '#fc5a4d',
+"    \ '#ff7272',
+"    \ '#fb4934',
 "    \ ]
-let g:rainbow_guifgs = [
-    \ '#DCC6AE',
-    \ '#b8bb26',
-    \ '#8ccbea',
-    \ '#8ec07c',
-    \ '#c3e5d8',
-    \ '#afd700',
-    \ '#fabd2f',
-    \ '#68CDEC',
-    \ '#a4e57e',
-    \ '#ffdb72',
-    \ '#9999ff',
-    \ '#ffb3ff',
-    \ '#C8EC98',
-    \ '#fc5a4d',
-    \ '#ff7272',
-    \ '#fb4934',
-    \ ]
 "au FileType c,cpp,objc,objcpp call rainbow#load()
 "let g:rainbow_active = 1
 ":RainbowToggle  --you can use it to toggle this plugin.
@@ -296,24 +387,15 @@ let g:rainbow_guifgs = [
 " See: https://github.com/oblitum/rainbow
 " }}}
 
-" tabular插件 {{{
-Bundle 'godlygeek/tabular'
-" See: https://github.com/godlygeek/tabular
-" }}}
-
-" 未启用插件
-
-" bufexplorer.zip插件(未启用) {{{1
-" 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
-" Bundle 'vim-scripts/bufexplorer.zip'
-" let g:bufExplorerShowNoName = 1
-" let g:bufExplorerDisableDefaultKeyMapping = 1
-" nnoremap <Leader>e :BufExplorer<CR>
-" nnoremap <Leader>e :BufExplorerHorizontalSplit<CR>
+" Mark插件（性能问题，改成自定义的W_mark函数实现）{{{1
+" Mark different color with different string
+" Bundle 'vim-scripts/Mark'
+" 注意，Mark 插件会使用 autocmd! 注册事件，如下：
+"   autocmd! BufWinEnter * call s:UpdateMark()
+" 这将会清除默认 group 的所有已注册 BufWinEnter 事件，所以应该将它放到组里
+"   augroup mark
+"       autocmd! BufWinEnter * call s:UpdateMark()
+"   augroup END
 " }}}1
-" UltiSnip插件(未启用) {{{
-" 代码块的补全
-" Bundle 'sirver/UltiSnips'
-"}}}
 
 " vim: set ft=vim:

@@ -159,7 +159,7 @@ else
     alias open='xdg-open'
     alias m='mplayer -zoom'
     alias mkd='Markdown.pl --html4tags'
-    alias wz='/home/wolfwzr/usr/src/WizNote/WizNote'
+    alias wz='/usr/local/bin/WizNote'
     alias df='df -PTh'
     alias ds='d * | sort -h'
     alias pg='ps -elf | grep -v $$ | grep -i'
@@ -284,11 +284,15 @@ else
     _scn='/home/wolfwzr/Documents/work/scanner'
     alias gscn='cd $_scn'
 
-    _hse='/home/wolfwzr/Documents/work/scanner/svn/scanner/user/modules/hse'
+    _hse="$_scn/svn/scanner/user/modules/hse"
     alias ghse='cd $_hse'
     alias hse='(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)'
 
-    _plg='/home/wolfwzr/Documents/work/scanner/svn/signature/tr/sig/plugins'
+    _sm="$_scn/svn/scanner/user/modules/scanner/bin/scanner_main/"
+    alias gsm='cd $_sm'
+    alias sm='(cd $_sm && vi scanner_main.c)'
+
+    _plg="$_scn/svn/signature/tr/sig/plugins"
     alias gplg='cd $_plg'
 
     # github

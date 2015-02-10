@@ -5,13 +5,73 @@
 " ~wolfwzr/.vim/mac-alt-map.vimrc
 
 " 变量定义 {{{1
+let s:W_TRUE  = 1
+let s:W_FALSE = 0
+
 let s:W_colorscheme_applied = 0
 let s:W_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 let s:W_last_filetype = ""
 let s:W_last_insert_im_status = 0
+
+let s:W_last_mark_idx = 5
 " }}}1
 
 " 函数定义 {{{1
+" W_get_visual_selected_text {{{2
+function! W_get_visual_selected_text()
+    " Check if is in visual mode ?
+    let l:reg_bakup = @x
+    normal gv"xy
+    let l:ret = @x
+    let @x = l:reg_bakup
+    echom "selected text:[" . l:ret . "]"
+    return l:ret
+endfunction
+"}}}2
+" W_mark: 高亮单词，用于替换Mark插件（Mark插件性能不行）{{{2
+function! W_mark(str, is_a_word)
+    let l:syn_num = 6
+	let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
+    if 0 == match(l:cur_syn, "W_MarkWord")
+        let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
+        execute 'syn match NONE /\<' . a:str . '\>/'
+    else "Choose a color and mark a:str
+        "高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
+        hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
+        hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
+        hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
+        hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
+        hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
+        hi W_MarkWord5 ctermbg=Blue    ctermfg=Black guibg=#9999FF guifg=Black
+
+        let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % l:syn_num
+        let l:exec_str = 'syn match W_MarkWord' . s:W_last_mark_idx
+        if s:W_TRUE == a:is_a_word
+            execute l:exec_str . ' /\<' . a:str . '\>/'
+        else
+            execute l:exec_str . ' /' . a:str . '/'
+        endif
+    endif
+endfunction
+" }}}2
+" W_source: source 一个文件 {{{2
+function! W_source(file)
+    if filereadable(a:file)
+        source a:file
+        return s:W_TRUE
+    endif
+    return s:W_FALSE
+endfunction
+" }}}2
+" W_exec_cmd: execute an command{{{2
+function! W_exec_cmd(cmd)
+    if exists(a:cmd)
+        source a:cmd
+        return s:W_TRUE
+    endif
+    return s:W_FALSE
+endfunction
+" }}}2
 " W_eatchar: 吃掉一个字符 {{{2
 function! W_eatchar(char)
     let c = nr2char(getchar())
@@ -35,11 +95,20 @@ endfunction
 " }}}2
 " W_C_replace: C语言自动替换 {{{2
 function! W_C_replace()
-    iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
-    iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev fore for ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev doo do<CR>{<CR>}<CR>while ();<Left><Left><C-r>=W_eatchar(' ')<CR>
+    " 考虑到({等符号已成对匹配，以下替换也做了相应修改
+    "iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
+    "iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev fore for ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev doo do<CR>{<CR>}<CR>while ();<Left><Left><C-r>=W_eatchar(' ')<CR>
+
+    iabbrev iff if (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev forr for (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev whilee while (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev doo do<CR>{<Esc>ddowhile (<Right>;<Left><Left><C-r>=W_eatchar(' ')<CR>
+    iabbrev elsee else<CR>{<C-r>=W_eatchar('')<CR>
+
+    iabbrev inc #include <.h><Left><Left><Left><C-r>=W_eatchar(' ')<CR>
 endfunction
 " }}}2
 " W_code_common_setting: 代码通用设置 {{{2
@@ -61,7 +130,7 @@ function! W_code_common_setting()
         " 警示行尾多余空格
         " match Error /\s\+$/
         " 显示缩进垂直对齐线
-        IndentLinesEnable
+        "call W_exec_cmd("IndentLinesEnable")
     endif
 
     " 按<Leader><Leader>执行make并打开quickfix窗口
@@ -72,11 +141,11 @@ function! W_code_common_setting()
     vnoremap <Leader>= :Tabularize /=<CR>
 
     " 快速插入函数注释头
-    command! Ifhc call W_insert_function_header('cn')
-    command! Ifhe call W_insert_function_header('en')
+    command! Ifc call W_insert_function_header('cn')
+    command! Ife call W_insert_function_header('en')
     " 不知道为什么会多输出一个0,所以用<BS>删除
-    inoremap <Leader>ifhc <C-r>=W_insert_function_header('cn')<CR><BS><Space>
-    inoremap <Leader>ifhe <C-r>=W_insert_function_header('en')<CR><BS><Space>
+    inoremap <Leader>ifc <C-r>=W_insert_function_header('cn')<CR><BS><C-o>A
+    inoremap <Leader>ife <C-r>=W_insert_function_header('en')<CR><BS><C-o>A
 
     call W_common_replace()
     call W_set_colorscheme("codeschool")
@@ -250,10 +319,14 @@ function! W_set_colorscheme(color)
     elseif g:W_color_scheme == "gruvbox"
         hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         hi Normal guibg=#303030
+        hi String guibg=#3E411A
     elseif g:W_color_scheme == "neon"
         hi Folded guibg=#003040 guifg=Grey
         hi Comment guifg=#909090
+        "hi String guifg=#80BADF guibg=#2A3A45
     endif
+    hi StatusLine   gui=none guibg=grey35 guifg=grey85
+    hi StatusLineNC gui=none guibg=grey30 guifg=grey70
 
     if has("gui_running")
         let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
@@ -330,9 +403,10 @@ function! W_set_colorscheme(color)
     " 重新加载mark.vim（否则mark.vim将失效） {{{3
     " 下面的autocmd命令无预期效果, why?
     " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
-    source ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
-    source ~wolfwzr/.vim/bundle/rainbow/plugin/rainbow.vim
-    RainbowLoad
+    " call W_source("~wolfwzr/.vim/bundle/Mark/plugin/mark.vim")
+    if s:W_TRUE == W_source("~wolfwzr/.vim/bundle/rainbow/plugin/rainbow.vim")
+        RainbowLoad
+    endif
     " }}}3
 endfunction
 " }}}2
@@ -396,7 +470,7 @@ function! W_filetype_setting()
         call W_set_colorscheme("rainbow_neon")
         setlocal syntax=nasm
         if has("gui_running")
-            IndentLinesDisable
+            "call W_exec_cmd("IndentLinesDisable")
             setlocal nolist
         endif
     " PYTHON {{{3
@@ -408,6 +482,7 @@ function! W_filetype_setting()
         set foldmethod=indent
         call W_code_common_setting()
         call W_set_colorscheme("neon")
+        inoremap { {}<Left>
     " VIM {{{3
     elseif &filetype == "vim"
         set foldmethod=marker
@@ -459,13 +534,11 @@ function! W_insert_function_header(lang)
 \ 输入参数: \n
 \ 输出参数: \n
 \ 返 回 值: \n
-\-----------------------------------------------------------------------\n
+\ ------------------------------------------------------------------------\n
 \ 最近一次修改记录:\n
-\ 修改作者: \n
-\ 修改目的: \n
-\ 修改日期: \n
-\*************************************************************************/\n
-\"
+\ 修改作者: wangzhengrong\n
+\ 修改目的: 定义函数\n
+\ 修改日期: "
     "}}}
     "英文版{{{
     elseif a:lang == 'en'
@@ -476,16 +549,19 @@ function! W_insert_function_header(lang)
 \ Input Args  : \n
 \ Output Args : \n
 \ Return Value: \n
-\-----------------------------------------------------------------------\n
+\ ------------------------------------------------------------------------\n
 \ Lastest Modify Record:\n
-\ Author : \n
-\ Purpose: \n
-\ Date   : \n
-\*************************************************************************/\n
-\"
+\ Author : wangzhengrong\n
+\ Purpose: create function\n
+\ Date   : "
     endif
     "}}}
-    normal "apj$
+    normal "ap10j
+    execute 'r!date +\%F'
+    normal kJ
+    let @a="
+\*************************************************************************/\n"
+    normal "ap10k$
     let @a = b:reg_bakup
 endfunction
 "}}}2
@@ -689,8 +765,8 @@ hi StatusLine cterm=bold gui=bold
 set statusline=
     \%f\ %r\ %m\ %q
     \%=
-    \[%{&fileformat},%{&fileencoding}%Y]
-    \\ (%l/%L,%03v)\ %03P
+    \[%Y,%{&fileencoding},%{&fileformat}]
+    \\ [%l,%02v]\ [%L,%02P]
 " }}}2
 " 打开文件时恢复光标位置 {{{2
 if has("autocmd")
@@ -734,8 +810,37 @@ set mouse=a
 " Shift+左键 - 拓展选区
 " Shift+右键 - 搜索单词
 set mousemodel=popup
+" 可用作 keymap 的鼠标动作
+"
+" ScrollWheel: (help scroll-mouse-wheel)
+" <ScrollWheelUp>
+" <ScrollWheelDown>
+" <ScrollWheelLeft>
+" <ScrollWheelRight>
+"
+" :help <MiddleRelease>
+" code            mouse button               normal action
+" <LeftMouse>     left pressed               set cursor position
+" <LeftDrag>      left moved while pressed   extend selection
+" <LeftRelease>   left released              set selection end
+" <MiddleMouse>   middle pressed             paste text at cursor position
+" <MiddleDrag>    middle moved while pressed -
+" <MiddleRelease> middle released            -
+" <RightMouse>    right pressed              extend selection
+" <RightDrag>     right moved while pressed  extend selection
+" <RightRelease>  right released             set selection end
+
 " double click
 nmap <2-LeftMouse> <Leader>m
+
+nmap <S-ScrollWheelUp>   <C-o>
+nmap <S-ScrollWheelDown> <C-i>
+
+" Auto copy on select
+"vnoremap <LeftRelease> "+ygv<LeftRelease>
+"vnoremap v             "+y
+"set go+=P
+
 "}}}2
 " 杂项设置{{{2
 set wrap
@@ -815,8 +920,11 @@ nnoremap ][ ]]
 nnoremap ]] ][
 " }}}2
 
-" Window/GUI窗口相关{{{2
+" Tab/Window/GUI窗口相关{{{2
 if has("gui_running")
+    " Duplication current window to a new tab
+    nnoremap <C-n>     :tabnew %<CR>
+
     " Window跳转 {{{
     nnoremap <Leader>j <C-w>j
     nnoremap <Leader>k <C-w>k
@@ -855,7 +963,7 @@ if has("gui_running")
         vnoremap Y     "+y
         vnoremap <C-x> "+x
         vnoremap X     "+x
-        inoremap <C-v> <C-r>+
+        inoremap <C-v> <Esc>:set paste<CR>"+p:set nopaste<CR>a
         cnoremap <C-v> <C-r>+
     endif
 endif
@@ -959,9 +1067,15 @@ command! SourceRc :source ~wolfwzr/.vim/vimrc
 nmap <Leader>c :call W_set_colorscheme(g:W_color_scheme)<CR>
 "}}}
 
+" Mark 当前单词 {{{
+nmap <Leader>m :call W_mark(expand("<cword>"), 1)<CR>
+vmap <Leader>m :call W_mark(W_get_visual_selected_text(), 0)<CR>
+"}}}
+
 " 删除当前 buffer {{{
 nmap <Leader><BS> :bdelete %<CR>
 "}}}
+
 " }}}1
 
 " 文件类型相关设置 {{{1
@@ -989,7 +1103,9 @@ if has("autocmd")
             \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>|
-            \ nnoremap <buffer> <BS>      <C-t>
+            \ nnoremap <buffer> <BS>      <C-t>|
+            \ nmap <C-ScrollWheelUp>   <Leader>fc|
+            \ nmap <C-ScrollWheelDown> <Leader>fs
         autocmd FileType help
             \ nnoremap <buffer> <SPACE>   <C-]>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
@@ -997,21 +1113,24 @@ if has("autocmd")
             \ nnoremap <buffer> q         :q<CR>|
             \ set ts=4
         autocmd FileType vim
-            \ nmap     <buffer> <SPACE>   <Leader>h|
-            \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <BS>      <C-o>|
-            \ nnoremap <buffer> <C-CR>    :<C-r>+<CR>
+            \ nmap     <buffer> <C-LeftMouse>   <Leader>h|
+            \ nmap     <buffer> <SPACE>         <Leader>h|
+            \ nnoremap <buffer> <S-SPACE>       <C-t>|
+            \ nnoremap <buffer> <BS>            <C-o>|
+            \ nnoremap <buffer> <C-CR>          :<C-r>+<CR>
         autocmd FileType mkd
             \ nnoremap <buffer> <F5>      :!mkd_preview.sh %<CR>|
             \ nnoremap <buffer> <C-t>     :Toch<CR>|
             \ nnoremap <buffer> o         A<CR>
         autocmd FileType qf
-            \ nnoremap <buffer> o         <CR>|
-            \ nnoremap <buffer> q         :q<CR>|
+            \ nnoremap <buffer> o               <CR>|
+            \ nmap     <buffer> <2-LeftMouse>   o|
+            \ nnoremap <buffer> q               :q<CR>|
             \ resize 5
         autocmd FileType man
-            \ nnoremap <buffer> q         :q<CR>|
-            \ nnoremap <buffer> <SPACE>   :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <SPACE>       :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nmap     <buffer> <2-LeftMouse> <SPACE>|
+            \ nnoremap <buffer> q             :q<CR>|
             \ setlocal ts=8
     augroup end
 endif
@@ -1022,6 +1141,9 @@ if has("gui_running")
     " 去掉菜单栏、工具栏等
     set go=
 
+    " 自动复制选区
+    set go+=P
+
     call W_set_guifont()
 
     " 设置窗口位置
@@ -1031,7 +1153,7 @@ if has("gui_running")
     "    winpos 245 10
     "endif
     set columns=90
-    set lines=40
+    set lines=39
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
@@ -1071,6 +1193,16 @@ if has("cscope")
     nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
+
+    " show result in new window
+    nnoremap <Leader>fS :split<CR>:cs find s <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fG :split<CR>:cs find g <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fC :split<CR>:cs find c <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fT :split<CR>:cs find t <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fE :split<CR>:cs find e <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fF :split<CR>:cs find f <C-R>=expand("<cfile>")<CR><CR>
+    nnoremap <Leader>fI :split<CR>:cs find i <C-R>=expand("<cfile>")<CR><CR>
+    nnoremap <Leader>fD :split<CR>:cs find d <C-R>=expand("<cword>")<CR><CR>
 
     nnoremap <Leader>fu :call W_cscope_update_db()<CR>
     nnoremap <Leader>fl :call W_cscope_init_db()<CR>

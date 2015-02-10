@@ -1,13 +1,12 @@
 @namespace url(http://www.w3.org/1999/xhtml);
 
 @-moz-document regexp('http.*\.baidu\..*') {
-
   #kw {
     position: relative;
     color: black;
   }
   
-  body, #head .head_wrapper {
+  body, #head .head_wrapper, #s_tab {
     background-color: #dddddd;
   }
   
@@ -21,12 +20,18 @@
 }
 
 @-moz-document domain("64.233.167.165") {
-
-  #rcnt {
+  #rcnt, {
     background-color: #eeeeee;
   }
   
-  #viewport {
+  #viewport, {
     background-color: #dddddd;
   }
 }
+
+@-moz-document domain("www.gfsoso.com") {
+  body, .fbar, #page-nav, {
+    background-color: #dddddd;
+  }
+}
+
