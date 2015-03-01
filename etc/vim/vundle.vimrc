@@ -56,10 +56,9 @@ function! W_nerdtree_toggle()
     endif
 endfunction
 nnoremap <Leader>e :call W_nerdtree_toggle()<CR>
-"if has("autocmd")
-"    这个nnoremap未能生效，因为被nerdtree插件覆盖了吗？
-"    autocmd FileType nerdtree nnoremap <buffer> q :call W_nerdtree_toggle()<CR>
-"endif
+if has("autocmd")
+    autocmd FileType nerdtree nnoremap <buffer> q :call W_nerdtree_toggle()<CR>
+endif
 " }}}1
 
 " tagbar插件 {{{1
