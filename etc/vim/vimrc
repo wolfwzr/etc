@@ -724,6 +724,25 @@ function! W_set_fcitx(event)
     endif
 endfunction
 "}}}2
+" W_setll: Insert/Normal模式切换时自动切换fcitx状态{{{2
+function! W_set_fcitx(event)
+    if a:event == "InsertEnter"
+        if s:W_last_insert_im_status == 1       " fcitx is inactive
+            call system("fcitx-remote -c")      " inactive fcitx
+        elseif s:W_last_insert_im_status == 2   " fcitx is active
+            call system("fcitx-remote -o")      " active fcitx
+        endif
+    elseif a:event == "InsertLeave"
+        if executable("fcitx-remote")
+            let s:W_last_insert_im_status =
+                \ system("fcitx-remote | tr -d '\r\n'")
+        endif
+        if s:W_last_insert_im_status == 2       " fcitx is active
+            call system("fcitx-remote -c")      " inactive fcitx
+        endif
+    endif
+endfunction
+"}}}2
 "}}}1
 
 " 基础设置 {{{1
@@ -1098,8 +1117,9 @@ if has("autocmd")
 
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
-        autocmd FileType c,cpp,h,flex,bison,yacc
+        autocmd FileType c,cpp,h,flex,bison,yacc,asm
             \ nnoremap <buffer> <SPACE>   :cs find g <C-R>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <CR>      :cs find s <C-R>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>|
@@ -1176,7 +1196,8 @@ endif
 "   :help cscope
 "   http://vim.wikia.com/wiki/Cscope
 if has("cscope")
-    set csprg=/usr/bin/cscope
+    "set csprg=/usr/bin/cscope
+    set csprg=cscope
     set csto=0
     set cst
     set cscopequickfix=s-,c-,d-,i-,t-,e-
