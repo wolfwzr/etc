@@ -24,7 +24,6 @@ function! W_get_visual_selected_text()
     normal gv"xy
     let l:ret = @x
     let @x = l:reg_bakup
-    echom "selected text:[" . l:ret . "]"
     return l:ret
 endfunction
 "}}}2
@@ -33,16 +32,16 @@ function! W_mark(str, is_a_word)
     let l:syn_num = 6
 	let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
     if 0 == match(l:cur_syn, "W_MarkWord")
-        let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
-        execute 'syn match NONE /\<' . a:str . '\>/'
-    else "Choose a color and mark a:str
-        "高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
+        "let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
+        execute 'syn match none /\<' . a:str . '\>/'
+    else " Choose a color and mark a:str
+        " 高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
         hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
         hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
         hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
         hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
         hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
-        hi W_MarkWord5 ctermbg=Blue    ctermfg=Black guibg=#9999FF guifg=Black
+        hi W_MarkWord5 ctermbg=Blue    ctermfg=White guibg=#9999FF guifg=Black
 
         let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % l:syn_num
         let l:exec_str = 'syn match W_MarkWord' . s:W_last_mark_idx
@@ -218,32 +217,25 @@ endfunction
 "}}}2
 " W_set_colorscheme: 设置配色方案 {{{2
 function! W_set_colorscheme(color)
-
     let g:W_color_scheme = a:color
 
     " 设置配色方案{{{3
     " 还可以的 light 主题 {{{
     " biogoo
     " bmichaelsen
-    " cleanphp
     " colorful
     " colorzone
     " d8g_02
-    " nedit
     " nedit2
     " pspad
     " smp
     " soso
-    " [*****] neutron
     " [*****] newspaper
-    " [*****] oceanlight
     " [*****] peaksea
-    " [*****] pyte
-    " [*****] Tomorrow
-    " 备选配色方案：
-    " Monokai
-    " PapayaWhip
     " Tomorrow-Night-Eighties
+    " PapayaWhip
+    "
+    " 暗色配色方案：
     " anotherdark
     " bubblegum
     " carvedwood
@@ -251,16 +243,14 @@ function! W_set_colorscheme(color)
     " codeschool
     " corn
     " corporation
-    " dante
     " darkburn
     " darkz
     " dusk
-    " evening_2
     " freya
     " hybrid
     " lilypink
     " lucius
-    " metacosm
+    " Monokai
     " mint
     " mrpink
     " neon
@@ -277,8 +267,6 @@ function! W_set_colorscheme(color)
     " southwest-fog
     " spectro
     " strawimodo
-    " symfony
-    " tango-desert
     " tango2
     " tchaba
     " two2tango
@@ -313,20 +301,21 @@ function! W_set_colorscheme(color)
     endif
 
     if g:W_color_scheme == "codeschool"
-        hi Normal guibg=#2d2d2d guifg=#cccccc
-        hi Folded guibg=#353500 guifg=Grey65
-        hi NonText guibg=#2d2d2d
+        "hi Normal guibg=#2d2d2d guifg=#cccccc
+        "hi Folded guibg=#353500 guifg=Grey65
+        "hi NonText guibg=#2d2d2d
     elseif g:W_color_scheme == "gruvbox"
-        hi cFunctions guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-        hi Normal guibg=#303030
+        hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
+        "hi Normal guibg=#303030
         hi String guibg=#3E411A
     elseif g:W_color_scheme == "neon"
         hi Folded guibg=#003040 guifg=Grey
         hi Comment guifg=#909090
+        hi NonText guibg=#282828
         "hi String guifg=#80BADF guibg=#2A3A45
     endif
-    hi StatusLine   gui=none guibg=grey35 guifg=grey85
-    hi StatusLineNC gui=none guibg=grey30 guifg=grey70
+    "hi StatusLine   gui=none guibg=grey35 guifg=grey85
+    "hi StatusLineNC gui=none guibg=grey30 guifg=grey70
 
     if has("gui_running")
         let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
