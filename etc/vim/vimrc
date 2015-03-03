@@ -14,6 +14,7 @@ let s:W_last_filetype = ""
 let s:W_last_insert_im_status = 0
 
 let s:W_last_mark_idx = 5
+let s:W_cscope_is_from_symbol = s:W_FALSE
 " }}}1
 
 " 函数定义 {{{1
@@ -713,22 +714,25 @@ function! W_set_fcitx(event)
     endif
 endfunction
 "}}}2
-" W_setll: Insert/Normal模式切换时自动切换fcitx状态{{{2
-function! W_set_fcitx(event)
-    if a:event == "InsertEnter"
-        if s:W_last_insert_im_status == 1       " fcitx is inactive
-            call system("fcitx-remote -c")      " inactive fcitx
-        elseif s:W_last_insert_im_status == 2   " fcitx is active
-            call system("fcitx-remote -o")      " active fcitx
-        endif
-    elseif a:event == "InsertLeave"
-        if executable("fcitx-remote")
-            let s:W_last_insert_im_status =
-                \ system("fcitx-remote | tr -d '\r\n'")
-        endif
-        if s:W_last_insert_im_status == 2       " fcitx is active
-            call system("fcitx-remote -c")      " inactive fcitx
-        endif
+" W_cscope_lookup_define_or_symbol: 使用cscope查询定义或符号{{{2
+" 使用 cscope 查询，先查询符号定义，若查到则跳到定义处，
+" 若没有查到，则查询符号引用处并跳到第一个引用的地方。
+function! W_cscope_lookup_define_or_symbol(pattern)
+    let v:errmsg = ""
+    execute "silent! cs find g " . a:pattern
+    if v:errmsg != ""
+        execute "cs find s " . a:pattern
+        let s:W_cscope_is_from_symbol = s:W_TRUE
+    endif
+endfunction
+"}}}2
+" W_cscope_back: 针对W_cscope_lookup_define_or_symbol函数的返回{{{2
+function! W_cscope_back()
+    if s:W_cscope_is_from_symbol == s:W_TRUE
+        execute "normal \<C-o>"
+        let s:W_cscope_is_from_symbol = s:W_FALSE
+    else
+        execute "normal \<C-t>"
     endif
 endfunction
 "}}}2
@@ -1107,39 +1111,39 @@ if has("autocmd")
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
         autocmd FileType c,cpp,h,flex,bison,yacc,asm
-            \ nnoremap <buffer> <SPACE>   :cs find g <C-R>=expand("<cword>")<CR><CR>|
-            \ nnoremap <buffer> <CR>      :cs find s <C-R>=expand("<cword>")<CR><CR>|
-            \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>|
-            \ nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>|
-            \ nnoremap <buffer> <BS>      <C-t>|
-            \ nmap <C-ScrollWheelUp>   <Leader>fc|
-            \ nmap <C-ScrollWheelDown> <Leader>fs
+            \ nnoremap <buffer> <SPACE>             :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>|
+            \ nnoremap <buffer> <S-SPACE>           :call W_cscope_back()<CR>|
+            \ nnoremap <buffer> <S-CR>              :Csg .*.*<Left><Left>|
+            \ nnoremap <buffer> <C-CR>              :Csg <C-r>+<CR>|
+            \ nmap     <buffer> <C-LeftMouse>       <SPACE>|
+            \ nmap     <buffer> <C-ScrollWheelUp>   <Leader>fc|
+            \ nmap     <buffer> <C-ScrollWheelDown> <Leader>fs
         autocmd FileType help
-            \ nnoremap <buffer> <SPACE>   <C-]>|
-            \ nnoremap <buffer> <S-SPACE> <C-t>|
-            \ nnoremap <buffer> <BS>      <C-t>|
-            \ nnoremap <buffer> q         :q<CR>|
+            \ nnoremap <buffer> <SPACE>             <C-]>|
+            \ nnoremap <buffer> <S-SPACE>           <C-t>|
+            \ nnoremap <buffer> <BS>                <C-t>|
+            \ nnoremap <buffer> q                   :q<CR>|
             \ set ts=4
         autocmd FileType vim
-            \ nmap     <buffer> <C-LeftMouse>   <Leader>h|
-            \ nmap     <buffer> <SPACE>         <Leader>h|
-            \ nnoremap <buffer> <S-SPACE>       <C-t>|
-            \ nnoremap <buffer> <BS>            <C-o>|
-            \ nnoremap <buffer> <C-CR>          :<C-r>+<CR>
+            \ nmap     <buffer> <C-LeftMouse>       <Leader>h|
+            \ nmap     <buffer> <SPACE>             <Leader>h|
+            \ nnoremap <buffer> <S-SPACE>           <C-t>|
+            \ nnoremap <buffer> <BS>                <C-o>|
+            \ nnoremap <buffer> <C-CR>              :<C-r>+<CR>
         autocmd FileType mkd
-            \ nnoremap <buffer> <F5>      :!mkd_preview.sh %<CR>|
-            \ nnoremap <buffer> <C-t>     :Toch<CR>|
-            \ nnoremap <buffer> o         A<CR>
+            \ nnoremap <buffer> <F5>                :!mkd_preview.sh %<CR>|
+            \ nnoremap <buffer> <C-t>               :Toch<CR>|
+            \ nnoremap <buffer> o                   A<CR>
         autocmd FileType qf
-            \ nnoremap <buffer> o               <CR>|
-            \ nmap     <buffer> <2-LeftMouse>   o|
-            \ nnoremap <buffer> q               :q<CR>|
+            \ nnoremap <buffer> o                   <CR>|
+            \ nmap     <buffer> <2-LeftMouse>       o|
+            \ nnoremap <buffer> q                   :q<CR>|
             \ resize 5
         autocmd FileType man
-            \ nnoremap <buffer> <SPACE>       :Man <C-r>=expand("<cword>")<CR><CR>|
-            \ nmap     <buffer> <2-LeftMouse> <SPACE>|
-            \ nnoremap <buffer> q             :q<CR>|
+            \ nnoremap <buffer> <SPACE>             :Man <C-r>=expand("<cword>")<CR><CR>|
+            \ nnoremap <buffer> <S-SPACE>           <C-o>|
+            \ nmap     <buffer> <2-LeftMouse>       <SPACE>|
+            \ nnoremap <buffer> q                   :q<CR>|
             \ setlocal ts=8
     augroup end
 endif
@@ -1161,7 +1165,7 @@ if has("gui_running")
     "else
     "    winpos 245 10
     "endif
-    set columns=90
+    set columns=105
     set lines=39
 
     " 设置默认配色方案
