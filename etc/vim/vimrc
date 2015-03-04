@@ -314,8 +314,8 @@ function! W_set_colorscheme(color)
         hi NonText guibg=#282828
         "hi String guifg=#80BADF guibg=#2A3A45
     endif
-    "hi StatusLine   gui=none guibg=grey35 guifg=grey85
-    "hi StatusLineNC gui=none guibg=grey30 guifg=grey70
+    hi StatusLine   gui=none guibg=grey35 guifg=grey85
+    hi StatusLineNC gui=none guibg=grey30 guifg=grey70
 
     if has("gui_running")
         let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
@@ -1000,10 +1000,14 @@ nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
 
 " Buffer Grep {{{3
 " 在当前Buffer中Grep
+nnoremap <Leader>g :g/\<<C-R>=expand("<cword>")<CR>\>/p<CR>
+vnoremap <Leader>g :<C-u>g/<C-R>=W_get_visual_selected_text()<CR>/p<CR>
+
 command! -nargs=1 Grep call W_grep("<args>")
-nnoremap <Leader>g :call W_grep('<C-R>=expand("<cword>")<CR>')<CR>
+nnoremap <Leader>G :call W_grep('\<<C-R>=expand("<cword>")<CR>\>')<CR>
+vnoremap <Leader>G :<C-u>call W_grep('<C-R>=W_get_visual_selected_text()<CR>')<CR>
 " 在所有Buffer中Grep
-nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
+" nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
 " }}}3
 
 " }}}2
@@ -1087,14 +1091,18 @@ if has("autocmd")
 
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
-        autocmd FileType c,cpp,h,flex,bison,yacc
+        autocmd FileType c,cpp,h,flex,bison,yacc,asm
+            \ nnoremap <buffer> <CR>      :cs find s <C-R>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <SPACE>   :cs find g <C-R>=expand("<cword>")<CR><CR>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
             \ nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>|
             \ nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>|
-            \ nnoremap <buffer> <BS>      <C-t>|
             \ nmap <C-ScrollWheelUp>   <Leader>fc|
             \ nmap <C-ScrollWheelDown> <Leader>fs
+        "autocmd FileType asm
+        "    \ nnoremap <buffer> <SPACE>   <C-]>|
+        "    \ nnoremap <buffer> <S-SPACE> <C-t>|
+        "    \ nnoremap <buffer> <C-CR>    :tag <C-r>+<CR>
         autocmd FileType help
             \ nnoremap <buffer> <SPACE>   <C-]>|
             \ nnoremap <buffer> <S-SPACE> <C-t>|
