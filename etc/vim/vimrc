@@ -308,15 +308,18 @@ function! W_set_colorscheme(color)
     elseif g:W_color_scheme == "gruvbox"
         hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         "hi Normal guibg=#303030
-        hi String guibg=#3E411A
+        hi String guibg=#373A17
+        hi Normal  guibg=#252D2B
+        "hi Normal  guibg=#2D2C25
     elseif g:W_color_scheme == "neon"
-        hi Folded guibg=#003040 guifg=Grey
+        hi Folded  guibg=#003040 guifg=Grey
         hi Comment guifg=#909090
         hi NonText guibg=#282828
         "hi String guifg=#80BADF guibg=#2A3A45
     endif
     hi StatusLine   gui=none guibg=grey35 guifg=grey85
     hi StatusLineNC gui=none guibg=grey30 guifg=grey70
+    hi Function     gui=bold
 
     if has("gui_running")
         let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
@@ -328,9 +331,15 @@ function! W_set_colorscheme(color)
                     \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x40)
 
         " LineNr
-        execute 'hi LineNr guibg=' . W_color_modify(l:normal_bg, 'add', 0x3)
+        execute 'hi LineNr guibg=' . W_color_modify(l:normal_bg, 'add', 0x4)
         execute 'hi LineNr guifg=' . W_color_modify
                 \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
+
+        execute 'hi StatusLine   guibg=' . W_color_modify(l:normal_bg, 'add', 0x18)
+        execute 'hi StatusLineNC guibg=' . W_color_modify(l:normal_bg, 'add', 0xD)
+
+        execute 'hi VertSplit    guibg=' . W_color_modify(l:normal_bg, 'add', 0x1A)
+                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x45)
 
         " SpecialKey/Conceal
         " SpecialKey for chars setting by (:set listchars)
@@ -360,10 +369,10 @@ function! W_set_colorscheme(color)
 
         " TabLine/TabLineSel/TabLineFill
         let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x17)
+        execute 'hi TabLine guibg=' . W_color_modify(l:normal_bg, 'add', 0x27)
+                 \'gui=none guifg=' . W_color_modify(l:normal_fg, 'sub', 0x10)
         execute 'hi TabLineSel gui=bold guibg=' . l:normal_bg .
                                     \ ' guifg=' . l:normal_fg
-        execute 'hi TabLine gui=NONE guibg=' . W_color_modify
-                                            \ (l:normal_bg, 'add', 0x27)
         execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
 
         " Search/Cursor
@@ -457,7 +466,7 @@ function! W_filetype_setting()
         set commentstring=;%s
         call W_code_common_setting()
 
-        call W_set_colorscheme("rainbow_neon")
+        "call W_set_colorscheme("rainbow_neon")
         setlocal syntax=nasm
         if has("gui_running")
             "call W_exec_cmd("IndentLinesDisable")
@@ -718,9 +727,12 @@ endfunction
 " 使用 cscope 查询，先查询符号定义，若查到则跳到定义处，
 " 若没有查到，则查询符号引用处并跳到第一个引用的地方。
 function! W_cscope_lookup_define_or_symbol(pattern)
+    let l:msg_bakup = v:errmsg
     let v:errmsg = ""
     execute "cs find g " . a:pattern
-    if v:errmsg != ""
+    if v:errmsg == ""
+        let v:errmsg = l:msg_bakup
+    else
         execute "cs find s " . a:pattern
         let s:W_cscope_is_from_symbol = s:W_TRUE
     endif
@@ -934,6 +946,9 @@ nnoremap ]] ][
 
 " Tab/Window/GUI窗口相关{{{2
 if has("gui_running")
+    " Tab Navigate
+    nnoremap <C-j>     :tabnext<CR>
+    nnoremap <C-k>     :tabprev<CR>
     " Duplication current window to a new tab
     nnoremap <C-n>     :tabnew %<CR>
 
@@ -1080,8 +1095,8 @@ command! SourceRc :source ~wolfwzr/.vim/vimrc
 "}}}
 
 " 刷新 ColorScheme {{{
-nmap <Leader>c :call W_set_colorscheme(g:W_color_scheme)<CR>
-"}}}
+"nmap <Leader>c :call W_set_colorscheme(g:W_color_scheme)<CR>
+"}}}"
 
 " Mark 当前单词 {{{
 nmap <Leader>m :call W_mark(expand("<cword>"), 1)<CR>
@@ -1092,6 +1107,9 @@ vmap <Leader>m :call W_mark(W_get_visual_selected_text(), 0)<CR>
 nmap <Leader><BS> :bdelete %<CR>
 "}}}
 
+" 其它 {{{
+nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
+"}}}"
 " }}}1
 
 " 文件类型相关设置 {{{1
