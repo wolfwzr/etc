@@ -719,7 +719,7 @@ endfunction
 " 若没有查到，则查询符号引用处并跳到第一个引用的地方。
 function! W_cscope_lookup_define_or_symbol(pattern)
     let v:errmsg = ""
-    execute "silent! cs find g " . a:pattern
+    execute "cs find g " . a:pattern
     if v:errmsg != ""
         execute "cs find s " . a:pattern
         let s:W_cscope_is_from_symbol = s:W_TRUE
