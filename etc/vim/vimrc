@@ -148,7 +148,7 @@ function! W_code_common_setting()
     inoremap <Leader>ife <C-r>=W_insert_function_header('en')<CR><BS><C-o>A
 
     call W_common_replace()
-    call W_set_colorscheme("codeschool")
+    call W_set_colorscheme("solarized")
 endfunction
 "}}}2
 " W_set_guifont: 设置GUI字体{{{2
@@ -180,6 +180,7 @@ function! W_set_guifont()
 endfunction
 "}}}2
 " W_color_modify: 颜色加减运算 {{{2
+" 正确的实现方法: RGB->HSV,修改V值->RGB
 function! W_color_modify(color, oper, modify_value)
     if a:color == ""
         " 返回红色以做告警
@@ -301,45 +302,51 @@ function! W_set_colorscheme(color)
         return
     endif
 
-    if g:W_color_scheme == "codeschool"
-        "hi Normal guibg=#2d2d2d guifg=#cccccc
-        "hi Folded guibg=#353500 guifg=Grey65
-        "hi NonText guibg=#2d2d2d
+    if g:W_color_scheme == "solarized"
+        hi Normal   guibg=#00222C guifg=#A0B5B7
+        hi Function gui=bold guifg=#2AA198
+        hi Comment  guifg=#606F83
     elseif g:W_color_scheme == "gruvbox"
         hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         "hi Normal guibg=#303030
         hi String guibg=#373A17
-        hi Normal  guibg=#252D2B
         "hi Normal  guibg=#2D2C25
+        "hi Normal  guibg=#252D2B
+        hi Normal  guibg=#18261D
     elseif g:W_color_scheme == "neon"
         hi Folded  guibg=#003040 guifg=Grey
         hi Comment guifg=#909090
         hi NonText guibg=#282828
         "hi String guifg=#80BADF guibg=#2A3A45
+    elseif g:W_color_scheme == "yeller"
+        hi Normal   guibg=#16241B
+        hi Function guifg=#73BD93
     endif
-    hi StatusLine   gui=none guibg=grey35 guifg=grey85
-    hi StatusLineNC gui=none guibg=grey30 guifg=grey70
-    hi Function     gui=bold
 
     if has("gui_running")
         let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
         let l:normal_fg = synIDattr(hlID("Normal"), "fg#", "gui")
 
-        " CursorLineNr
-        execute 'hi CursorLineNr gui=NONE guibg=' . l:normal_bg
-        execute 'hi CursorLineNr guifg=' . W_color_modify
-                    \ (synIDattr(hlID("Identifier"), "fg#", "gui"), 'add', 0x40)
+        " LineNr/CursorLineNr
+        execute 'hi LineNr       guibg=' . W_color_modify(l:normal_bg, 'add', 0x6)
+                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x70)
+        execute 'hi CursorLineNr guibg=' . l:normal_bg . ' gui=none'
+                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x90)
 
-        " LineNr
-        execute 'hi LineNr guibg=' . W_color_modify(l:normal_bg, 'add', 0x4)
-        execute 'hi LineNr guifg=' . W_color_modify
-                \ (synIDattr(hlID("CursorLineNr"), "fg#", "gui"), 'sub', 0x50)
-
-        execute 'hi StatusLine   guibg=' . W_color_modify(l:normal_bg, 'add', 0x18)
-        execute 'hi StatusLineNC guibg=' . W_color_modify(l:normal_bg, 'add', 0xD)
+        " StatusLine/StatusLineNC
+        execute 'hi StatusLine   gui=none'
+                              \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x1D)
+                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x88)
+        execute 'hi StatusLineNC gui=none'
+                              \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x10)
+                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x70)
 
         execute 'hi VertSplit    guibg=' . W_color_modify(l:normal_bg, 'add', 0x1A)
                               \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x45)
+
+        execute 'hi Function     gui=bold'
+        hi! link vimFunction Function
+        execute 'hi Constant     guibg=' . W_color_modify(l:normal_bg, 'add', 0xA)
 
         " SpecialKey/Conceal
         " SpecialKey for chars setting by (:set listchars)
@@ -355,12 +362,10 @@ function! W_set_colorscheme(color)
         " Pmenu/PmenuSel/ColorColumn
         "hi! link Pmenu LineNr
         "hi! link PmenuSel Cursor
-        execute 'hi Pmenu gui=NONE guibg=' . W_color_modify
-                    \ (l:normal_bg, "add", 0x10) .
-                    \ ' guifg=' . W_color_modify(l:normal_fg, 'sub', 0x25)
-        execute 'hi PmenuSel guibg=' . W_color_modify
-                    \ (l:normal_bg, 'add', 0x25) .
-                    \ ' guifg=' . W_color_modify(l:normal_fg, 'add', 0x30)
+        execute 'hi Pmenu gui=NONE guibg=' . W_color_modify(l:normal_bg, "add", 0x10)
+                                \ 'guifg=' . W_color_modify(l:normal_fg, 'sub', 0x25)
+        execute 'hi PmenuSel guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
+                          \ 'guifg=' . W_color_modify(l:normal_fg, 'add', 0x30)
         hi! link ColorColumn Pmenu
 
         " Visual
@@ -369,10 +374,10 @@ function! W_set_colorscheme(color)
 
         " TabLine/TabLineSel/TabLineFill
         let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x17)
-        execute 'hi TabLine guibg=' . W_color_modify(l:normal_bg, 'add', 0x27)
-                 \'gui=none guifg=' . W_color_modify(l:normal_fg, 'sub', 0x10)
-        execute 'hi TabLineSel gui=bold guibg=' . l:normal_bg .
-                                    \ ' guifg=' . l:normal_fg
+        execute 'hi TabLine guibg=' . W_color_modify(l:normal_bg, 'add', 0x20)
+                 \'gui=none guifg=' . W_color_modify(l:normal_fg, 'sub', 0x4)
+        execute 'hi TabLineSel gui=bold guibg=' . l:normal_bg
+                                     \ 'guifg=' . l:normal_fg
         execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
 
         " Search/Cursor
@@ -452,8 +457,10 @@ function! W_filetype_setting()
         " source ~/usr/etc/abbreviations.vim
 
         " gruvbox (要使这个主题生效，得先设置主题为greyblue)
-        call W_set_colorscheme("greyblue")
-        call W_set_colorscheme("gruvbox")
+        "call W_set_colorscheme("greyblue")
+        "call W_set_colorscheme("gruvbox")
+        "call W_set_colorscheme("yeller")
+        "call W_set_colorscheme("solarized")
 
         "setlocal cc=80
         highlight WarningCols gui=undercurl
@@ -480,13 +487,13 @@ function! W_filetype_setting()
     elseif &filetype == "sh"
         set foldmethod=indent
         call W_code_common_setting()
-        call W_set_colorscheme("neon")
+        "call W_set_colorscheme("neon")
         inoremap { {}<Left>
     " VIM {{{3
     elseif &filetype == "vim"
         set foldmethod=marker
         call W_code_common_setting()
-        call W_set_colorscheme("codeschool")
+        "call W_set_colorscheme("codeschool")
     " MKD {{{3
     elseif &filetype == "mkd"
         call W_code_common_setting()
@@ -511,7 +518,7 @@ function! W_filetype_setting()
             return
         endif
         call W_code_common_setting()
-        call W_set_colorscheme("corn")
+        "call W_set_colorscheme("corn")
     " CONF {{{3
     elseif &filetype == "conf"
         call W_code_common_setting()
@@ -1187,12 +1194,12 @@ if has("gui_running")
     "else
     "    winpos 245 10
     "endif
-    set columns=105
+    set columns=110
     set lines=39
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
-        call W_set_colorscheme("codeschool")
+        call W_set_colorscheme("solarized")
     endif
 
     " 光标设置 (:help 'guicursor')
