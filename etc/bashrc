@@ -119,13 +119,16 @@ fi
 # ALIAS
 ############################################################
 alias a='./a.out'
+alias b='bochs -f bochsrc'
 alias c='clear'
 alias d='du -sh'
 alias h='history | less +G --'
+alias t='top'
 alias j='jobs -l'
 alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
+alias pg='pgrep'
 alias hgrep='history | grep -i'
 alias mkdir='mkdir -p'
 
@@ -141,12 +144,13 @@ then
     alias ll='ls -Glh'
     alias la='ls -GlhA'
     alias top='top -o cpu'
+    alias t='htop'
     alias um='diskutil umount'
     alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
     alias cpwd='printf "$PWD" | pbcopy'
     alias df='df -Ph'
     alias ds='d * | sort -g'
-    alias pg='ps aux | grep -v $$ | grep -i'
+    alias pg='ps aux | grep -i'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
     alias srh='brew search'
     alias ist='brew install'
@@ -163,7 +167,6 @@ else
     alias wz='/usr/local/bin/WizNote'
     alias df='df -PTh'
     alias ds='d * | sort -h'
-    alias pg='ps -elf | grep -v $$ | grep -i'
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
     if [ -n "$(which zypper 2>/dev/null)" ]
