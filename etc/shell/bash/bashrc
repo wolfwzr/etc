@@ -129,8 +129,10 @@ alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
 alias pg='pgrep'
-alias hgrep='history | grep -i'
+alias hg='history | grep -i'
 alias mkdir='mkdir -p'
+alias md='mkdir'
+alias cpwd='copy "$PWD"'
 
 if type colordiff 1>/dev/null 2>/dev/null
 then
@@ -147,7 +149,6 @@ then
     alias t='htop'
     alias um='diskutil umount'
     alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
-    alias cpwd='printf "$PWD" | pbcopy'
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias pg='ps aux | grep -i'
@@ -160,7 +161,6 @@ else
     alias ll='ls --color=auto -lh'
     alias la='ls --color=auto -lhA'
     alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
-    alias cpwd='printf "$PWD" | xclip -selection clipboard'
     alias open='xdg-open'
     alias m='mplayer -zoom'
     alias mkd='Markdown.pl --html4tags'
@@ -204,6 +204,9 @@ alias f='find . -iname'
 
 alias s='source /etc/wolfwzr.bashrc'
 
+# makescript with the last command
+alias makescript='fc -rnl | head -1 >'
+
 # ${var/pattern/string}
 # is pattern begin with /, all matchs of pattern are replaced with string
 alias path='echo -e ${PATH//:/\\n}'
@@ -230,7 +233,7 @@ else
     if which vim 2>&1 >/dev/null; then alias vi='vim'; fi
 fi
 
-alias vibashrc='vi /etc/wolfwzr.bashrc'
+alias vishrc='vi -p /etc/wolfwzr.bashrc ~wolfwzr/.zshrc'
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf='vi ~wolfwzr/.ssh/config'
 alias vihosts='vi /etc/hosts'
@@ -242,6 +245,84 @@ else
     alias vismbconf='vi /etc/samba/smb.conf'
     alias vikbconf='vi ~wolfwzr/.Xmodmap'
 fi
+
+############################################################
+# function shortcut
+############################################################
+# cd and ls
+cls () { cd $1; ls;}
+
+# mkdir and cd
+mcd () { mkdir $1; cd $1;}
+
+# backup files and dirs
+bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
+
+# md5sum check
+md5chk () { md5sum "$1" | grep "$2";}
+
+copy ()
+{
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        echo -n -E "$*" | pbcopy
+    else
+        echo -n -E "$*" | xclip -selection clipboard
+    fi
+}
+
+# copy last command (to clipboard)
+clc ()
+{
+    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
+    local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
+    copy "$last_cmd"
+}
+
+# generate an strong password and copy
+genpasswd ()
+{
+    local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
+                   head -n ${1:-30} | tr -d '\n';)
+    echo "$passwd"
+    copy "$passwd"
+}
+
+# extract package to current dir
+ex ()
+{
+    local dir=${2:-.}
+    if [ -z "$1" ]
+    then
+        echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
+        return
+    fi
+
+    if [ -f $1 ]
+    then
+        case $1 in
+            *.tar.gz)    mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
+            *.tar.bz2)   mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
+            *.tar.xz)    mkdir -p "$dir" && tar xJf $1 -C "$dir" && cd "$dir" && ls ;;
+            *.bz2)       bunzip2 $1                                                 ;;
+            *.rar)       mkdir -p "$dir" && unrar e $1 "$dir"    && cd "$dir" && ls ;;
+            *.gz)        gunzip $1                                                  ;;
+            *.tar)       mkdir -p "$dir" && tar xf $1  -C "$dir" && cd "$dir" && ls ;;
+            *.tbz2)      mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
+            *.tgz)       mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
+            *.zip)       mkdir -p "$dir" && unzip $1 -d "$dir"   && cd "$dir" && ls ;;
+            *.Z)         uncompress $1                                              ;;
+            *.7z)        mkdir -p "$dir" && 7z x $1 -o"$dir"     && cd "$dir" && ls ;;
+            *)           echo "'$1' cannot be extracted via extract()"              ;;
+        esac
+    else
+        echo "'$1' is not a valid file"
+    fi
+}
+
+# take over stdout and stderr of the pid-specific process
+alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
+
 
 ############################################################
 # z - a better cd
