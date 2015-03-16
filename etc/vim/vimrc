@@ -373,12 +373,10 @@ function! W_set_colorscheme(color)
         execute 'hi Visual guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
 
         " TabLine/TabLineSel/TabLineFill
-        let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x17)
-        execute 'hi TabLine guibg=' . W_color_modify(l:normal_bg, 'add', 0x20)
-                 \'gui=none guifg=' . W_color_modify(l:normal_fg, 'sub', 0x4)
-        execute 'hi TabLineSel gui=bold guibg=' . l:normal_bg
-                                     \ 'guifg=' . l:normal_fg
-        execute 'hi TabLineFill guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+        let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x20)
+        execute 'hi TabLine     gui=none guibg=' . l:tmp_color . ' guifg=' . l:normal_fg
+        execute 'hi TabLineFill gui=none guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+        execute 'hi TabLineSel  gui=bold guibg=' . l:normal_bg . ' guifg=#D2A458'
 
         " Search/Cursor
         "hi Search NONE
@@ -1199,6 +1197,7 @@ if has("gui_running")
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
+        set background=dark
         call W_set_colorscheme("solarized")
     endif
 
