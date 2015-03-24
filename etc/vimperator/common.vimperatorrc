@@ -38,6 +38,15 @@ nnoremap <S-Return> :set fullscreen!<Return>
 " use C to copy current url in markdown link formart
 nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
 
+" highlight
+highlight CmdLine color: white; background: #0F3736;
+highlight CompItem[selected] background: #3C5D65; box-shadow: 0px 0px 1px #CC0;
+highlight CompTitle font-weight: bold; background: #457E81; color: white;
+highlight CompTitle>* font-weight: bold; background: #457E81; color: white;
+highlight Filter border-radius: 2px; background: gray; border: 1px solid orange;
+highlight Normal color: white; background: #0F3736;
+highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
+
 " press <C-]> to complete
 iabbrev ww wolfwzr
 iabbrev wq wolfwzr@qq.com

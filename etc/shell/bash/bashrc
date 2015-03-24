@@ -155,6 +155,10 @@ then
     alias sdcv='sdcv --color --utf8-input --utf8-output'
     alias srh='brew search'
     alias ist='brew install'
+
+    alias ports='netstat -na'
+    alias tcp='netstat -na -p tcp'
+    alias udp='netstat -na -p udp'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
@@ -169,6 +173,18 @@ else
     alias ds='d * | sort -h'
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
+
+    # list all tcp/udp ports
+    #   -t : tcp
+    #   -u : udp
+    #   -l : listening
+    #   -a : show all
+    #   -n : show numberic
+    #   -p : show process name
+    alias ports='netstat -tulanp'
+    alias tcp='netstat -plant'
+    alias udp='netstat -plant'
+
     if [ -n "$(which zypper 2>/dev/null)" ]
     then
         alias srh='zypper search -d'
@@ -210,15 +226,6 @@ alias makescript='fc -rnl | head -1 >'
 # ${var/pattern/string}
 # is pattern begin with /, all matchs of pattern are replaced with string
 alias path='echo -e ${PATH//:/\\n}'
-
-# list all tcp/udp ports
-#   -t : tcp
-#   -u : udp
-#   -l : listening
-#   -a : show all
-#   -n : show numberic
-#   -p : show process name
-alias ports='netstat -tulanp'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector
