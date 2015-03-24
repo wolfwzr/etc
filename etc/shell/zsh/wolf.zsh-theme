@@ -2,15 +2,16 @@
 
 # colors: magenta
 
-local ret_status="%(?::%{$fg_bold[red]%}${?}✗)"
+local ret_status="%(?::%{$fg[red]%}${?}✗)"
 
 if [ $(id -u) -eq 0 ]; then
     local user="%{$fg_bold[red]%}%n"
 else
     local user="%{$fg[cyan]%}%n"
 fi
+user="$user%{$reset_color%}%{$bg[black]%}"
 
-PROMPT='%{$bg[black]%}${ret_status}%{$fg_bold[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg_bold[blue]%}$(git_prompt_info)%{$fg[green]%}%c%{$fg_bold[cyan]%}]%{$reset_color%} '
+PROMPT='%{$bg[black]%}${ret_status}%{$fg[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg[blue]%}$(git_prompt_info)%{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
 
 ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}"
 ZSH_THEME_GIT_PROMPT_SUFFIX=" "

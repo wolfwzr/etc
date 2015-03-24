@@ -132,7 +132,7 @@ alias pg='pgrep'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
-alias cpwd='copy "$PWD"'
+alias cpwd='copy_str "$PWD"'
 
 if type colordiff 1>/dev/null 2>/dev/null
 then
@@ -233,7 +233,7 @@ else
     if which vim 2>&1 >/dev/null; then alias vi='vim'; fi
 fi
 
-alias vishrc='vi -p /etc/wolfwzr.bashrc ~wolfwzr/.zshrc'
+alias vishrc='vi -p ~wolfwzr/.zshrc /etc/wolfwzr.bashrc'
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf='vi ~wolfwzr/.ssh/config'
 alias vihosts='vi /etc/hosts'
@@ -261,7 +261,19 @@ bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
 # md5sum check
 md5chk () { md5sum "$1" | grep "$2";}
 
-copy ()
+copy_file ()
+{
+    local file=${1:--}
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        cat - | pbcopy
+    else
+        cat - | xclip -selection clipboard
+    fi
+}
+alias cb='copy_file'
+
+copy_str ()
 {
     if [ "$OS_TYPE" = "osx" ]
     then
@@ -276,7 +288,7 @@ clc ()
 {
     #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
     local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
-    copy "$last_cmd"
+    copy_str "$last_cmd"
 }
 
 # generate an strong password and copy
@@ -285,7 +297,7 @@ genpasswd ()
     local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
                    head -n ${1:-30} | tr -d '\n';)
     echo "$passwd"
-    copy "$passwd"
+    copy_str "$passwd"
 }
 
 # extract package to current dir

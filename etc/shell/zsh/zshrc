@@ -1,6 +1,5 @@
-
 # Path to your oh-my-zsh installation.
-export ZSH=/home/wolfwzr/.oh-my-zsh
+export ZSH=~wolfwzr/.oh-my-zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -62,6 +61,10 @@ export KEYTIMEOUT=1
 bindkey '^r' history-incremental-search-backward
 # Ctrl-/ launch man page
 bindkey '^_' run-help
+bindkey '^Y' vi-put-before
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+bindkey -s '^E' '^[I#^m'
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -88,22 +91,25 @@ bindkey '^_' run-help
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# use comments in interactive mode
+setopt interactivecomments
+
 compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z' + -g '(-/)' ex
 user-complete(){
     if [[ -n $BUFFER ]] ; then     # 如果该行有内容
-        zle expand-or-complete    # 执行 TAB 原来的功能
-    else                                  # 如果没有
-        BUFFER="cd "                 # 填入 cd（空格）
-        zle end-of-line                # 这时光标在行首，移动到行末
-        zle expand-or-complete    # 执行 TAB 原来的功能
+        zle expand-or-complete     # 执行 TAB 原来的功能
+    else                           # 如果没有
+        BUFFER="cd "               # 填入 cd（空格）
+        zle end-of-line            # 这时光标在行首，移动到行末
+        zle expand-or-complete     # 执行 TAB 原来的功能
     fi }
 zle -N user-complete
-bindkey "\t" user-complete        #将上面的功能绑定到 TAB 键
+bindkey "\t" user-complete         #将上面的功能绑定到 TAB 键
 
 sudo-command-line() {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
-#光标移动到行末
+	#光标移动到行末
     zle end-of-line
 }
 zle -N sudo-command-line
@@ -114,8 +120,17 @@ bindkey '^\' sudo-command-line
 comment-command-line() {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != \#\ * ]] && BUFFER="# $BUFFER"
-#光标移动到行末
+	#光标移动到行末
     zle end-of-line
+	zle -U ''
 }
 zle -N comment-command-line
 bindkey '^E' comment-command-line
+
+source /etc/wolfwzr.bashrc
+alias s='source ~/.zshrc'
+
+alias -s jpg=xview
+alias -s jpeg=xview
+alias -s png=xview
+alias -s pdf=o
