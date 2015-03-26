@@ -42,21 +42,22 @@ nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
 " install colorscheme:
 " $ mkdir -p ~/.vimperator/colors
 " $ git clone https://github.com/vimpr/vimperator-colors.git ~/.vimperator/colors
-colorscheme darkness
+" colorscheme darkness
 " modify colors for darkness scheme
-hi Normal -append font-size: 10pt;
-hi Filter -append border: 1px solid orange;
-hi StatusLine color: #afafaf; background: transparent; font-weight: normal;
-hi CmdLine background: #222222; color: #afafaf; font-size: 10pt;
+"hi Normal -append font-size: 10pt;
+"hi Filter -append border: 1px solid orange;
+"hi StatusLine color: #afafaf; background: transparent; font-weight: normal;
+"hi CmdLine background: #222222; color: #afafaf; font-size: 10pt;
 
+colorscheme default
 " modify colors for default scheme
-"highlight CmdLine color: white; background: #0F3736;
-"highlight CompItem[selected] background: #3C5D65; box-shadow: 0px 0px 1px #CC0;
-"highlight CompTitle font-weight: bold; background: #457E81; color: white;
-"highlight CompTitle>* font-weight: bold; background: #457E81; color: white;
-"highlight Filter border-radius: 2px; background: gray; border: 1px solid orange;
-"highlight Normal color: white; background: #0F3736;
-"highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
+highlight Normal color: white; background: #112624;
+highlight CmdLine color: white; background: #112624;
+highlight CompItem[selected] background: #3C5D65; box-shadow: 0px 0px 1px #CC0;
+highlight CompTitle font-weight: bold; background: #124342; color: white;
+highlight CompTitle>* font-weight: bold; background: #124342; color: white;
+highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0;
+highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
 
 " press <C-]> to complete
 iabbrev ww wolfwzr

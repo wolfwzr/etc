@@ -650,7 +650,7 @@ function! W_cscope_init_db()
 
     if find_db == 0
         " go to origin directory if no database found
-        execute 'cd ' . '"' . l:cwd_bakup . '"'
+        execute 'cd ' . l:cwd_bakup
         if $CSCOPE_DB != ""
             " add database pointed to by environment
             cs add $CSCOPE_DB
