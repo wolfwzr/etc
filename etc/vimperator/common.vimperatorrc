@@ -63,6 +63,7 @@ highlight MoreMsg color: green; background: transparent;
 highlight Question color: green; background: transparent; font-weight: bold;
 highlight WarningMsg color: red; background: transparent;
 highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
+highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
 
 " press <C-]> to complete
 iabbrev ww wolfwzr
