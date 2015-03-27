@@ -53,11 +53,16 @@ colorscheme default
 " modify colors for default scheme
 highlight Normal color: white; background: #112624;
 highlight CmdLine color: white; background: #112624;
-highlight CompItem[selected] background: #3C5D65; box-shadow: 0px 0px 1px #CC0;
+highlight CompItem[selected] background: #1D4341; box-shadow: 0px 0px 1px #377E7A;
 highlight CompTitle font-weight: bold; background: #124342; color: white;
 highlight CompTitle>* font-weight: bold; background: #124342; color: white;
-highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0;
+highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0; color: #58C3BD;
 highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
+highlight InfoMsg color: magenta; background: transparent;
+highlight MoreMsg color: green; background: transparent;
+highlight Question color: green; background: transparent; font-weight: bold;
+highlight WarningMsg color: red; background: transparent;
+highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
 
 " press <C-]> to complete
 iabbrev ww wolfwzr
