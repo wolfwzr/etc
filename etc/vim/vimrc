@@ -219,6 +219,10 @@ endfunction
 "}}}2
 " W_set_colorscheme: 设置配色方案 {{{2
 function! W_set_colorscheme(color)
+    if ! has("gui_running")
+        return
+    endif
+
     let g:W_color_scheme = a:color
 
     " 设置配色方案{{{3
