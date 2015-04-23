@@ -10,21 +10,6 @@ nnoremap <C-e>      <C-S-e>
 " nnoremap <C-d>   <C-l><A-Enter>
 nnoremap <C-d>      :tabduplicate<Return>
 
-" copy current tab url
-nnoremap c          <C-l><C-c><Esc>
-
-" Quick url access or search using current search engine
-" v open url from clipboard in new tab
-" V open url from clipboard in current tab
-" nnoremap v          P
-" nnoremap V          p
-nnoremap v          <C-l><C-v><Return>
-nnoremap V          <C-t><C-l><C-v><Return>
-
-" Quick Search using Baidu(keyword b)
-nnoremap <C-v>      <C-l>b<Space><C-v><Return>
-nnoremap <C-S-V>    <C-t><C-l>b<Space><C-v><Return>
-
 nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
 nnoremap <C-S-o>    :dialog openfile<Return>
 nnoremap <C-p>      :emenu File.Print Preview<Return>
@@ -32,6 +17,11 @@ nnoremap <C-,>      :preferences<Return>
 
 nnoremap <C-[>      :back<Return>
 nnoremap <C-]>      :forward<Return>
+
+" quick search
+nnoremap V          :tab bdpansearch <C-v><Enter>
+nnoremap <C-v>      :tab  ssbcsearch <C-v><Enter>
+nnoremap <C-S-v>    :tab    ydsearch <C-v><Enter>
 
 " Ctrl-Shift-n - next tabgroup
 " Ctrl-Shift-p - prev tabgroup
@@ -45,6 +35,9 @@ inoremap <C-h>      <Left>
 inoremap <C-l>      <Right>
 inoremap <C-b>      <Home>
 inoremap <C-e>      <End>
+
+" go to https
+nnoremap gs  		<C-L><Left>https://<Return>
 
 " A-Enter in addresss bar to open url in new tab
 inoremap <C-Enter>  <A-Enter>

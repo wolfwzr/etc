@@ -3,12 +3,8 @@
 source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
-set defsearch=gf
-" set titlestring=wolfwzr
-" ]]
-set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
-" [[
-set nextpattern=\s*下一页|下一章|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b
+
+nnoremap V          p
 
 nnoremap j          3j
 nnoremap k          3k
@@ -22,9 +18,6 @@ nnoremap l          gt
 nnoremap e          :emenu Tools.Clearly<Return>
 nnoremap i          :pageinfo<Return>
 
-" Use https
-nnoremap s  		<C-L><Left>https://<Return>
-
 " Use default shortkey C-S-q instead
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
 
@@ -32,22 +25,41 @@ nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
 nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
 nnoremap <S-Return> :set fullscreen!<Return>
 
-" use C to instead origial c function (switch to Cursor/Caret mode)
-" nnoremap C c
-
-" use C to copy current url in markdown link formart
+" copy current tab url
+" origial c function (switch to Cursor/Caret mode)
+" nnoremap c          <C-l><C-c><Esc>
+nnoremap c          y
+" copy current url in markdown link formart
 nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
 
-" colorscheme
-" install colorscheme:
-" $ mkdir -p ~/.vimperator/colors
-" $ git clone https://github.com/vimpr/vimperator-colors.git ~/.vimperator/colors
-" colorscheme darkness
-" modify colors for darkness scheme
-"hi Normal -append font-size: 10pt;
-"hi Filter -append border: 1px solid orange;
-"hi StatusLine color: #afafaf; background: transparent; font-weight: normal;
-"hi CmdLine background: #222222; color: #afafaf; font-size: 10pt;
+" search skills
+" (custom search engine using http://mycroftproject.com/submitos.html)
+set defsearch=gf
+" search commands
+command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
+command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
+command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
+command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
+command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
+command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
+command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
+command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
+command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
+
+nnoremap sb :tab bdsearch 
+nnoremap sj :tab jdsearch 
+nnoremap st :tab tbsearch 
+nnoremap sy :tab ydsearch 
+nnoremap si :tab ipsearch 
+nnoremap sm :tab mbsearch 
+nnoremap ss :tab ssbcsearch 
+nnoremap sp :tab bdpansearch 
+nnoremap sg :tab gfsososearch 
+
+" Quick url access or search using current search engine
+" p open url from clipboard in current tab
+" P open url from clipboard in new tab
+nnoremap v          P
 
 colorscheme default
 " modify colors for default scheme
@@ -69,5 +81,11 @@ highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
 iabbrev ww wolfwzr
 iabbrev wq wolfwzr@qq.com
 iabbrev wg wolfwzr.china@gmail.com
+
+" set titlestring=wolfwzr
+" ]]
+set previouspattern=\s*上一页|上一章|上页\s*,\bprev|previous\b,^<$,^(<<|«)$,^(<|«),(<|«)$
+" [[
+set nextpattern=\s*下一页|下一章|下页\s*,\bnext\b,^>$,^(>>|»)$,^(>|»),(>|»)$,\bmore\b
 
 " vim: set ft=vim:

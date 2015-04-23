@@ -128,7 +128,7 @@ alias j='jobs -l'
 alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
-alias pg='pgrep'
+alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
@@ -151,7 +151,6 @@ then
     alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
     alias df='df -Ph'
     alias ds='d * | sort -g'
-    alias pg='ps aux | grep -i'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
     alias srh='brew search'
     alias ist='brew install'
@@ -518,6 +517,22 @@ get_website_favicon()
     then
         wget "http://$host/favicon.ico" -O "$h.ico"
     fi
+}
+
+which-pkg()
+{
+    local fullpath
+    
+    fullpath=$(whence -p $1)
+    [ $? -eq 0 ] && rpm -qf $fullpath
+}
+
+ls-pkg-file()
+{
+    local pkg
+
+    pkg=$(which-pkg $1)
+    [ $? -eq 0 ] && rpm -ql $pkg
 }
 
 ############################################################

@@ -5,20 +5,19 @@ nnoremap <M-j>      gt
 nnoremap <M-k>      gT
 nnoremap <M-e>      <M-S-e>
 
-" c copy current tab url
-nnoremap c          <M-l><M-c><Esc>
 nnoremap d          <M-w>
-nnoremap v          <M-l><M-v><Return>
-nnoremap V          <M-t><M-l><M-v><Return>
-" Use https
-nnoremap s  		<M-L><Left>https://<Return>
-nnoremap <M-v>      <M-l>b<space><M-v><Return>
-nnoremap <M-S-v>    <M-t><M-l>b<space><M-v><Return>
+" go to https
+nnoremap gs  		<M-L><Left>https://<Return>
 
 nnoremap <M-d>      :tabduplicate<Return>
 
 " Group tabs
 nnoremap <M-e>      <M-S-e>
+
+" quick search
+nnoremap V          :tab bdpansearch <M-v><Enter>
+nnoremap <M-v>      :tab  ssbcsearch <M-v><Enter>
+nnoremap <M-S-v>    :tab    ydsearch <M-v><Enter>
 
 inoremap <M-Enter>  <A-Enter>
 
