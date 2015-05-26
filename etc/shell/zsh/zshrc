@@ -8,6 +8,8 @@ export ZSH=~wolfwzr/.oh-my-zsh
 #ZSH_THEME="robbyrussell"
 ZSH_THEME="wolf"
 
+DISABLE_UPDATE_PROMPT=true
+
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
 
@@ -128,7 +130,7 @@ zle -N comment-command-line
 bindkey '^E' comment-command-line
 
 source /etc/wolfwzr.bashrc
-alias s='source ~/.zshrc'
+alias src='source ~/.zshrc'
 
 # history options
 HISTSIZE=50000

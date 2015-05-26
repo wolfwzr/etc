@@ -152,8 +152,8 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
-    alias srh='brew search'
-    alias ist='brew install'
+    alias s='brew search'
+    alias i='brew install'
 
     alias ports='netstat -na'
     alias tcp='netstat -na -p tcp'
@@ -172,6 +172,7 @@ else
     alias ds='d * | sort -h'
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
+    alias restart-krunner='kquitapp krunner && krunner &'
 
     # list all tcp/udp ports
     #   -t : tcp
@@ -186,16 +187,16 @@ else
 
     if [ -n "$(which zypper 2>/dev/null)" ]
     then
-        alias srh='zypper search -d'
-        alias ist='sudo zypper install'
+        alias s='zypper search'
+        alias i='sudo zypper install'
     elif [ -n "$(which yum 2>/dev/null)" ]
     then
-        alias srh='yum search'
-        alias ist='sudo yum install'
+        alias s='yum search'
+        alias i='sudo yum install'
     elif [ -n "$(which apt-get 2>/dev/null)" ]
     then
-        alias srh='apt-cache search'
-        alias ist='sudo apt-get install'
+        alias s='apt-cache search'
+        alias i='sudo apt-get install'
     fi
 fi
 alias o='open'
@@ -217,7 +218,7 @@ alias o='open'
 alias g='grep'
 alias f='find . -iname'
 
-alias s='source /etc/wolfwzr.bashrc'
+alias src='source /etc/wolfwzr.bashrc'
 
 # makescript with the last command
 alias makescript='fc -rnl | head -1 >'
@@ -239,7 +240,7 @@ else
     if which vim 2>&1 >/dev/null; then alias vi='vim'; fi
 fi
 
-alias vishrc='vi -p ~wolfwzr/.zshrc /etc/wolfwzr.bashrc'
+alias vishrc='vi -p /etc/wolfwzr.bashrc ~wolfwzr/.zshrc'
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf='vi ~wolfwzr/.ssh/config'
 alias vihosts='vi /etc/hosts'
@@ -251,6 +252,8 @@ else
     alias vismbconf='vi /etc/samba/smb.conf'
     alias vikbconf='vi ~wolfwzr/.Xmodmap'
 fi
+
+alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
 ############################################################
 # function shortcut
@@ -340,7 +343,7 @@ ex ()
 
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
-
+alias monit-open='sudo strace -ff -e trace=open -p'
 
 ############################################################
 # z - a better cd
@@ -403,7 +406,7 @@ else
     alias ggh='cd "$_gh"'
 
     # etc in github
-    _etc="/home/wolfwzr/usr/etc/etc_in_github/etc"
+    _etc="/home/wolfwzr/Documents/github/wolfwzr/etc/etc"
     alias getc='cd "$_etc"'
 
     # os develop
@@ -519,7 +522,7 @@ get_website_favicon()
     fi
 }
 
-which-pkg()
+whichpkg()
 {
     local fullpath
     
@@ -527,12 +530,13 @@ which-pkg()
     [ $? -eq 0 ] && rpm -qf $fullpath
 }
 
-ls-pkg-file()
+lspkgfile()
 {
     local pkg
 
-    pkg=$(which-pkg $1)
-    [ $? -eq 0 ] && rpm -ql $pkg
+    pkg=$(whichpkg $1)
+    [ $? -ne 0 ] && pkg=$1
+    rpm -ql $pkg
 }
 
 ############################################################
