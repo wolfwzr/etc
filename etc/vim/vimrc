@@ -174,7 +174,8 @@ function! W_set_guifont()
         else
             "YaHei Consolas Hybrid字体不知为何会使状态栏占用命令栏
             "set guifont=YaHei\ Consolas\ Hybrid\ 13
-            set guifont=Source\ Code\ Pro\ 13
+            "set guifont=Source\ Code\ Pro\ 13
+            set guifont=Courier\ 10\ Pitch\ 13
         endif
     endif
 endfunction
@@ -649,12 +650,16 @@ function! W_cscope_init_db()
             break
         endif
         " go to parrent directory
-        execute 'cd ' . l:tmp_dir . '/..'
+        if isdirectory(l:tmp_dir . '/..')
+            execute 'cd ' . l:tmp_dir . '/..'
+        endif
     endwhile
 
     if find_db == 0
         " go to origin directory if no database found
-        execute 'cd ' . l:cwd_bakup
+        if isdirectory(l:tmp_dir . '/..')
+            execute 'cd ' . l:cwd_bakup
+        endif
         if $CSCOPE_DB != ""
             " add database pointed to by environment
             cs add $CSCOPE_DB

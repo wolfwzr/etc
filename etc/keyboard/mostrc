@@ -1,0 +1,23 @@
+% get references from $(rpm -ql most)
+%   /usr/share/doc/packages/most/lesskeys.rc
+%   /usr/share/doc/packages/most/most-fun.txt
+%   /usr/share/doc/packages/most/most.rc
+
+% keybinding
+
+setkey "down"               j
+setkey "up"                 k
+setkey "goto_line"          ^g
+setkey "goto_percent"       \%
+setkey "help"               ?
+setkey "page_up"            b
+setkey "page_down"          f
+setkey "page_down"          sapce
+setkey "page_left"          h
+setkey "page_right"         l
+setkey "search_backward"    /
+setkey "search_forward"     ?
+setkey "edt_find_next"      n
+setkey "bob"                g
+setkey "eob"                G
+setkey "exit"               q

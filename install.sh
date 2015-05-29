@@ -6,7 +6,7 @@ GITHUB_VIMRC_DIR="$GITHUB_ETC_DIR/vim"
 GITHUB_VIMPERATOR_DIR="$GITHUB_ETC_DIR/vimperator"
 GITHUB_XMODMAP="$GITHUB_ETC_DIR/keyboard/xmodmap"
 GITHUB_KARABINER="$GITHUB_ETC_DIR/keyboard/karabiner.xml"
-GITHUB_BASHRC="$GITHUB_ETC_DIR/bashrc"
+GITHUB_BASHRC="$GITHUB_ETC_DIR/shell/bash/bashrc"
 GITHUB_HOSTS="$GITHUB_ETC_DIR/hosts"
 
 if [ "$(uname -s)" = "Darwin" ]

@@ -185,6 +185,7 @@ else
     alias ds='d * | sort -h'
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
+    alias restart-krunner='kquitapp krunner && krunner &'
 
     # list all tcp/udp ports
     #   -t : tcp
@@ -280,6 +281,8 @@ else
     alias vikbconf="vi $WOLFWZR_HOME/.Xmodmap"
 fi
 
+alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
+
 ############################################################
 # function shortcut
 ############################################################
@@ -369,7 +372,7 @@ ex ()
 
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
-
+alias monit-open='sudo strace -ff -e trace=open -p'
 
 ############################################################
 # z - a better cd
@@ -561,7 +564,8 @@ lspkgfile()
     local pkg
 
     pkg=$(whichpkg $1)
-    [ $? -eq 0 ] && rpm -ql $pkg
+    [ $? -ne 0 ] && pkg=$1
+    rpm -ql $pkg
 }
 
 ############################################################
