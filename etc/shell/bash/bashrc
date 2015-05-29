@@ -1,26 +1,17 @@
-############################################################
-# VARIABLES FOR THIS SCRIPT
-############################################################
-WOLFWZR_HOME=~wolfwzr
-if [ "$(uname -s)" = "Darwin" ]
-then
-    OS_TYPE="osx"
-else
-    OS_TYPE="linux"
-fi
+# source target file if file exist
+function safe_source ()
+{
+    [ -f "$1" ] && source "$1"
+}
 
-if [ "$OS_TYPE" = "linux" ]
-then
-    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
-fi
+# check if command is available
+function cmd_available ()
+{
+    local cmd=$1
+    which "$cmd" >/dev/null 2>&1
+}
 
-############################################################
-# BASH PREFERENCES
-############################################################
-set -o vi
-export EDITOR=vim
-
-# PATH
+# add a item to PATH variable
 function append_to_path()
 {
     local new_path=$1
@@ -36,6 +27,45 @@ function uniq_path()
     eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
+
+function copy_file ()
+{
+    local file=${1:--}
+
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        pbcopy < "$file"
+    else
+        xclip -selection clipboard < "$file"
+    fi
+}
+
+function copy_string ()
+{
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        echo -n -E "$*" | pbcopy
+    else
+        echo -n -E "$*" | xclip -selection clipboard
+    fi
+}
+
+WOLFWZR_HOME=~wolfwzr
+
+if [ "$(uname -s)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+fi
+
+set -o vi
+export EDITOR=vim
 
 append_to_path "/bin"
 append_to_path "/sbin"
@@ -59,6 +89,7 @@ then
     w | grep " w$" | awk '{print $3}' | grep -s -q ":"
     [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
 fi
+
 ############################################################
 # COMMAND PROMPT
 ############################################################
@@ -104,22 +135,10 @@ function wolf_update_ps1()
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
 
-############################################################
-# BASH COMPLETION
-############################################################
-if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
+if cmd_available brew
 then
-    if [ -f "$(brew --prefix)/etc/bash_completion" ]
-    then
-        . "$(brew --prefix)/etc/bash_completion"
-    fi
+    safe_source "$(brew --prefix)/etc/bash_completion"
 fi
-
-function cmd_available ()
-{
-    local cmd=$1
-    which "$cmd" >/dev/null 2>&1
-}
 
 ############################################################
 # ALIAS
@@ -137,6 +156,8 @@ alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
+alias cf='copy_file'
+alias cs='copy_string'
 alias cpwd='copy_string "$PWD"'
 
 if cmd_available clear
@@ -153,7 +174,7 @@ fi
 
 if [ "$OS_TYPE" = "osx" ] 
 then
-    alias r='netstat -f inet -nr'
+    alias r='netstat -f inet -rn'
     alias ls='ls -G'
     alias ll='ls -Glh'
     alias la='ls -GlhA'
@@ -164,15 +185,14 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
-    alias s='brew search'
-    alias i='brew install'
 
     alias ports='netstat -na'
-    alias tcp='netstat -na -p tcp'
+    alias tcp='netstat -nl -p tcp'
     alias udp='netstat -na -p udp'
-    alias udp='netstat -na -p unix'
+    alias unix='netstat -nl -p unix'
 else
-    alias r='route -n'
+    #alias r='route -n'
+    alias r='netstat -rn'
     alias ls='ls --color=auto'
     alias ll='ls --color=auto -lh'
     alias la='ls --color=auto -lhA'
@@ -196,25 +216,30 @@ else
     #   -n : show numberic (ip, port and uid)
     #   -p : show process name
     alias ports='netstat -pantu'
-    alias tcp='netstat -pant'
+    alias tcp='netstat -plnt'
     alias udp='netstat -panu'
-    alias unix='netstat -panx'
-
-    if cmd_available zypper
-    then
-        #alias s='zypper search -d'
-        alias s='zypper search'
-        alias i='sudo zypper install'
-    elif cmd_available yum
-    then
-        alias s='yum search'
-        alias i='sudo yum install'
-    elif cmd_available apt-get
-    then
-        alias s='apt-cache search --names-only'
-        alias i='sudo apt-get install'
-    fi
+    alias unix='netstat -plnx'
 fi
+
+if cmd_available zypper
+then
+    #alias s='zypper search -d'
+    alias s='zypper search'
+    alias i='sudo zypper install'
+elif cmd_available yum
+then
+    alias s='yum search'
+    alias i='sudo yum install'
+elif cmd_available apt-get
+then
+    alias s='apt-cache search --names-only'
+    alias i='sudo apt-get install'
+elif cmd_available brew
+then
+    alias s='brew search'
+    alias i='brew install'
+fi
+
 alias o='open'
 alias lb='lsblk'
 alias ..='cd ..'
@@ -290,36 +315,13 @@ alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 cls () { cd $1; ls;}
 
 # mkdir and cd
-mcd () { mkdir $1; cd $1;}
+mcd () { mkdir -p $1 && cd $1}
 
 # backup files and dirs
 bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
 
 # md5sum check
 md5chk () { md5sum "$1" | grep "$2";}
-
-copy_file ()
-{
-    local file=${1:--}
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        cat - | pbcopy
-    else
-        cat - | xclip -selection clipboard
-    fi
-}
-alias cf='copy_file'
-
-copy_string ()
-{
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        echo -n -E "$*" | pbcopy
-    else
-        echo -n -E "$*" | xclip -selection clipboard
-    fi
-}
-alias cs='copy_string'
 
 # copy last command (to clipboard)
 clc ()
@@ -339,7 +341,7 @@ genpasswd ()
 }
 
 # extract package to current dir
-ex ()
+function ex ()
 {
     local dir=${2:-.}
     if [ -z "$1" ]
@@ -541,7 +543,7 @@ function wrestart()
     wolf_service_control "$1" restart
 }
 
-get_website_favicon()
+function get_website_favicon()
 {
     local host=$1
     local h=$(echo $host | awk -F '.' '{print $1}')
@@ -551,7 +553,7 @@ get_website_favicon()
     fi
 }
 
-whichpkg()
+function whichpkg ()
 {
     local fullpath
     
@@ -559,7 +561,7 @@ whichpkg()
     [ $? -eq 0 ] && rpm -qf $fullpath
 }
 
-lspkgfile()
+function lspkgfile ()
 {
     local pkg
 
@@ -579,11 +581,6 @@ then
         resize -s 30 100 > /dev/null
     fi
 fi
-
-safe_source ()
-{
-    [ -f "$1" ] && source "$1"
-}
 
 safe_source ~/.work.bashrc
 safe_source ~/.nasl.bashrc

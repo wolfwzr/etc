@@ -9,7 +9,6 @@ let s:W_TRUE  = 1
 let s:W_FALSE = 0
 
 let s:W_colorscheme_applied = 0
-let s:W_cpu_info = system("grep -m 1 -o Atom /proc/cpuinfo | tr -d '\r\n'")
 let s:W_last_filetype = ""
 let s:W_last_insert_im_status = 0
 
@@ -168,15 +167,10 @@ function! W_set_guifont()
         " Xingkai\ SC\ Light
         set guifontwide=Kaiti\ SC\ Regular
     else
-        if s:W_cpu_info == "Atom"
-            "set guifont=YaHei\ Consolas\ Hybrid\ 12
-            set guifont=Source\ Code\ Pro\ 12
-        else
-            "YaHei Consolas Hybrid字体不知为何会使状态栏占用命令栏
-            "set guifont=YaHei\ Consolas\ Hybrid\ 13
-            "set guifont=Source\ Code\ Pro\ 13
-            set guifont=Courier\ 10\ Pitch\ 13
-        endif
+        "YaHei Consolas Hybrid字体不知为何会使powerline的状态栏占用命令栏
+        "set guifont=YaHei\ Consolas\ Hybrid\ 13
+        "set guifont=Source\ Code\ Pro\ 13
+        set guifont=Courier\ 10\ Pitch\ 13
     endif
 endfunction
 "}}}2
@@ -1004,7 +998,7 @@ if has("gui_running")
         vnoremap Y     "+y
         vnoremap <C-x> "+x
         vnoremap X     "+x
-        inoremap <C-v> <Esc>:set paste<CR>"+gP:set nopaste<CR>a
+        inoremap <C-v> <Esc>:set paste<CR>a<C-R>+<Esc>:set nopaste<CR>a
         cnoremap <C-v> <C-r>+
     endif
 endif
@@ -1129,12 +1123,11 @@ nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
 " 文件类型相关设置 {{{1
 if has("autocmd")
     " 指定某些后缀的文件类型
-    autocmd BufRead,BufNewFile *.nasl   set filetype=nasl
-    autocmd BufRead,BufNewFile *.inc    set filetype=nasl
-    autocmd BufRead,BufNewFile *.wsgi   set filetype=python
-    autocmd BufRead,BufNewFile *.bashrc set filetype=sh
-    autocmd BufRead,BufNewFile *.vimrc  set filetype=vim
-    autocmd BufRead,BufNewFile *.{md,mkd,markdown} set filetype=mkd
+    autocmd BufRead,BufNewFile *.wsgi               set filetype=python
+    autocmd BufRead,BufNewFile *.bashrc             set filetype=sh
+    autocmd BufRead,BufNewFile *.vimrc              set filetype=vim
+    autocmd BufRead,BufNewFile *.{nasl,inc}         set filetype=nasl
+    autocmd BufRead,BufNewFile *.{md,mkd,markdown}  set filetype=mkd
 
     " 根据不同的文件类型做不同的设置
     "autocmd VimEnter * call W_filetype_setting()
@@ -1195,14 +1188,10 @@ if has("gui_running")
 
     call W_set_guifont()
 
-    " 设置窗口位置
-    "if s:W_cpu_info == "Atom"
+    " 设置窗口位置和大小
     "    winpos 120 0
-    "else
-    "    winpos 245 10
-    "endif
-    set columns=118
-    set lines=40
+    set columns=115
+    set lines=41
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0

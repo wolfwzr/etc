@@ -9,48 +9,21 @@
 #
 
 #######################################################
-# LOCALHOST
+# SYSTEM
 #######################################################
 127.0.0.1	localhost
-127.0.0.1	lh
-
-# special IPv6 addresses
-::1             localhost ipv6-localhost ipv6-loopback
-::1             localhost 
-fe80::1%lo0	localhost
-# END OF LOCALHOST
-
-
-#######################################################
-# COMPANY ONLY 
-#######################################################
-fe00::0         ipv6-localnet
-ff00::0         ipv6-mcastprefix
-ff02::1         ipv6-allnodes
-ff02::2         ipv6-allrouters
-ff02::3         ipv6-allhosts
-
-# END OF COMPANY ONLY
-
-#######################################################
-# RMBP ONLY
-#######################################################
 255.255.255.255	broadcasthost
 
 192.168.86.168 router
 192.168.86.150 mbp
 192.168.86.151 mx4
-# END OF RMBP ONLY
 
 #######################################################
 # COMMON
 #######################################################
-
 209.116.186.231 www.google.com
 209.116.186.231 talk.google.com
 209.116.186.231 mail.google.com
 209.116.186.231 accounts.google.com
-
-162.159.255.4 www.feedly.com s3.feedly.com
-
 74.125.200.16 smtp.googlemail.com
+162.159.255.4 www.feedly.com s3.feedly.com
