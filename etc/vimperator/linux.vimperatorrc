@@ -7,7 +7,7 @@ nnoremap d          <C-w>
 nnoremap <C-e>      <C-S-e>
 
 " duplicate tab
-" nnoremap <C-d>   <C-l><A-Enter>
+" nnoremap <C-d>   yP
 nnoremap <C-d>      :tabduplicate<Return>
 
 nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
@@ -58,5 +58,7 @@ cnoremap <C-e>      <End>
 
 " Select All in command mode
 cnoremap <C-a>      <C-Home><S-C-End>
+" Repeat last vimperator command
+nnoremap <C-a>      :<Up><Return>
 
 " vim: set ft=vim:

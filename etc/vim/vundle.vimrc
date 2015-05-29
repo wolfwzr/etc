@@ -31,7 +31,7 @@ nnoremap <Leader>a :A<CR>
 " 可使用let g:NERDTreeWinSize=20设置浏览界面的宽度
 " :NERDTreeFind - 打开 NERDTree 窗口并定位到当前文件
 Bundle 'scrooloose/nerdtree'
-let g:NERDTreeWinSize=25
+let g:NERDTreeWinSize=23
 " 检测NERDTree是否打开
 "if exists('t:NERDTreeBufName')
 "    let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
@@ -68,7 +68,7 @@ endif
 Bundle 'majutsushi/tagbar'
 " 检测Tagbar是否打开
 "let tagbar_open = bufwinnr('__Tagbar__') != -1
-let g:tagbar_width=28
+let g:tagbar_width=25
 " 本函数功能：（发现g:tagbar_expand参数可解决该问题，不再自己实现）
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width

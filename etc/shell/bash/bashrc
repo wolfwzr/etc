@@ -115,12 +115,17 @@ then
     fi
 fi
 
+function cmd_available ()
+{
+    local cmd=$1
+    which "$cmd" >/dev/null 2>&1
+}
+
 ############################################################
 # ALIAS
 ############################################################
 alias a='./a.out'
 alias b='bochs -f bochsrc'
-alias c='clear'
 alias d='du -sh'
 alias h='history | less +G --'
 alias t='top'
@@ -132,9 +137,16 @@ alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
-alias cpwd='copy_str "$PWD"'
+alias cpwd='copy_string "$PWD"'
 
-if type colordiff 1>/dev/null 2>/dev/null
+if cmd_available clear
+then
+    alias c='clear'
+else
+    alias c="printf '\033c'"
+fi
+
+if cmd_available colordiff
 then
     alias diff='colordiff'
 fi
@@ -152,22 +164,23 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
-    alias srh='brew search'
-    alias ist='brew install'
+    alias s='brew search'
+    alias i='brew install'
 
     alias ports='netstat -na'
     alias tcp='netstat -na -p tcp'
     alias udp='netstat -na -p udp'
+    alias udp='netstat -na -p unix'
 else
     alias r='route -n'
     alias ls='ls --color=auto'
     alias ll='ls --color=auto -lh'
     alias la='ls --color=auto -lhA'
+    alias um='sudo umount -l'
     alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
     alias open='xdg-open'
     alias m='mplayer -zoom'
     alias mkd='Markdown.pl --html4tags'
-    alias wz='/usr/local/bin/WizNote'
     alias df='df -PTh'
     alias ds='d * | sort -h'
     alias office='/usr/lib/libreoffice/program/soffice'
@@ -176,32 +189,37 @@ else
     # list all tcp/udp ports
     #   -t : tcp
     #   -u : udp
-    #   -l : listening
-    #   -a : show all
-    #   -n : show numberic
+    #   -x : unix socket
+    #   -l : listening (These are omitted by default.)
+    #   -a : show all (listening + not listening)
+    #   -n : show numberic (ip, port and uid)
     #   -p : show process name
-    alias ports='netstat -tulanp'
-    alias tcp='netstat -plant'
-    alias udp='netstat -plant'
+    alias ports='netstat -pantu'
+    alias tcp='netstat -pant'
+    alias udp='netstat -panu'
+    alias unix='netstat -panx'
 
-    if [ -n "$(which zypper 2>/dev/null)" ]
+    if cmd_available zypper
     then
-        alias srh='zypper search -d'
-        alias ist='sudo zypper install'
-    elif [ -n "$(which yum 2>/dev/null)" ]
+        #alias s='zypper search -d'
+        alias s='zypper search'
+        alias i='sudo zypper install'
+    elif cmd_available yum
     then
-        alias srh='yum search'
-        alias ist='sudo yum install'
-    elif [ -n "$(which apt-get 2>/dev/null)" ]
+        alias s='yum search'
+        alias i='sudo yum install'
+    elif cmd_available apt-get
     then
-        alias srh='apt-cache search'
-        alias ist='sudo apt-get install'
+        alias s='apt-cache search --names-only'
+        alias i='sudo apt-get install'
     fi
 fi
 alias o='open'
 alias lb='lsblk'
 alias ..='cd ..'
 alias ...='cd ../..'
+alias .2='cd ..'
+alias .3='cd ../..'
 alias .4='cd ../../..'
 alias .5='cd ../../../..'
 alias .6='cd ../../../../..'
@@ -210,6 +228,7 @@ alias iconvcat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
 alias wget='wget -c -L'
+alias pstree='pstree -sp'
 alias gpu='lspci | grep -i "vga\|3d\|2d"'
 alias p8='ping 8.8.8.8'
 
@@ -217,7 +236,7 @@ alias o='open'
 alias g='grep'
 alias f='find . -iname'
 
-alias s='source /etc/wolfwzr.bashrc'
+alias src='source /etc/wolfwzr.bashrc'
 
 # makescript with the last command
 alias makescript='fc -rnl | head -1 >'
@@ -234,22 +253,31 @@ export CSCOPE_EDITOR=vim
 
 if [ -n "$DISPLAY" ]
 then
-    if which gvim 2>&1 >/dev/null; then alias vi='gvim'; fi
+    if cmd_available gvim
+    then 
+        alias vi='gvim'
+    elif cmd_available vim
+    then
+        alias vi='vim'
+    fi
 else
-    if which vim 2>&1 >/dev/null; then alias vi='vim'; fi
+    if cmd_available vim
+    then
+        alias vi='vim'
+    fi
 fi
 
-alias vishrc='vi -p ~wolfwzr/.zshrc /etc/wolfwzr.bashrc'
+alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc"
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf='vi ~wolfwzr/.ssh/config'
-alias vihosts='vi /etc/hosts'
+alias visshconf="vi $WOLFWZR_HOME/.ssh/config"
+alias vihosts="vi /etc/hosts"
 if [ "$OS_TYPE" = "osx" ]
 then
-    alias vismbconf='vi /usr/local/etc/smb.conf'
-    alias vikbconf='vi "/Users/wolfwzr/Library/Application Support/Karabiner/private.xml"'
+    alias vismbconf="vi /usr/local/etc/smb.conf"
+    alias vikbconf="vi $WOLFWZR_HOME/Library/Application\ Support/Karabiner/private.xml"
 else
-    alias vismbconf='vi /etc/samba/smb.conf'
-    alias vikbconf='vi ~wolfwzr/.Xmodmap'
+    alias vismbconf="vi /etc/samba/smb.conf"
+    alias vikbconf="vi $WOLFWZR_HOME/.Xmodmap"
 fi
 
 ############################################################
@@ -277,9 +305,9 @@ copy_file ()
         cat - | xclip -selection clipboard
     fi
 }
-alias cb='copy_file'
+alias cf='copy_file'
 
-copy_str ()
+copy_string ()
 {
     if [ "$OS_TYPE" = "osx" ]
     then
@@ -288,13 +316,14 @@ copy_str ()
         echo -n -E "$*" | xclip -selection clipboard
     fi
 }
+alias cs='copy_string'
 
 # copy last command (to clipboard)
 clc ()
 {
     #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
     local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
-    copy_str "$last_cmd"
+    copy_string "$last_cmd"
 }
 
 # generate an strong password and copy
@@ -303,7 +332,7 @@ genpasswd ()
     local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
                    head -n ${1:-30} | tr -d '\n';)
     echo "$passwd"
-    copy_str "$passwd"
+    copy_string "$passwd"
 }
 
 # extract package to current dir
@@ -356,7 +385,7 @@ fi
 if [ "$OS_TYPE" = "osx" ]
 then
     # Github
-    _gh="/Users/wolfwzr/Documents/git/github/wolfwzr"
+    _gh="$WOLFWZR_HOME/Documents/git/github/wolfwzr"
     alias ggh='cd "$_gh"'
 
     # os develop
@@ -372,7 +401,7 @@ then
     alias gbh='cd "$_bh"'
 
     # HomeBin(~/.local/bin)
-    _hb="/Users/wolfwzr/.local/bin"
+    _hb="$WOLFWZR_HOME/.local/bin"
     alias ghb='cd "$_hb"'
 
     # MountFolder
@@ -380,16 +409,16 @@ then
     alias gmf='cd "$_mf"'
 
     # SAE (Sina App Engine)
-    _sae='/Users/wolfwzr/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1'
+    _sae="$WOLFWZR_HOME/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
     alias gsae='cd $_sae'
 else
     # scn/hse/plug
-    _scn='/home/wolfwzr/Documents/work/scanner'
+    _scn="$WOLFWZR_HOME/Documents/work/scanner"
     alias gscn='cd $_scn'
 
     _hse="$_scn/svn/scanner/user/modules/hse"
-    alias ghse='cd $_hse'
-    alias hse='(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)'
+    alias ghse="cd $_hse"
+    alias hse="(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)"
 
     _sm="$_scn/svn/scanner/user/modules/scanner/bin/scanner_main/"
     alias gsm='cd $_sm'
@@ -399,11 +428,11 @@ else
     alias gplg='cd $_plg'
 
     # github
-    _gh="/home/wolfwzr/Documents/myprojects/github"
+    _gh="$WOLFWZR_HOME/Documents/myprojects/github"
     alias ggh='cd "$_gh"'
 
     # etc in github
-    _etc="/home/wolfwzr/usr/etc/etc_in_github/etc"
+    _etc="$WOLFWZR_HOME/usr/etc/etc_in_github/etc"
     alias getc='cd "$_etc"'
 
     # os develop
@@ -411,7 +440,7 @@ else
     alias gos='cd "$_os"'
 
     # sae
-    _sae='/home/wolfwzr/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1'
+    _sae="$WOLFWZR_HOME/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1"
     alias gsae='cd $_sae'
 fi
 
@@ -519,7 +548,7 @@ get_website_favicon()
     fi
 }
 
-which-pkg()
+whichpkg()
 {
     local fullpath
     
@@ -527,11 +556,11 @@ which-pkg()
     [ $? -eq 0 ] && rpm -qf $fullpath
 }
 
-ls-pkg-file()
+lspkgfile()
 {
     local pkg
 
-    pkg=$(which-pkg $1)
+    pkg=$(whichpkg $1)
     [ $? -eq 0 ] && rpm -ql $pkg
 }
 
@@ -547,4 +576,11 @@ then
     fi
 fi
 
+safe_source ()
+{
+    [ -f "$1" ] && source "$1"
+}
+
+safe_source ~/.work.bashrc
+safe_source ~/.nasl.bashrc
 # vim: set ft=sh:

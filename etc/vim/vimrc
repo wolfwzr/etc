@@ -122,7 +122,7 @@ function! W_code_common_setting()
 
     if has("gui_running")
         "set cursorline
-        "set colorcolumn=80
+        "set colorcolumn=100
 
         " 显示特殊字符
         set list
@@ -173,8 +173,8 @@ function! W_set_guifont()
             set guifont=Source\ Code\ Pro\ 12
         else
             "YaHei Consolas Hybrid字体不知为何会使状态栏占用命令栏
-            "set guifont=YaHei\ Consolas\ Hybrid\ 14
-            set guifont=Source\ Code\ Pro\ 14
+            "set guifont=YaHei\ Consolas\ Hybrid\ 13
+            set guifont=Source\ Code\ Pro\ 13
         endif
     endif
 endfunction
@@ -464,9 +464,9 @@ function! W_filetype_setting()
         "call W_set_colorscheme("yeller")
         "call W_set_colorscheme("solarized")
 
-        "setlocal cc=80
+        "setlocal cc=100
         highlight WarningCols gui=undercurl
-        match WarningCols /\%>80v/
+        match WarningCols /\%>100v/
 
         call W_C_replace()
     " ASM {{{3
@@ -999,7 +999,7 @@ if has("gui_running")
         vnoremap Y     "+y
         vnoremap <C-x> "+x
         vnoremap X     "+x
-        inoremap <C-v> <Esc>:set paste<CR>"+p:set nopaste<CR>a
+        inoremap <C-v> <Esc>:set paste<CR>"+gP:set nopaste<CR>a
         cnoremap <C-v> <C-r>+
     endif
 endif
@@ -1125,7 +1125,7 @@ nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
 if has("autocmd")
     " 指定某些后缀的文件类型
     autocmd BufRead,BufNewFile *.nasl   set filetype=nasl
-    autocmd BufRead,BufNewFile *.inc    set filetype=asm
+    autocmd BufRead,BufNewFile *.inc    set filetype=nasl
     autocmd BufRead,BufNewFile *.wsgi   set filetype=python
     autocmd BufRead,BufNewFile *.bashrc set filetype=sh
     autocmd BufRead,BufNewFile *.vimrc  set filetype=vim
@@ -1141,7 +1141,7 @@ if has("autocmd")
 
     " 根据不同的文件类型设置按键映射
     augroup filetype_autocmd
-        autocmd FileType c,cpp,h,flex,bison,yacc,asm
+        autocmd FileType c,cpp,h,flex,bison,yacc,asm,nasl
             \ nnoremap <buffer> <SPACE>             :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>|
             \ nnoremap <buffer> <S-SPACE>           :call W_cscope_back()<CR>|
             \ nnoremap <buffer> <S-CR>              :Csg .*.*<Left><Left>|
@@ -1196,8 +1196,8 @@ if has("gui_running")
     "else
     "    winpos 245 10
     "endif
-    set columns=110
-    set lines=39
+    set columns=118
+    set lines=40
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0

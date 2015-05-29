@@ -4,16 +4,18 @@ source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
 
-nnoremap V          p
+"nnoremap a 		  	:tabprev<Return>
+"nnoremap d 		  	:tabnext<Return>
+"nnoremap w 			<Up><Up><Up> 
+"nnoremap s 			<Down><Down><Down>
 
 nnoremap j          3j
 nnoremap k          3k
+nnoremap h          gT
+nnoremap l          gt
 
 "nnoremap <BS>       :back<Return>
 "nnoremap <BS>       :tabclose<Return>
-
-nnoremap h          gT
-nnoremap l          gt
 
 nnoremap e          :emenu Tools.Clearly<Return>
 nnoremap i          :pageinfo<Return>
@@ -22,7 +24,7 @@ nnoremap i          :pageinfo<Return>
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
 
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return>
+nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return><Esc>
 nnoremap <S-Return> :set fullscreen!<Return>
 
 " copy current tab url
@@ -59,6 +61,7 @@ nnoremap sg :tab gfsososearch
 " Quick url access or search using current search engine
 " p open url from clipboard in current tab
 " P open url from clipboard in new tab
+" nnoremap V          p
 nnoremap v          P
 
 colorscheme default

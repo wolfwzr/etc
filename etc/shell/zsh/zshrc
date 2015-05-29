@@ -128,7 +128,7 @@ zle -N comment-command-line
 bindkey '^E' comment-command-line
 
 source /etc/wolfwzr.bashrc
-alias s='source ~/.zshrc'
+alias src='source ~/.zshrc'
 
 # history options
 HISTSIZE=50000
