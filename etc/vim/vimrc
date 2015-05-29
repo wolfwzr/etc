@@ -1003,6 +1003,10 @@ if has("gui_running")
     endif
 endif
 " }}}2
+"
+" 以 root 权限保存文件 {{{2
+command W :execute ':silent w !sudo tee % > /dev/null' | :edit!
+" }}}2
 
 " 代码折叠快捷键 {{{2
 " zi : set foldenable!
