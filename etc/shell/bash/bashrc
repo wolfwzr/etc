@@ -226,18 +226,22 @@ then
     #alias s='zypper search -d'
     alias s='zypper search'
     alias i='sudo zypper install'
+    alias u='sudo zypper update'
 elif cmd_available yum
 then
     alias s='yum search'
     alias i='sudo yum install'
+    alias u='sudo yum update'
 elif cmd_available apt-get
 then
     alias s='apt-cache search --names-only'
     alias i='sudo apt-get install'
+    alias u='sudo apt-get update'
 elif cmd_available brew
 then
     alias s='brew search'
     alias i='brew install'
+    alias u='brew update'
 fi
 
 alias o='open'
@@ -437,7 +441,7 @@ else
     alias ggh='cd "$_gh"'
 
     # etc in github
-    _etc="$WOLFWZR_HOME/usr/etc/etc_in_github/etc"
+    _etc="$WOLFWZR_HOME/Documents/github/wolfwzr/etc/etc"
     alias getc='cd "$_etc"'
 
     # os develop
