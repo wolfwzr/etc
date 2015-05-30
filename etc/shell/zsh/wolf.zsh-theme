@@ -12,6 +12,8 @@ fi
 user="$user%{$reset_color%}%{$bg[black]%}"
 
 PROMPT='%{$bg[black]%}${ret_status}%{$fg[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
+RPROMPT='%{$bg[black]%}%{$fg[green]%}${VIMODE}%{$reset_color%}'
+#RPROMPT='%{$fg[green]%}${VIMODE}%{$reset_color%}'
 
 #PROMPT='%{$bg[black]%}${ret_status}%{$fg[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg[blue]%}$(git_prompt_info)%{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
 

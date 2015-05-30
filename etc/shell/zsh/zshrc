@@ -7,6 +7,7 @@ export ZSH=~wolfwzr/.oh-my-zsh
 # time that oh-my-zsh is loaded.
 #ZSH_THEME="robbyrussell"
 ZSH_THEME="wolf"
+#ZSH_THEME="random"
 
 DISABLE_UPDATE_PROMPT=true
 
@@ -128,6 +129,21 @@ comment-command-line() {
 }
 zle -N comment-command-line
 bindkey '^E' comment-command-line
+
+# setting for vi mode prompt
+VIMODE='INS'
+function zle-line-init zle-keymap-select {
+    #VIMODE="${${KEYMAP/vicmd/NOR}/(main|viins)/INS}"
+    VIMODE="${${KEYMAP/vicmd/}/(main|viins)/INS}"
+    zle reset-prompt
+}
+function zle-line-finish {
+    VIMODE=""
+    zle reset-prompt
+}
+zle -N zle-line-init 
+zle -N zle-line-finish
+zle -N zle-keymap-select
 
 source /etc/wolfwzr.bashrc
 alias src='source ~/.zshrc'

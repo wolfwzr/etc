@@ -297,7 +297,7 @@ else
     fi
 fi
 
-alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc"
+alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
