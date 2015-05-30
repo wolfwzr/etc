@@ -1,23 +1,25 @@
-# Based on robbyrussell theme
-
-# colors: magenta
-
-local ret_status="%(?::%{$fg[red]%}${?}✗)"
-
+# left prompt(PROMPT): colors baseed on robbyrussell theme
+local RET_STATUS="%(?::%{$fg[red]%}${?}✗)"
 if [ $(id -u) -eq 0 ]; then
-    local user="%{$fg_bold[red]%}%n"
+    local USER="%{$fg_bold[red]%}%n"
 else
-    local user="%{$fg[cyan]%}%n"
+    local USER="%{$fg[cyan]%}%n"
 fi
-user="$user%{$reset_color%}%{$bg[black]%}"
+USER="$USER%{$reset_color%}%{$bg[black]%}"
+PROMPT='%{$bg[black]%}${RET_STATUS}%{$fg[cyan]%}[%{$fg[bule]%}%* ${USER} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
 
-PROMPT='%{$bg[black]%}${ret_status}%{$fg[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
+# right prompt(RPROMPT): vi mode
+VIMODE=''
+function zle-line-init zle-keymap-select {
+    #VIMODE="${${KEYMAP/vicmd/NOR}/(main|viins)/INS}"
+    VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/}"
+    zle reset-prompt
+}
+function zle-line-finish {
+    VIMODE=''
+    zle reset-prompt
+}
+zle -N zle-line-init 
+zle -N zle-line-finish
+zle -N zle-keymap-select
 RPROMPT='%{$bg[black]%}%{$fg[green]%}${VIMODE}%{$reset_color%}'
-#RPROMPT='%{$fg[green]%}${VIMODE}%{$reset_color%}'
-
-#PROMPT='%{$bg[black]%}${ret_status}%{$fg[cyan]%}[%{$fg[bule]%}%* ${user} %{$fg[blue]%}$(git_prompt_info)%{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
-
-#ZSH_THEME_GIT_PROMPT_PREFIX="%{$fg[yellow]%}"
-#ZSH_THEME_GIT_PROMPT_SUFFIX=" "
-#ZSH_THEME_GIT_PROMPT_DIRTY="%{$fg[red]%}+"
-#ZSH_THEME_GIT_PROMPT_CLEAN=""

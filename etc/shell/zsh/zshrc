@@ -98,7 +98,8 @@ bindkey -s '^E' '^[I#^m'
 setopt interactivecomments
 
 compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z' + -g '(-/)' ex
-user-complete(){
+
+functions user-complete (){
     if [[ -n $BUFFER ]] ; then     # 如果该行有内容
         zle expand-or-complete     # 执行 TAB 原来的功能
     else                           # 如果没有
@@ -109,18 +110,16 @@ user-complete(){
 zle -N user-complete
 bindkey "\t" user-complete         #将上面的功能绑定到 TAB 键
 
-sudo-command-line() {
+function sudo-command-line () {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != sudo\ * ]] && BUFFER="sudo $BUFFER"
 	#光标移动到行末
     zle end-of-line
 }
 zle -N sudo-command-line
-#定义快捷键为： [Esc] [Esc]
-#bindkey "\e\e" sudo-command-line
 bindkey '^\' sudo-command-line
 
-comment-command-line() {
+function comment-command-line () {
     [[ -z $BUFFER ]] && zle up-history
     [[ $BUFFER != \#\ * ]] && BUFFER="# $BUFFER"
 	#光标移动到行末
@@ -129,21 +128,6 @@ comment-command-line() {
 }
 zle -N comment-command-line
 bindkey '^E' comment-command-line
-
-# setting for vi mode prompt
-VIMODE='INS'
-function zle-line-init zle-keymap-select {
-    #VIMODE="${${KEYMAP/vicmd/NOR}/(main|viins)/INS}"
-    VIMODE="${${KEYMAP/vicmd/}/(main|viins)/INS}"
-    zle reset-prompt
-}
-function zle-line-finish {
-    VIMODE=""
-    zle reset-prompt
-}
-zle -N zle-line-init 
-zle -N zle-line-finish
-zle -N zle-keymap-select
 
 source /etc/wolfwzr.bashrc
 alias src='source ~/.zshrc'
