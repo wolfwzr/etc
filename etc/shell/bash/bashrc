@@ -347,32 +347,39 @@ genpasswd ()
 # extract package to current dir
 function ex ()
 {
-    local dir=${2:-.}
-    if [ -z "$1" ]
+    local file=$1
+    local dst_dir=${2:-.}
+    local cur_dir=$PWD
+
+    if [ -z "$file" ]
     then
         echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
         return
     fi
 
-    if [ -f $1 ]
+    if [ -f "$file" ]
     then
-        case $1 in
-            *.tar.gz)    mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tar.bz2)   mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tar.xz)    mkdir -p "$dir" && tar xJf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.bz2)       bunzip2 $1                                                 ;;
-            *.rar)       mkdir -p "$dir" && unrar e $1 "$dir"    && cd "$dir" && ls ;;
-            *.gz)        gunzip $1                                                  ;;
-            *.tar)       mkdir -p "$dir" && tar xf $1  -C "$dir" && cd "$dir" && ls ;;
-            *.tbz2)      mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tgz)       mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.zip)       mkdir -p "$dir" && unzip $1 -d "$dir"   && cd "$dir" && ls ;;
-            *.Z)         uncompress $1                                              ;;
-            *.7z)        mkdir -p "$dir" && 7z x $1 -o"$dir"     && cd "$dir" && ls ;;
-            *)           echo "'$1' cannot be extracted via extract()"              ;;
+        case "$file" in
+            *.tar.gz)   mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.tar.bz2)  mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.tar.xz)   mkdir -p "$dst_dir" && tar xJf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.bz2)      bunzip2 "$file" ;;
+            *.rar)      mkdir -p "$dst_dir" && unrar e "$file" "$dst_dir"    && cd "$dst_dir" && ls ;;
+            *.gz)       gunzip "$file" ;;
+            *.tar)      mkdir -p "$dst_dir" && tar xf  "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.tbz2)     mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.tgz)      mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.zip)      mkdir -p "$dst_dir" && unzip   "$file" -d "$dst_dir" && cd "$dst_dir" && ls ;;
+            *.Z)        uncompress "$file" ;;
+            *.7z)       mkdir -p "$dst_dir" && 7z x    "$file" -o"$dst_dir"  && cd "$dst_dir" && ls ;;
+            *.rpm)      mkdir -p "$dst_dir" && rpm2cpio "$file" | cpio -id && cd "$dst_dir" && ls ;;
+            *.deb|*.ipk)mkdir -p "$dst_dir" && cd "$dst_dir" && ar -x "$cur_dir/$file" && \
+                        tar xzf control.tar.gz && rm -f control.tar.gz && \
+                        tar xzf data.tar.gz    && rm -f data.tar.gz && ls ;;
+            *)          echo "'$file' cannot be extracted via extract()" ;;
         esac
     else
-        echo "'$1' is not a valid file"
+        echo "'$file' is not a valid file"
     fi
 }
 
