@@ -70,8 +70,9 @@ function install_vimperatorrc()
     make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
     echo "source ~/.$rc" > $target_rc
 
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.linux.vimperatorrc
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.osx.vimperatorrc
     rc="${OS_TYPE}.vimperatorrc"
-    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
     echo "source ~/.$rc" >> $target_rc
 }
 
