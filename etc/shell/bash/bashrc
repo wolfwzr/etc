@@ -521,43 +521,16 @@ alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
 alias monit-open='sudo strace -ff -e trace=open -p'
 
+# etc folder
+_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
+alias getc='cd "$_etc"'
+
 ############################################################
 # z - a better cd
 ############################################################
 if [ "$OS_TYPE" = "osx" ]
 then
     source /usr/local/etc/profile.d/z.sh
-fi
-
-# etc folder
-_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
-alias getc='cd "$_etc"'
-
-if [ "$OS_TYPE" = "osx" ]
-then
-    # Github
-    _gh="$HOME_DIR/Documents/git/github/wolfwzr"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # BrewHome
-    _bh="/usr/local/Cellar/"
-    alias gbh='cd "$_bh"'
-
-    # HomeBin(~/.local/bin)
-    _hb="$HOME_DIR/.local/bin"
-    alias ghb='cd "$_hb"'
-
-    # MountFolder
-    _mf="/Volumes/"
-    alias gmf='cd "$_mf"'
-
-    # SAE (Sina App Engine)
-    _sae="$HOME_DIR/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
 fi
 
 ############################################################
