@@ -1,3 +1,101 @@
+WOLFWZR_HOME=~wolfwzr
+
+if [ "$(uname -s)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+fi
+
+function get_current_shell ()
+{
+    if [ "$OS_TYPE" = "linux" ]
+    then
+        basename $(readlink /proc/$$/exe)
+    else
+        if [ "$BASH" != "" ]
+        then
+            echo "bash"
+        elif [ "$ZSH_NAME" != "" ]
+        then
+            echo "zsh"
+        elif [ "$version" != "" ]
+        then
+            echo "tcsh"
+        elif [ "$shell" != "" ]
+        then
+            # csh or tcsh
+            basename "$shell"
+        elif [ "$PS4" != ""]
+        then
+            echo "ksh"
+        fi
+    fi
+}
+CURRENT_SHELL=$(get_current_shell)
+
+function show_cmd_info ()
+{
+    local cmd=$1
+    local type_info
+    local man_info
+
+    type_info=$(type $cmd)
+    if [ "$type_info" = "$cmd is a shell builtin" ] || \
+       [ "$type_info" = "$cmd is a shell function" ] || \
+       echo "$type_info" | grep -sq "^$cmd is an alias"
+    then
+        echo "$type_info"
+        #echo "use 'typeset -f $cmd' to print function definition"
+        #echo "use 'help $cmd' in bash to get builtin help"
+    else
+        man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        if [ $? -eq 0 ]
+        then
+            echo "$man_info"
+        else
+            echo "$type_info"
+        fi
+    fi
+}
+
+function lscmd ()
+{
+    local keyword=$1
+    local CMD_INDEX="/tmp/.cmd.index"
+
+    if [ ! -f "$CMD_INDEX" ]
+    then
+        case "$CURRENT_SHELL" in
+            bash)
+                compgen -A function -abck
+                ;;
+            zsh)
+                echo ${(k)aliases} ${(k)functions} \
+                     ${(k)builtins} ${(k)commands} | \
+                     tr ' ' '\n'
+                ;;
+        esac | sort | uniq > "$CMD_INDEX"
+    fi
+
+    if [ "$keyword" = "" ]
+    then
+        echo "Usage: $0 <keyword>"
+        return
+    fi
+
+    grep "$keyword" "$CMD_INDEX" | while read cmd
+    do
+        show_cmd_info $cmd
+    done | tr -s ' ' | sed 's/^\([^ ]*\) /\1※/g' | column -t -s '※' | \
+    grep --color=auto "$keyword"
+}
+
 # source target file if file exist
 function safe_source ()
 {
@@ -49,20 +147,6 @@ function copy_string ()
         echo -n -E "$*" | xclip -selection clipboard
     fi
 }
-
-WOLFWZR_HOME=~wolfwzr
-
-if [ "$(uname -s)" = "Darwin" ]
-then
-    OS_TYPE="osx"
-else
-    OS_TYPE="linux"
-fi
-
-if [ "$OS_TYPE" = "linux" ]
-then
-    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
-fi
 
 set -o vi
 export EDITOR=vim
@@ -266,8 +350,6 @@ alias o='open'
 alias g='grep'
 alias f='find . -iname'
 
-alias src='source /etc/wolfwzr.bashrc'
-
 # makescript with the last command
 alias makescript='fc -rnl | head -1 >'
 
@@ -297,6 +379,7 @@ else
     fi
 fi
 
+alias src='source /etc/wolfwzr.bashrc'
 alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
 alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
 alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config /etc/ssh/ssh{,d}_config"
@@ -395,9 +478,6 @@ then
     source /usr/local/etc/profile.d/z.sh
 fi
 
-############################################################
-# DIR SHORTCUT
-############################################################
 # etc folder
 _etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
 alias getc='cd "$_etc"'
@@ -426,33 +506,6 @@ then
 
     # SAE (Sina App Engine)
     _sae="$WOLFWZR_HOME/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
-else
-    # scn/hse/plug
-    _scn="$WOLFWZR_HOME/Documents/work/scanner"
-    alias gscn='cd $_scn'
-
-    _hse="$_scn/svn/scanner/user/modules/hse"
-    alias ghse="cd $_hse"
-    alias hse="(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)"
-
-    _sm="$_scn/svn/scanner/user/modules/scanner/bin/scanner_main/"
-    alias gsm='cd $_sm'
-    alias sm='(cd $_sm && vi scanner_main.c)'
-
-    _plg="$_scn/svn/signature/tr/sig/plugins"
-    alias gplg='cd $_plg'
-
-    # github
-    _gh="$WOLFWZR_HOME/Documents/myprojects/github"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # sae
-    _sae="$WOLFWZR_HOME/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1"
     alias gsae='cd $_sae'
 fi
 
@@ -563,7 +616,7 @@ function get_website_favicon()
 function whichpkg ()
 {
     local fullpath
-    
+
     fullpath=$(whence -p $1)
     [ $? -eq 0 ] && rpm -qf $fullpath
 }
@@ -590,5 +643,5 @@ then
 fi
 
 safe_source ~/.work.bashrc
-safe_source ~/.nasl.bashrc
+
 # vim: set ft=sh:
