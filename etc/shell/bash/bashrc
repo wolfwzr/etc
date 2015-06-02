@@ -1,3 +1,47 @@
+HOME_DIR=~wolfwzr
+
+if [ "$(uname -s)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+fi
+
+############################################################
+# basic functions
+############################################################
+function get_current_shell ()
+{
+    if [ "$OS_TYPE" = "linux" ]
+    then
+        basename $(readlink /proc/$$/exe)
+    else
+        if [ "$BASH" != "" ]
+        then
+            echo "bash"
+        elif [ "$ZSH_NAME" != "" ]
+        then
+            echo "zsh"
+        elif [ "$version" != "" ]
+        then
+            echo "tcsh"
+        elif [ "$shell" != "" ]
+        then
+            # csh or tcsh
+            basename "$shell"
+        elif [ "$PS4" != ""]
+        then
+            echo "ksh"
+        fi
+    fi
+}
+CURRENT_SHELL=$(get_current_shell)
+
 # source target file if file exist
 function safe_source ()
 {
@@ -28,71 +72,7 @@ function uniq_path()
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
 
-function copy_file ()
-{
-    local file=${1:--}
-
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        pbcopy < "$file"
-    else
-        xclip -selection clipboard < "$file"
-    fi
-}
-
-function copy_string ()
-{
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        echo -n -E "$*" | pbcopy
-    else
-        echo -n -E "$*" | xclip -selection clipboard
-    fi
-}
-
-WOLFWZR_HOME=~wolfwzr
-
-if [ "$(uname -s)" = "Darwin" ]
-then
-    OS_TYPE="osx"
-else
-    OS_TYPE="linux"
-fi
-
-if [ "$OS_TYPE" = "linux" ]
-then
-    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
-fi
-
-set -o vi
-export EDITOR=vim
-
-append_to_path "/bin"
-append_to_path "/sbin"
-append_to_path "/usr/bin"
-append_to_path "/usr/sbin"
-append_to_path "/usr/local/bin"
-append_to_path "/usr/local/sbin"
-append_to_path "/usr/libexec"
-if [ "$OS_TYPE" = "osx" ]
-then
-    append_to_path "$WOLFWZR_HOME/.local/bin"
-else
-    append_to_path "/opt/cross-mips32/bin"
-fi
-#uniq_path
-
-export HISTTIMEFORMAT="[%m-%d %R] "
-
-if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
-then
-    w | grep " w$" | awk '{print $3}' | grep -s -q ":"
-    [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
-fi
-
-############################################################
-# COMMAND PROMPT
-############################################################
+# update command prompt
 function wolf_update_ps1()
 {
     local exit_code=$?
@@ -127,17 +107,247 @@ function wolf_update_ps1()
     else
         username="\[\033[38m\]\u"
     fi
+    at="\[\033[33m\]@"
+    hostname="\[\033[37m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\] "
+    suffix="\[\033[37m\]]\[\033[0m\]"
 
-    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
+    export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
+
+############################################################
+# useful functions
+############################################################
+
+function copy_string ()
+{
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        echo -n -E "$*" | pbcopy
+    else
+        echo -n -E "$*" | xclip -selection clipboard
+    fi
+}
+
+function copy_file ()
+{
+    local file=${1:--}
+
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        pbcopy < "$file"
+    else
+        xclip -selection clipboard < "$file"
+    fi
+}
+
+function whichpkg ()
+{
+    local fullpath
+
+    fullpath=$(whence -p $1)
+    [ $? -eq 0 ] && rpm -qf $fullpath
+}
+
+function lspkgfile ()
+{
+    local pkg
+
+    pkg=$(whichpkg $1)
+    [ $? -ne 0 ] && pkg=$1
+    rpm -ql $pkg
+}
+
+function filecmd ()
+{
+    file $(which $1)
+}
+
+function get_website_favicon()
+{
+    local host=$1
+    local h=$(echo $host | awk -F '.' '{print $1}')
+    if [ -n "$host" -a -n "$h" ]
+    then
+        wget "http://$host/favicon.ico" -O "$h.ico"
+    fi
+}
+
+function show_cmd_info ()
+{
+    local cmd=$1
+    local type_info
+    local man_info
+
+    type_info=$(type $cmd)
+    if [ "$type_info" = "$cmd is a shell builtin" ] || \
+       [ "$type_info" = "$cmd is a shell function" ] || \
+       echo "$type_info" | grep -sq "^$cmd is an alias"
+    then
+        echo "$type_info"
+        #echo "use 'typeset -f $cmd' to print function definition"
+        #echo "use 'help $cmd' in bash to get builtin help"
+    else
+        man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        if [ $? -eq 0 ]
+        then
+            echo "$man_info"
+        else
+            echo "$type_info"
+        fi
+    fi
+}
+
+function lscmd ()
+{
+    local keyword=$1
+    local CMD_INDEX="/tmp/.cmd.index"
+
+    if [ ! -f "$CMD_INDEX" ]
+    then
+        case "$CURRENT_SHELL" in
+            bash)
+                compgen -A function -abck
+                ;;
+            zsh)
+                echo ${(k)aliases} ${(k)functions} \
+                     ${(k)builtins} ${(k)commands} | \
+                     tr ' ' '\n'
+                ;;
+        esac | sort | uniq > "$CMD_INDEX"
+    fi
+
+    if [ "$keyword" = "" ]
+    then
+        echo "Usage: $0 <keyword>"
+        return
+    fi
+
+    grep "$keyword" "$CMD_INDEX" | while read cmd
+    do
+        show_cmd_info $cmd
+    done | tr -s ' ' | sed 's/^\([^ ]*\) /\1※/g' | column -t -s '※' | \
+    grep --color=auto "$keyword"
+}
+
+# cd and ls
+cls () { cd $1; ls;}
+
+# mkdir and cd
+mcd () { mkdir -p $1 && cd $1}
+
+# backup files and dirs
+bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
+
+# md5sum check
+md5chk () { md5sum "$1" | grep "$2";}
+
+# copy last command (to clipboard)
+clc ()
+{
+    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g'
+    local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
+    copy_string "$last_cmd"
+}
+
+# generate an strong password and copy
+genpasswd ()
+{
+    local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
+                   head -n ${1:-30} | tr -d '\n';)
+    echo "$passwd"
+    copy_string "$passwd"
+}
+
+# extract package to current dir
+function ex ()
+{
+    local file=$1
+    local dst_dir=${2:-.}
+    local cur_dir=$PWD
+
+    if [ -z "$file" ]
+    then
+        echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
+        return
+    fi
+
+    if [ -f "$file" ]
+    then
+        [ "${file:0:1}" = "/" ] || file="$cur_dir/$file"
+        [ "${dst_dir:0:1}" = "/" ] || dst_dir="$cur_dir/$dst_dir"
+        mkdir -p "$dst_dir" || (echo "cannot mkdir \"$dst_dir\""; return)
+        case "$file" in
+            *.tar.gz)       tar xzf "$file" -C "$dst_dir" ;;
+            *.tar.bz2)      tar xjf "$file" -C "$dst_dir" ;;
+            *.tar.xz)       tar xJf "$file" -C "$dst_dir" ;;
+            *.tar)          tar xf  "$file" -C "$dst_dir" ;;
+            *.tbz2)         tar xjf "$file" -C "$dst_dir" ;;
+            *.tgz)          tar xzf "$file" -C "$dst_dir" ;;
+            *.7z)           7z x    "$file" -o "$dst_dir" ;;
+            *.zip)          unzip   "$file" -d "$dst_dir" ;;
+            *.rar)          unrar e "$file"    "$dst_dir" ;;
+            *.bz2)          bunzip2 "$file" ;;
+            *.gz)           gunzip "$file" ;;
+            *.Z)            uncompress "$file" ;;
+            *.rpm)          cd "$dst_dir" && rpm2cpio "$file" | cpio -id ;;
+            *.a)            cd "$dst_dir" && ar x "$file" ;;
+            *.deb|*.ipk)    cd "$dst_dir" && ar x "$file" && \
+                            tar xzf control.tar.gz && rm -f control.tar.gz && \
+                            tar xzf data.tar.gz    && rm -f data.tar.gz ;;
+            *)              echo "'$file' cannot be extracted via extract()" ;;
+        esac
+        cd "$dst_dir" && ls
+    else
+        echo "'$file' is not a valid file"
+    fi
+}
+
+############################################################
+# settings
+############################################################
+set -o vi
+export EDITOR=vim
+
+append_to_path "/bin"
+append_to_path "/sbin"
+append_to_path "/usr/bin"
+append_to_path "/usr/sbin"
+append_to_path "/usr/local/bin"
+append_to_path "/usr/local/sbin"
+append_to_path "/usr/libexec"
+if [ "$OS_TYPE" = "osx" ]
+then
+    append_to_path "$HOME_DIR/.local/bin"
+else
+    append_to_path "/opt/cross-mips32/bin"
+fi
+#uniq_path
+
+export HISTTIMEFORMAT="[%m-%d %R] "
+
+if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
+then
+    w | grep " w$" | awk '{print $3}' | grep -s -q ":"
+    [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
+fi
+
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
+export MANPAGER="most -s"
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    if [ "$DESKTOP_SESSION" = "xfce4" ]
+    then
+        resize -s 30 100 > /dev/null
+    fi
+fi
 
 ############################################################
 # ALIAS
 ############################################################
+
 alias a='./a.out'
 alias b='bochs -f bochsrc'
 alias d='du -sh'
@@ -175,7 +385,7 @@ then
     alias top='top -o cpu'
     alias t='htop'
     alias um='diskutil umount'
-    alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
+    alias briss="java -jar $HOME_DIR/.local/share/briss-0.9/briss-0.9.jar"
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
@@ -261,8 +471,6 @@ alias o='open'
 alias g='grep'
 alias f='find . -iname'
 
-alias src='source /etc/wolfwzr.bashrc'
-
 # makescript with the last command
 alias makescript='fc -rnl | head -1 >'
 
@@ -272,7 +480,7 @@ alias path='echo -e ${PATH//:/\\n}'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector
-export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
+export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
 
@@ -292,96 +500,22 @@ else
     fi
 fi
 
-alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc \
-                    $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi -p $WOLFWZR_HOME/.vim/vimrc \
-                  $WOLFWZR_HOME/.vim/vundle.vimrc \
-                  $WOLFWZR_HOME/.vim/mac-alt-map.vimrc"
-alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config \
-                       /etc/ssh/ssh{,d}_config"
+alias src='source /etc/wolfwzr.bashrc'
+alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme"
+alias virc="vi $HOME_DIR/.vim/vimrc"
+alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/Library/Application\ Support/Karabiner/private.xml"
+    alias vikbconf="vi $HOME_DIR/Library/Application\ Support/Karabiner/private.xml"
 else
     alias vismbconf="vi /etc/samba/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/.Xmodmap"
+    alias vikbconf="vi $HOME_DIR/.Xmodmap"
 fi
 
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
-
-############################################################
-# function shortcut
-############################################################
-# cd and ls
-cls () { cd $1; ls;}
-
-# mkdir and cd
-mcd () { mkdir -p $1 && cd $1}
-
-# backup files and dirs
-bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
-
-# md5sum check
-md5chk () { md5sum "$1" | grep "$2";}
-
-# copy last command (to clipboard)
-clc ()
-{
-    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
-    local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
-    copy_string "$last_cmd"
-}
-
-# generate an strong password and copy
-genpasswd ()
-{
-    local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
-                   head -n ${1:-30} | tr -d '\n';)
-    echo "$passwd"
-    copy_string "$passwd"
-}
-
-# extract package to current dir
-function ex ()
-{
-    local file=$1
-    local dst_dir=${2:-.}
-    local cur_dir=$PWD
-
-    if [ -z "$file" ]
-    then
-        echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
-        return
-    fi
-
-    if [ -f "$file" ]
-    then
-        case "$file" in
-            *.tar.gz)   mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tar.bz2)  mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tar.xz)   mkdir -p "$dst_dir" && tar xJf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.bz2)      bunzip2 "$file" ;;
-            *.rar)      mkdir -p "$dst_dir" && unrar e "$file" "$dst_dir"    && cd "$dst_dir" && ls ;;
-            *.gz)       gunzip "$file" ;;
-            *.tar)      mkdir -p "$dst_dir" && tar xf  "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tbz2)     mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tgz)      mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.zip)      mkdir -p "$dst_dir" && unzip   "$file" -d "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.Z)        uncompress "$file" ;;
-            *.7z)       mkdir -p "$dst_dir" && 7z x    "$file" -o"$dst_dir"  && cd "$dst_dir" && ls ;;
-            *.rpm)      mkdir -p "$dst_dir" && rpm2cpio "$file" | cpio -id && cd "$dst_dir" && ls ;;
-            *.deb|*.ipk)mkdir -p "$dst_dir" && cd "$dst_dir" && ar -x "$cur_dir/$file" && \
-                        tar xzf control.tar.gz && rm -f control.tar.gz && \
-                        tar xzf data.tar.gz    && rm -f data.tar.gz && ls ;;
-            *)          echo "'$file' cannot be extracted via extract()" ;;
-        esac
-    else
-        echo "'$file' is not a valid file"
-    fi
-}
 
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
@@ -395,9 +529,6 @@ then
     source /usr/local/etc/profile.d/z.sh
 fi
 
-############################################################
-# DIR SHORTCUT
-############################################################
 # etc folder
 _etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
 alias getc='cd "$_etc"'
@@ -405,7 +536,7 @@ alias getc='cd "$_etc"'
 if [ "$OS_TYPE" = "osx" ]
 then
     # Github
-    _gh="$WOLFWZR_HOME/Documents/git/github/wolfwzr"
+    _gh="$HOME_DIR/Documents/git/github/wolfwzr"
     alias ggh='cd "$_gh"'
 
     # os develop
@@ -417,7 +548,7 @@ then
     alias gbh='cd "$_bh"'
 
     # HomeBin(~/.local/bin)
-    _hb="$WOLFWZR_HOME/.local/bin"
+    _hb="$HOME_DIR/.local/bin"
     alias ghb='cd "$_hb"'
 
     # MountFolder
@@ -425,34 +556,7 @@ then
     alias gmf='cd "$_mf"'
 
     # SAE (Sina App Engine)
-    _sae="$WOLFWZR_HOME/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
-else
-    # scn/hse/plug
-    _scn="$WOLFWZR_HOME/Documents/work/scanner"
-    alias gscn='cd $_scn'
-
-    _hse="$_scn/svn/scanner/user/modules/hse"
-    alias ghse="cd $_hse"
-    alias hse="(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)"
-
-    _sm="$_scn/svn/scanner/user/modules/scanner/bin/scanner_main/"
-    alias gsm='cd $_sm'
-    alias sm='(cd $_sm && vi scanner_main.c)'
-
-    _plg="$_scn/svn/signature/tr/sig/plugins"
-    alias gplg='cd $_plg'
-
-    # github
-    _gh="$WOLFWZR_HOME/Documents/myprojects/github"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # sae
-    _sae="$WOLFWZR_HOME/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1"
+    _sae="$HOME_DIR/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
     alias gsae='cd $_sae'
 fi
 
@@ -550,45 +654,6 @@ function wrestart()
     wolf_service_control "$1" restart
 }
 
-function get_website_favicon()
-{
-    local host=$1
-    local h=$(echo $host | awk -F '.' '{print $1}')
-    if [ -n "$host" -a -n "$h" ]
-    then
-        wget "http://$host/favicon.ico" -O "$h.ico"
-    fi
-}
+safe_source ~/.self.bashrc
 
-function whichpkg ()
-{
-    local fullpath
-    
-    fullpath=$(whence -p $1)
-    [ $? -eq 0 ] && rpm -qf $fullpath
-}
-
-function lspkgfile ()
-{
-    local pkg
-
-    pkg=$(whichpkg $1)
-    [ $? -ne 0 ] && pkg=$1
-    rpm -ql $pkg
-}
-
-############################################################
-# MISCS
-############################################################
-if [ "$OS_TYPE" = "linux" ]
-then
-    export MANPAGER="most -s"
-    if [ "$DESKTOP_SESSION" = "xfce4" ]
-    then
-        resize -s 30 100 > /dev/null
-    fi
-fi
-
-safe_source ~/.work.bashrc
-safe_source ~/.nasl.bashrc
 # vim: set ft=sh:

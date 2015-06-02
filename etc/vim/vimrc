@@ -119,18 +119,17 @@ function! W_code_common_setting()
     set expandtab
     set nofoldenable
 
-    if has("gui_running")
-        "set cursorline
-        "set colorcolumn=100
+    "set cursorline
+    "set colorcolumn=100
 
-        " 显示特殊字符
-        set list
-        set listchars=tab:\|\ ,trail:-,nbsp:%
-        " 警示行尾多余空格
-        " match Error /\s\+$/
-        " 显示缩进垂直对齐线
-        "call W_exec_cmd("IndentLinesEnable")
-    endif
+    " 显示特殊字符
+    set list
+    "set listchars=tab:\|\ ,trail:-,nbsp:%
+    set listchars=tab:\|\ ,trail:•,nbsp:%
+    " 警示行尾多余空格
+    " match Error /\s\+$/
+    " 显示缩进垂直对齐线
+    "call W_exec_cmd("IndentLinesEnable")
 
     " 按<Leader><Leader>执行make并打开quickfix窗口
     " 然后跳到第一个错误处(如果有错误的话)
@@ -349,9 +348,8 @@ function! W_set_colorscheme(color)
 
         " SpecialKey/Conceal
         " SpecialKey for chars setting by (:set listchars)
-        execute 'hi SpecialKey gui=NONE guibg=' . l:normal_bg
-        execute 'hi SpecialKey guifg=' .
-                        \ W_color_modify(l:normal_bg, 'add', 0x18)
+        execute 'hi SpecialKey gui=bold guibg=' . l:normal_bg
+                  \ ' guifg=' . W_color_modify(l:normal_bg, 'add', 0x48)
         " Conceal for indentline plugin
         hi! link Conceal SpecialKey
 
@@ -998,7 +996,7 @@ if has("gui_running")
         vnoremap Y     "+y
         vnoremap <C-x> "+x
         vnoremap X     "+x
-        inoremap <C-v> <Esc>:set paste<CR>a<C-R>+<Esc>:set nopaste<CR>a
+        inoremap <C-v> <Space><BS><Esc>:set paste<CR>a<C-R>+<Esc>:set nopaste<CR>a
         cnoremap <C-v> <C-r>+
     endif
 endif

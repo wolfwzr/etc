@@ -1,12 +1,13 @@
 # left prompt(PROMPT): colors baseed on robbyrussell theme
-local RET_STATUS="%(?::%{$fg[red]%}${?}✗)"
+PS_RET_STATUS="%(?::%{$fg[red]%}${?}✗)"
 if [ $(id -u) -eq 0 ]; then
-    local USER="%{$fg_bold[red]%}%n"
+    PS_USER="%{$fg_bold[red]%}%n"
 else
-    local USER="%{$fg[cyan]%}%n"
+    PS_USER="%{$fg[cyan]%}%n"
 fi
-USER="$USER%{$reset_color%}%{$bg[black]%}"
-PROMPT='%{$bg[black]%}${RET_STATUS}%{$fg[cyan]%}[%{$fg[bule]%}%* ${USER} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
+PS_USER="$PS_USER%{$fg[green]%}@%{$fg[blue]%}%m%{$reset_color%}%{$bg[black]%}"
+#PROMPT='%{$bg[black]%}${PS_RET_STATUS}%{$fg[cyan]%}[%{$fg[bule]%}%* ${PS_USER} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
+PROMPT='%{$bg[black]%}${PS_RET_STATUS}%{$fg[cyan]%}[${PS_USER} %{$fg[green]%}%c%{$fg[cyan]%}]%{$reset_color%} '
 
 # right prompt(RPROMPT): vi mode
 VIMODE=''

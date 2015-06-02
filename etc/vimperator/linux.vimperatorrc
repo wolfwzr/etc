@@ -7,8 +7,8 @@ nnoremap d          <C-w>
 nnoremap <C-e>      <C-S-e>
 
 " duplicate tab
-" nnoremap <C-d>   yP
-nnoremap <C-d>      :tabduplicate<Return>
+" nnoremap <C-d>      :tabduplicate<Return>
+nnoremap <C-d>   	yP
 
 nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
 nnoremap <C-S-o>    :dialog openfile<Return>
@@ -19,9 +19,9 @@ nnoremap <C-[>      :back<Return>
 nnoremap <C-]>      :forward<Return>
 
 " quick search
-nnoremap V          :tab bdpansearch <C-v><Enter>
-nnoremap <C-v>      :tab  ssbcsearch <C-v><Enter>
-nnoremap <C-S-v>    :tab    ydsearch <C-v><Enter>
+nnoremap <C-v>      :tab    ydsearch <C-v><Enter>
+nnoremap V          :tab  ssbcsearch <C-v><Enter>
+nnoremap <C-S-v>    :tab bdpansearch <C-v><Enter>
 
 " Ctrl-Shift-n - next tabgroup
 " Ctrl-Shift-p - prev tabgroup

@@ -24,7 +24,7 @@ nnoremap i          :pageinfo<Return>
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
 
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return><Esc>
+nnoremap <Leader>e  :!gvim -p ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return><Esc>
 nnoremap <S-Return> :set fullscreen!<Return>
 
 " copy current tab url

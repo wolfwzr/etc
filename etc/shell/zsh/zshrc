@@ -97,7 +97,8 @@ bindkey -s '^E' '^[I#^m'
 # use comments in interactive mode
 setopt interactivecomments
 
-compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z *.rpm *.deb *.ipk' + -g '(-/)' ex
+compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z *.a *.rpm *.deb *.ipk' \
+      + -g '(-/)' ex
 
 functions user-complete (){
     if [[ -n $BUFFER ]] ; then     # 如果该行有内容

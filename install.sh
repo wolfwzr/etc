@@ -7,7 +7,6 @@ GITHUB_VIMPERATOR_DIR="$GITHUB_ETC_DIR/vimperator"
 GITHUB_XMODMAP="$GITHUB_ETC_DIR/keyboard/xmodmap"
 GITHUB_KARABINER="$GITHUB_ETC_DIR/keyboard/karabiner.xml"
 GITHUB_BASHRC="$GITHUB_ETC_DIR/shell/bash/bashrc"
-GITHUB_HOSTS="$GITHUB_ETC_DIR/hosts"
 
 if [ "$(uname -s)" = "Darwin" ]
 then
@@ -70,8 +69,9 @@ function install_vimperatorrc()
     make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
     echo "source ~/.$rc" > $target_rc
 
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.linux.vimperatorrc
+    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.osx.vimperatorrc
     rc="${OS_TYPE}.vimperatorrc"
-    make_symlink "$GITHUB_VIMPERATOR_DIR/$rc" ~wolfwzr/.$rc
     echo "source ~/.$rc" >> $target_rc
 }
 
@@ -97,9 +97,6 @@ install_bashrc
 
 echo "install vimperatorrc"
 install_vimperatorrc
-
-echo "install hosts"
-make_symlink "$GITHUB_HOSTS" /etc/hosts
 
 echo "install keyboard config"
 install_keyboard_config
