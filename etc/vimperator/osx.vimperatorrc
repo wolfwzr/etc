@@ -26,9 +26,9 @@ nnoremap <M-d>      :tabduplicate<Return>
 nnoremap <M-e>      <M-S-e>
 
 " quick search
-nnoremap V          :tab bdpansearch <M-v><Enter>
-nnoremap <M-v>      :tab  ssbcsearch <M-v><Enter>
-nnoremap <M-S-v>    :tab    ydsearch <M-v><Enter>
+nnoremap <M-v>      :tab    ydsearch <M-v><Enter>
+nnoremap V          :tab  ssbcsearch <M-v><Enter>
+nnoremap <M-S-v>    :tab bdpansearch <M-v><Enter>
 
 inoremap <M-Enter>  <A-Enter>
 

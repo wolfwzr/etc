@@ -1,4 +1,4 @@
-WOLFWZR_HOME=~wolfwzr
+HOME_DIR=~wolfwzr
 
 if [ "$(uname -s)" = "Darwin" ]
 then
@@ -316,7 +316,7 @@ append_to_path "/usr/local/sbin"
 append_to_path "/usr/libexec"
 if [ "$OS_TYPE" = "osx" ]
 then
-    append_to_path "$WOLFWZR_HOME/.local/bin"
+    append_to_path "$HOME_DIR/.local/bin"
 else
     append_to_path "/opt/cross-mips32/bin"
 fi
@@ -384,7 +384,7 @@ then
     alias top='top -o cpu'
     alias t='htop'
     alias um='diskutil umount'
-    alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
+    alias briss="java -jar $HOME_DIR/.local/share/briss-0.9/briss-0.9.jar"
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
@@ -478,7 +478,7 @@ alias path='echo -e ${PATH//:/\\n}'
 
 # alias for vi
 # environment variable for vim script - vim-colorselector
-export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
+export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
 
@@ -499,17 +499,17 @@ else
 fi
 
 alias src='source /etc/wolfwzr.bashrc'
-alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config /etc/ssh/ssh{,d}_config"
+alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme"
+alias virc="vi $HOME_DIR/.vim/vimrc"
+alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/Library/Application\ Support/Karabiner/private.xml"
+    alias vikbconf="vi $HOME_DIR/Library/Application\ Support/Karabiner/private.xml"
 else
     alias vismbconf="vi /etc/samba/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/.Xmodmap"
+    alias vikbconf="vi $HOME_DIR/.Xmodmap"
 fi
 
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
@@ -533,7 +533,7 @@ alias getc='cd "$_etc"'
 if [ "$OS_TYPE" = "osx" ]
 then
     # Github
-    _gh="$WOLFWZR_HOME/Documents/git/github/wolfwzr"
+    _gh="$HOME_DIR/Documents/git/github/wolfwzr"
     alias ggh='cd "$_gh"'
 
     # os develop
@@ -545,7 +545,7 @@ then
     alias gbh='cd "$_bh"'
 
     # HomeBin(~/.local/bin)
-    _hb="$WOLFWZR_HOME/.local/bin"
+    _hb="$HOME_DIR/.local/bin"
     alias ghb='cd "$_hb"'
 
     # MountFolder
@@ -553,7 +553,7 @@ then
     alias gmf='cd "$_mf"'
 
     # SAE (Sina App Engine)
-    _sae="$WOLFWZR_HOME/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
+    _sae="$HOME_DIR/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
     alias gsae='cd $_sae'
 fi
 
