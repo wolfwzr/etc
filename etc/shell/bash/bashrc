@@ -107,10 +107,12 @@ function wolf_update_ps1()
     else
         username="\[\033[38m\]\u"
     fi
+    at="\[\033[33m\]@"
+    hostname="\[\033[37m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\] "
+    suffix="\[\033[37m\]]\[\033[0m\]"
 
-    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
+    export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
 
 ############################################################
