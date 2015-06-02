@@ -12,6 +12,9 @@ then
     grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
 fi
 
+############################################################
+# basic functions
+############################################################
 function get_current_shell ()
 {
     if [ "$OS_TYPE" = "linux" ]
@@ -38,6 +41,135 @@ function get_current_shell ()
     fi
 }
 CURRENT_SHELL=$(get_current_shell)
+
+# source target file if file exist
+function safe_source ()
+{
+    [ -f "$1" ] && source "$1"
+}
+
+# check if command is available
+function cmd_available ()
+{
+    local cmd=$1
+    which "$cmd" >/dev/null 2>&1
+}
+
+# add a item to PATH variable
+function append_to_path()
+{
+    local new_path=$1
+
+    [ -z "$new_path" ] && return
+    echo $PATH | grep -s -q ":${new_path}[:$]"
+    [ $? -ne 0 ] && PATH="$PATH:$new_path"
+    export PATH
+}
+
+function uniq_path()
+{
+    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
+                        | tr '\n' ':' | sed 's/:$//g')\""
+}
+
+# update command prompt
+function wolf_update_ps1()
+{
+    local exit_code=$?
+    local last_cmd_exit_code
+    local time
+    local username
+    local work_dir
+    local prefix
+    local suffix
+
+    if [ $exit_code -ne 0 ]
+    then
+        # reverse on error ✘
+        #last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
+
+        # warnning in PS1 head
+        last_cmd_exit_code="\[\033[35;40m\]${exit_code}✘\[\033[0m\]"
+    fi
+
+    if [ "$TERMINAL_PROFILE" = "Light" ]
+    then
+        prefix="\[\033[47;37m\]"
+    else
+        prefix="\[\033[40;37m\]"
+    fi
+    prefix="$prefix\[\033[37m\]["
+
+    time="\[\033[37m\]\t"
+    if [ "$UID" = '0' ]
+    then
+        username="\[\033[35m\]\u"
+    else
+        username="\[\033[38m\]\u"
+    fi
+    work_dir="\[\033[33m\]\W"
+    suffix="\[\033[37m\]]\[\033[0m\] "
+
+    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
+}
+
+############################################################
+# useful functions
+############################################################
+
+function copy_string ()
+{
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        echo -n -E "$*" | pbcopy
+    else
+        echo -n -E "$*" | xclip -selection clipboard
+    fi
+}
+
+function copy_file ()
+{
+    local file=${1:--}
+
+    if [ "$OS_TYPE" = "osx" ]
+    then
+        pbcopy < "$file"
+    else
+        xclip -selection clipboard < "$file"
+    fi
+}
+
+function whichpkg ()
+{
+    local fullpath
+
+    fullpath=$(whence -p $1)
+    [ $? -eq 0 ] && rpm -qf $fullpath
+}
+
+function lspkgfile ()
+{
+    local pkg
+
+    pkg=$(whichpkg $1)
+    [ $? -ne 0 ] && pkg=$1
+    rpm -ql $pkg
+}
+
+function filecmd ()
+{
+    file $(which $1)
+}
+
+function get_website_favicon()
+{
+    local host=$1
+    local h=$(echo $host | awk -F '.' '{print $1}')
+    if [ -n "$host" -a -n "$h" ]
+    then
+        wget "http://$host/favicon.ico" -O "$h.ico"
+    fi
+}
 
 function show_cmd_info ()
 {
@@ -96,58 +228,82 @@ function lscmd ()
     grep --color=auto "$keyword"
 }
 
-# source target file if file exist
-function safe_source ()
+# cd and ls
+cls () { cd $1; ls;}
+
+# mkdir and cd
+mcd () { mkdir -p $1 && cd $1}
+
+# backup files and dirs
+bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
+
+# md5sum check
+md5chk () { md5sum "$1" | grep "$2";}
+
+# copy last command (to clipboard)
+clc ()
 {
-    [ -f "$1" ] && source "$1"
+    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g'
+    local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
+    copy_string "$last_cmd"
 }
 
-# check if command is available
-function cmd_available ()
+# generate an strong password and copy
+genpasswd ()
 {
-    local cmd=$1
-    which "$cmd" >/dev/null 2>&1
+    local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
+                   head -n ${1:-30} | tr -d '\n';)
+    echo "$passwd"
+    copy_string "$passwd"
 }
 
-# add a item to PATH variable
-function append_to_path()
+# extract package to current dir
+function ex ()
 {
-    local new_path=$1
+    local file=$1
+    local dst_dir=${2:-.}
+    local cur_dir=$PWD
 
-    [ -z "$new_path" ] && return
-    echo $PATH | grep -s -q ":${new_path}[:$]"
-    [ $? -ne 0 ] && PATH="$PATH:$new_path"
-    export PATH
-}
-
-function uniq_path()
-{
-    eval "export PATH=\"$(tr ':' '\n' <<< "$PATH" | sort -r | uniq \
-                        | tr '\n' ':' | sed 's/:$//g')\""
-}
-
-function copy_file ()
-{
-    local file=${1:--}
-
-    if [ "$OS_TYPE" = "osx" ]
+    if [ -z "$file" ]
     then
-        pbcopy < "$file"
+        echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
+        return
+    fi
+
+    if [ -f "$file" ]
+    then
+        [ "${file:0:1}" = "/" ] || file="$cur_dir/$file"
+        [ "${dst_dir:0:1}" = "/" ] || dst_dir="$cur_dir/$dst_dir"
+        mkdir -p "$dst_dir" || (echo "cannot mkdir \"$dst_dir\""; return)
+        case "$file" in
+            *.tar.gz)       tar xzf "$file" -C "$dst_dir" ;;
+            *.tar.bz2)      tar xjf "$file" -C "$dst_dir" ;;
+            *.tar.xz)       tar xJf "$file" -C "$dst_dir" ;;
+            *.tar)          tar xf  "$file" -C "$dst_dir" ;;
+            *.tbz2)         tar xjf "$file" -C "$dst_dir" ;;
+            *.tgz)          tar xzf "$file" -C "$dst_dir" ;;
+            *.7z)           7z x    "$file" -o "$dst_dir" ;;
+            *.zip)          unzip   "$file" -d "$dst_dir" ;;
+            *.rar)          unrar e "$file"    "$dst_dir" ;;
+            *.bz2)          bunzip2 "$file" ;;
+            *.gz)           gunzip "$file" ;;
+            *.Z)            uncompress "$file" ;;
+            *.rpm)          cd "$dst_dir" && rpm2cpio "$file" | cpio -id ;;
+            *.a)            cd "$dst_dir" && ar x "$file" ;;
+            *.deb|*.ipk)    cd "$dst_dir" && ar x "$file" && \
+                            tar xzf control.tar.gz && rm -f control.tar.gz && \
+                            tar xzf data.tar.gz    && rm -f data.tar.gz ;;
+            *)              echo "'$file' cannot be extracted via extract()" ;;
+        esac
+        cd "$dst_dir" && ls
     else
-        xclip -selection clipboard < "$file"
+        echo "'$file' is not a valid file"
     fi
 }
 
-function copy_string ()
-{
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        echo -n -E "$*" | pbcopy
-    else
-        echo -n -E "$*" | xclip -selection clipboard
-    fi
-}
-
+############################################################
+# settings
+############################################################
 set -o vi
 export EDITOR=vim
 
@@ -174,59 +330,22 @@ then
     [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
 fi
 
-############################################################
-# COMMAND PROMPT
-############################################################
-function wolf_update_ps1()
-{
-    local exit_code=$?
-    local last_cmd_exit_code
-    local time
-    local username
-    local work_dir
-    local prefix
-    local suffix
-
-    if [ $exit_code -ne 0 ]
-    then
-        # reverse on error ✘
-        #last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
-
-        # warnning in PS1 head
-        last_cmd_exit_code="\[\033[35;40m\]${exit_code}✘\[\033[0m\]"
-    fi
-
-    if [ "$TERMINAL_PROFILE" = "Light" ]
-    then
-        prefix="\[\033[47;37m\]"
-    else
-        prefix="\[\033[40;37m\]"
-    fi
-    prefix="$prefix\[\033[37m\]["
-
-    time="\[\033[37m\]\t"
-    if [ "$UID" = '0' ]
-    then
-        username="\[\033[35m\]\u"
-    else
-        username="\[\033[38m\]\u"
-    fi
-    work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\] "
-
-    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
-}
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
 
-if cmd_available brew
+if [ "$OS_TYPE" = "linux" ]
 then
-    safe_source "$(brew --prefix)/etc/bash_completion"
+    export MANPAGER="most -s"
+    if [ "$DESKTOP_SESSION" = "xfce4" ]
+    then
+        resize -s 30 100 > /dev/null
+    fi
 fi
 
 ############################################################
 # ALIAS
 ############################################################
+
 alias a='./a.out'
 alias b='bochs -f bochsrc'
 alias d='du -sh'
@@ -395,77 +514,6 @@ fi
 
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
-############################################################
-# function shortcut
-############################################################
-# cd and ls
-cls () { cd $1; ls;}
-
-# mkdir and cd
-mcd () { mkdir -p $1 && cd $1}
-
-# backup files and dirs
-bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
-
-# md5sum check
-md5chk () { md5sum "$1" | grep "$2";}
-
-# copy last command (to clipboard)
-clc ()
-{
-    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
-    local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
-    copy_string "$last_cmd"
-}
-
-# generate an strong password and copy
-genpasswd ()
-{
-    local passwd=$(strings /dev/urandom | grep -o '[[:alnum:]]' | \
-                   head -n ${1:-30} | tr -d '\n';)
-    echo "$passwd"
-    copy_string "$passwd"
-}
-
-# extract package to current dir
-function ex ()
-{
-    local file=$1
-    local dst_dir=${2:-.}
-    local cur_dir=$PWD
-
-    if [ -z "$file" ]
-    then
-        echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
-        return
-    fi
-
-    if [ -f "$file" ]
-    then
-        case "$file" in
-            *.tar.gz)   mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tar.bz2)  mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tar.xz)   mkdir -p "$dst_dir" && tar xJf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.bz2)      bunzip2 "$file" ;;
-            *.rar)      mkdir -p "$dst_dir" && unrar e "$file" "$dst_dir"    && cd "$dst_dir" && ls ;;
-            *.gz)       gunzip "$file" ;;
-            *.tar)      mkdir -p "$dst_dir" && tar xf  "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tbz2)     mkdir -p "$dst_dir" && tar xjf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.tgz)      mkdir -p "$dst_dir" && tar xzf "$file" -C "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.zip)      mkdir -p "$dst_dir" && unzip   "$file" -d "$dst_dir" && cd "$dst_dir" && ls ;;
-            *.Z)        uncompress "$file" ;;
-            *.7z)       mkdir -p "$dst_dir" && 7z x    "$file" -o"$dst_dir"  && cd "$dst_dir" && ls ;;
-            *.rpm)      mkdir -p "$dst_dir" && rpm2cpio "$file" | cpio -id && cd "$dst_dir" && ls ;;
-            *.deb|*.ipk)mkdir -p "$dst_dir" && cd "$dst_dir" && ar -x "$cur_dir/$file" && \
-                        tar xzf control.tar.gz && rm -f control.tar.gz && \
-                        tar xzf data.tar.gz    && rm -f data.tar.gz && ls ;;
-            *)          echo "'$file' cannot be extracted via extract()" ;;
-        esac
-    else
-        echo "'$file' is not a valid file"
-    fi
-}
-
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
 alias monit-open='sudo strace -ff -e trace=open -p'
@@ -603,45 +651,6 @@ function wrestart()
     wolf_service_control "$1" restart
 }
 
-function get_website_favicon()
-{
-    local host=$1
-    local h=$(echo $host | awk -F '.' '{print $1}')
-    if [ -n "$host" -a -n "$h" ]
-    then
-        wget "http://$host/favicon.ico" -O "$h.ico"
-    fi
-}
-
-function whichpkg ()
-{
-    local fullpath
-
-    fullpath=$(whence -p $1)
-    [ $? -eq 0 ] && rpm -qf $fullpath
-}
-
-function lspkgfile ()
-{
-    local pkg
-
-    pkg=$(whichpkg $1)
-    [ $? -ne 0 ] && pkg=$1
-    rpm -ql $pkg
-}
-
-############################################################
-# MISCS
-############################################################
-if [ "$OS_TYPE" = "linux" ]
-then
-    export MANPAGER="most -s"
-    if [ "$DESKTOP_SESSION" = "xfce4" ]
-    then
-        resize -s 30 100 > /dev/null
-    fi
-fi
-
-safe_source ~/.work.bashrc
+safe_source ~/.self.bashrc
 
 # vim: set ft=sh:
