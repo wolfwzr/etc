@@ -135,11 +135,6 @@ function wolf_update_ps1()
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
 
-if cmd_available brew
-then
-    safe_source "$(brew --prefix)/etc/bash_completion"
-fi
-
 ############################################################
 # ALIAS
 ############################################################
@@ -152,7 +147,6 @@ alias j='jobs -l'
 alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
-alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
@@ -185,11 +179,11 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,comm | grep -i'
 
     alias ports='netstat -na'
-    alias tcp='netstat -nl -p tcp'
+    alias tcp='netstat -na -p tcp'
     alias udp='netstat -na -p udp'
-    alias unix='netstat -nl -p unix'
 else
     #alias r='route -n'
     alias r='netstat -rn'
@@ -206,6 +200,7 @@ else
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
     alias restart-krunner='kquitapp krunner && krunner &'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 
     # list all tcp/udp ports
     #   -t : tcp
@@ -297,10 +292,15 @@ else
     fi
 fi
 
-alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config /etc/ssh/ssh{,d}_config"
+alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc \
+                    $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
+alias virc="vi -p $WOLFWZR_HOME/.vim/vimrc \
+                  $WOLFWZR_HOME/.vim/vundle.vimrc \
+                  $WOLFWZR_HOME/.vim/mac-alt-map.vimrc"
+alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config \
+                       /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
+
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
