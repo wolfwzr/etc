@@ -1,6 +1,5 @@
 nnoremap <C-j>      gt
 nnoremap <C-k>      gT
-
 nnoremap d          <C-w>
 
 " Group tabs
@@ -9,6 +8,12 @@ nnoremap <C-e>      <C-S-e>
 " duplicate tab
 " nnoremap <C-d>      :tabduplicate<Return>
 nnoremap <C-d>   	yP
+
+" nnoremap e          :emenu Tools.Clearly<Return>
+" reader view is imported since firefox 38
+nnoremap <C-r>       :emenu View.Enter Reader View<Return>
+"nnoremap <C-S-r>     :emenu View.Close Reader View<Return>
+nnoremap <C-S-r>     :back<Return>
 
 nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
 nnoremap <C-S-o>    :dialog openfile<Return>
