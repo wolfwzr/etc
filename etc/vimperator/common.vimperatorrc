@@ -17,7 +17,10 @@ nnoremap l          gt
 "nnoremap <BS>       :back<Return>
 "nnoremap <BS>       :tabclose<Return>
 
-nnoremap e          :emenu Tools.Clearly<Return>
+"nnoremap e          :emenu Tools.Clearly<Return>
+" reader view is imported since firefox 38
+nnoremap e          :emenu View.Enter Reader View<Return>
+nnoremap E          :emenu View.Close Reader View<Return>
 nnoremap i          :pageinfo<Return>
 
 " Use default shortkey C-S-q instead
