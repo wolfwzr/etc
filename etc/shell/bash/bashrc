@@ -186,7 +186,8 @@ function show_cmd_info ()
         #echo "use 'typeset -f $cmd' to print function definition"
         #echo "use 'help $cmd' in bash to get builtin help"
     else
-        man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        #man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        man_info=$(whatis -s 1,1p "$cmd" 2>/dev/null)
         if [ $? -eq 0 ]
         then
             echo "$man_info"
