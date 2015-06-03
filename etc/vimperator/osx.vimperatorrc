@@ -5,16 +5,6 @@ nnoremap <M-j>      gt
 nnoremap <M-k>      gT
 nnoremap <M-e>      <M-S-e>
 
-nnoremap <M-s>b :tab bdsearch 
-nnoremap <M-s>j :tab jdsearch 
-nnoremap <M-s>t :tab tbsearch 
-nnoremap <M-s>y :tab ydsearch 
-nnoremap <M-s>i :tab ipsearch 
-nnoremap <M-s>m :tab mbsearch 
-nnoremap <M-s>s :tab ssbcsearch 
-nnoremap <M-s>p :tab bdpansearch 
-nnoremap <M-s>g :tab gfsososearch 
-
 nnoremap d          <M-w>
 
 " go to https

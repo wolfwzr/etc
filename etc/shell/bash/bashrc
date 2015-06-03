@@ -12,6 +12,11 @@ then
     grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
 fi
 
+# environment variable for vim script - vim-colorselector
+export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
+# variable for cscope
+export CSCOPE_EDITOR=vim
+
 ############################################################
 # basic functions
 ############################################################
@@ -188,7 +193,8 @@ function show_cmd_info ()
         #echo "use 'typeset -f $cmd' to print function definition"
         #echo "use 'help $cmd' in bash to get builtin help"
     else
-        man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        #man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        man_info=$(whatis -s 1,1p "$cmd" 2>/dev/null)
         if [ $? -eq 0 ]
         then
             echo "$man_info"
@@ -234,7 +240,7 @@ function lscmd ()
 cls () { cd $1; ls;}
 
 # mkdir and cd
-mcd () { mkdir -p $1 && cd $1}
+mcd () { mkdir -p $1 && cd $1;}
 
 # backup files and dirs
 bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
@@ -478,12 +484,6 @@ alias makescript='fc -rnl | head -1 >'
 # is pattern begin with /, all matchs of pattern are replaced with string
 alias path='echo -e ${PATH//:/\\n}'
 
-# alias for vi
-# environment variable for vim script - vim-colorselector
-export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
-# variable for cscope
-export CSCOPE_EDITOR=vim
-
 if [ -n "$DISPLAY" ]
 then
     if cmd_available gvim
@@ -515,6 +515,7 @@ else
     alias vikbconf="vi $HOME_DIR/.Xmodmap"
 fi
 
+alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push origin dev'
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
 # take over stdout and stderr of the pid-specific process
