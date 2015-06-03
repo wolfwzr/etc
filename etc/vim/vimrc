@@ -157,7 +157,7 @@ function! W_set_guifont()
 
     if has("macunix")
         "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        set guifont=Monaco:h16
+        set guifont=Monaco:h15
         " 单独设置中文字体
         " 备用字体
         " Hannotate\ SC\ Regular
