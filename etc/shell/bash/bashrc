@@ -12,6 +12,11 @@ then
     grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
 fi
 
+# environment variable for vim script - vim-colorselector
+export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
+# variable for cscope
+export CSCOPE_EDITOR=vim
+
 ############################################################
 # basic functions
 ############################################################
@@ -107,10 +112,12 @@ function wolf_update_ps1()
     else
         username="\[\033[38m\]\u"
     fi
+    at="\[\033[33m\]@"
+    hostname="\[\033[37m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\] "
+    suffix="\[\033[37m\]]\[\033[0m\]"
 
-    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
+    export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
 
 ############################################################
@@ -233,7 +240,7 @@ function lscmd ()
 cls () { cd $1; ls;}
 
 # mkdir and cd
-mcd () { mkdir -p $1 && cd $1}
+mcd () { mkdir -p $1 && cd $1;}
 
 # backup files and dirs
 bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
@@ -333,10 +340,10 @@ fi
 
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
+export MANPAGER="most -s"
 
 if [ "$OS_TYPE" = "linux" ]
 then
-    export MANPAGER="most -s"
     if [ "$DESKTOP_SESSION" = "xfce4" ]
     then
         resize -s 30 100 > /dev/null
@@ -356,7 +363,6 @@ alias j='jobs -l'
 alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
-alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 alias hg='history | grep -i'
 alias mkdir='mkdir -p'
 alias md='mkdir'
@@ -389,11 +395,11 @@ then
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,comm | grep -i'
 
     alias ports='netstat -na'
-    alias tcp='netstat -nl -p tcp'
+    alias tcp='netstat -na -p tcp'
     alias udp='netstat -na -p udp'
-    alias unix='netstat -nl -p unix'
 else
     #alias r='route -n'
     alias r='netstat -rn'
@@ -410,6 +416,7 @@ else
     alias office='/usr/lib/libreoffice/program/soffice'
     alias sdcv='sdcv --utf8-input --utf8-output'
     alias restart-krunner='kquitapp krunner && krunner &'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
 
     # list all tcp/udp ports
     #   -t : tcp
@@ -477,12 +484,6 @@ alias makescript='fc -rnl | head -1 >'
 # is pattern begin with /, all matchs of pattern are replaced with string
 alias path='echo -e ${PATH//:/\\n}'
 
-# alias for vi
-# environment variable for vim script - vim-colorselector
-export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
-# variable for cscope
-export CSCOPE_EDITOR=vim
-
 if [ -n "$DISPLAY" ]
 then
     if cmd_available gvim
@@ -504,6 +505,7 @@ alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/th
 alias virc="vi $HOME_DIR/.vim/vimrc"
 alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
+
 if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
@@ -513,11 +515,16 @@ else
     alias vikbconf="vi $HOME_DIR/.Xmodmap"
 fi
 
+alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push origin dev'
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
 alias monit-open='sudo strace -ff -e trace=open -p'
+
+# etc folder
+_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
+alias getc='cd "$_etc"'
 
 ############################################################
 # z - a better cd
@@ -525,37 +532,6 @@ alias monit-open='sudo strace -ff -e trace=open -p'
 if [ "$OS_TYPE" = "osx" ]
 then
     source /usr/local/etc/profile.d/z.sh
-fi
-
-# etc folder
-_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
-alias getc='cd "$_etc"'
-
-if [ "$OS_TYPE" = "osx" ]
-then
-    # Github
-    _gh="$HOME_DIR/Documents/git/github/wolfwzr"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # BrewHome
-    _bh="/usr/local/Cellar/"
-    alias gbh='cd "$_bh"'
-
-    # HomeBin(~/.local/bin)
-    _hb="$HOME_DIR/.local/bin"
-    alias ghb='cd "$_hb"'
-
-    # MountFolder
-    _mf="/Volumes/"
-    alias gmf='cd "$_mf"'
-
-    # SAE (Sina App Engine)
-    _sae="$HOME_DIR/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
 fi
 
 ############################################################

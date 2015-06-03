@@ -1192,8 +1192,8 @@ if has("gui_running")
 
     " 设置窗口位置和大小
     "    winpos 120 0
-    set columns=115
-    set lines=41
+    set columns=120
+    set lines=40
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0

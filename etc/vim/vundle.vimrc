@@ -2,9 +2,10 @@ set nocompatible
 syntax on
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
 
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
 
 " a插件 {{{1
 " jump between .h and .c files
@@ -406,6 +407,7 @@ Bundle 'octol/vim-cpp-enhanced-highlight'
 " }}}1
 
 call vundle#end()
+
 filetype plugin indent on
 
 " vim: set ft=vim:
