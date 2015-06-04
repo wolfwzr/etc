@@ -4,6 +4,9 @@ source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
 set hintchars=hjklasdf
+set hlsearch
+set incsearch
+set noinsertmode
 
 "nnoremap a 		  	:tabprev<Return>
 "nnoremap d 		  	:tabnext<Return>
@@ -26,7 +29,7 @@ nnoremap i           :pageinfo<Return>
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
 
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e  :!gvim -p ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return><Esc>
+nnoremap <Leader>e  :silent !gvim -p ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return>
 nnoremap <S-Return> :set fullscreen!<Return>
 
 " copy current tab url
@@ -51,6 +54,17 @@ command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action
 command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
 command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
 command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
+
+" Add Search Engine Using firefox bookmark keyword search
+"silent bmark -title="jd search" -keyword="jd" http://search.jd.com/Search?keyword=%s&enc=utf-8
+"silent bmark -title="youdao dictionary search" -keyword="yd" http://dict.youdao.com/search?q=%s
+"silent bmark -title="baidu search" -keyword="bd" https://www.baidu.com/s?ie=utf-8&wd=%s
+"silent bmark -title="taobao search" -keyword="tb" http://s.taobao.com/search?q=%s
+"silent bmark -title="ip search" -keyword="ip" http://www.ip138.com/ips138.asp?ip=%s&action=2
+"silent bmark -title="phone number search" -keyword="ph" http://www.ip138.com:8080/search.asp?action=mobile&mobile=%s
+"silent bmark -title="shousibaocai dht search" -keyword="ssbc" http://www.shousibaocai.com/search/%s/1
+"silent bmark -title="baidu yun pan search" -keyword="bdpan" %s site:pan.baidu.com
+"silent bmark -title="gfsoso search" -keyword="gf" http://www.gfsoso.com/?q=%s
 
 nnoremap sb :tab bdsearch 
 nnoremap sj :tab jdsearch 

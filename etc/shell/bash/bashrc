@@ -502,7 +502,7 @@ fi
 
 alias src='source /etc/wolfwzr.bashrc'
 alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi $HOME_DIR/.vim/vimrc"
+alias virc="vi -p $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc $HOME_DIR/.vim/mac-alt-map.vimrc"
 alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 
@@ -629,5 +629,4 @@ function wrestart()
 }
 
 safe_source ~/.self.bashrc
-
 # vim: set ft=sh:
