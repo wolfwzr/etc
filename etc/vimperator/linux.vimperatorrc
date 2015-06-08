@@ -28,6 +28,8 @@ nnoremap <C-v>      :tab    ydsearch <C-v><Enter>
 nnoremap V          :tab  ssbcsearch <C-v><Enter>
 nnoremap <C-S-v>    :tab bdpansearch <C-v><Enter>
 
+nnoremap <Leader><Leader>   /<C-v><Enter>
+
 " Ctrl-Shift-n - next tabgroup
 " Ctrl-Shift-p - prev tabgroup
 " Ctrl-Shift-a - addons
@@ -86,8 +88,8 @@ cnoremap <C-S-a>      <C-Home><S-C-End>
 " copy all in command line mode"
 cnoremap <C-S-c>      <C-Home><S-C-End><C-c><Right>
 
-" Repeat last vimperator command
-nnoremap <C-a>      :<Up><Return>
+" DANGER: Repeat last vimperator command
+" nnoremap <C-a>      :<Up><Return>
 
 " go to https
 nnoremap gs  		<C-l><Left>https://<Return>

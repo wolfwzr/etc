@@ -146,7 +146,7 @@ function copy_file ()
     fi
 }
 
-function whichpkg ()
+function lspkg ()
 {
     local fullpath
 
@@ -158,7 +158,7 @@ function lspkgfile ()
 {
     local pkg
 
-    pkg=$(whichpkg $1)
+    pkg=$(lspkg $1)
     [ $? -ne 0 ] && pkg=$1
     rpm -ql $pkg
 }

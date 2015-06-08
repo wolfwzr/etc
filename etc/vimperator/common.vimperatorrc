@@ -4,11 +4,9 @@ source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
 set hintchars=hjklasdf
-set hlsearch
-set incsearch
-
+"set hlsearch
+"set incsearch
 "set noinsertmode
-
 " do not focus input field when open webpage
 "set focuscontent
 
@@ -57,7 +55,8 @@ command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&a
 command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
 command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
 command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
-command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
+command! -nargs=* jwsssearch    open http://www.jwss.cc/?q=<args>
+"command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
 
 " Add Search Engine Using firefox bookmark keyword search
 "silent bmark -title="jd search" -keyword="jd" http://search.jd.com/Search?keyword=%s&enc=utf-8
@@ -78,7 +77,7 @@ nnoremap si :tab ipsearch
 nnoremap sm :tab mbsearch 
 nnoremap ss :tab ssbcsearch 
 nnoremap sp :tab bdpansearch 
-nnoremap sg :tab gfsososearch 
+nnoremap sg :tab jwsssearch
 
 " Quick url access or search using current search engine
 " p open url from clipboard in current tab
