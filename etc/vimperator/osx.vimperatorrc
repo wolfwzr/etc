@@ -20,6 +20,8 @@ nnoremap <M-v>      :tab    ydsearch <M-v><Enter>
 nnoremap V          :tab  ssbcsearch <M-v><Enter>
 nnoremap <M-S-v>    :tab bdpansearch <M-v><Enter>
 
+nnoremap <Leader><Leader>   /<M-v><Enter>
+
 inoremap <M-Enter>  <A-Enter>
 
 inoremap <M-j>      <Down>

@@ -304,6 +304,7 @@ function! W_set_colorscheme(color)
         hi Normal   guibg=#00222C guifg=#A0B5B7
         hi Function gui=bold guifg=#2AA198
         hi Comment  guifg=#606F83
+        hi Folded   gui=bold
     elseif g:W_color_scheme == "gruvbox"
         hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
         "hi Normal guibg=#303030
@@ -872,6 +873,14 @@ nmap <S-ScrollWheelDown> <C-i>
 "set go+=P
 
 "}}}2
+" 永久保留undo历史记录{{{2
+" vim 7.3 版本新增功能
+if version >= 703
+    call system("mkdir -p ~/.vim/.undo")
+    set undofile
+    set undodir=~/.vim/.undo
+endif
+" }}}2
 " 杂项设置{{{2
 set wrap
 " 取消CursorLine
