@@ -520,7 +520,7 @@ alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
-alias monit-open='sudo strace -ff -e trace=open -p'
+alias trace-open='sudo strace -ff -e trace=open'
 
 # etc folder
 _etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."

@@ -6,7 +6,11 @@ let mapleader='\'
 set hintchars=hjklasdf
 set hlsearch
 set incsearch
-set noinsertmode
+
+"set noinsertmode
+
+" do not focus input field when open webpage
+"set focuscontent
 
 "nnoremap a 		  	:tabprev<Return>
 "nnoremap d 		  	:tabnext<Return>
@@ -43,7 +47,7 @@ nnoremap C :js util.copyToClipboard('['+ buffer.title + '](' + buffer.URL + ')')
 
 " search skills
 " (custom search engine using http://mycroftproject.com/submitos.html)
-set defsearch=gf
+set defsearch=g
 " search commands
 command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
 command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
