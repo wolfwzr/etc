@@ -301,7 +301,8 @@ function! W_set_colorscheme(color)
     endif
 
     if g:W_color_scheme == "solarized"
-        hi Normal   guibg=#00222C guifg=#A0B5B7
+        "hi Normal   guibg=#00222C guifg=#A0B5B7
+        hi Normal   guibg=#122927 guifg=#A0B5B7
         hi Function gui=bold guifg=#2AA198
         hi Comment  guifg=#606F83
         hi Folded   gui=bold
@@ -320,6 +321,9 @@ function! W_set_colorscheme(color)
     elseif g:W_color_scheme == "yeller"
         hi Normal   guibg=#16241B
         hi Function guifg=#73BD93
+    elseif g:W_color_scheme == "two2tango"
+        hi Normal   guibg=#122927
+        hi NonText  guibg=#122927
     endif
 
     if has("gui_running")
