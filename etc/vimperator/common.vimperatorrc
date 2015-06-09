@@ -7,6 +7,8 @@ set hintchars=hjklasdf
 "set hlsearch
 "set incsearch
 "set noinsertmode
+" do not focus input field when open webpage
+"set focuscontent
 
 "nnoremap a 		  	:tabprev<Return>
 "nnoremap d 		  	:tabnext<Return>
