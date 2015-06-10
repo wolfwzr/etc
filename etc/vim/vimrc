@@ -876,9 +876,9 @@ nmap <S-ScrollWheelDown> <C-i>
 " 永久保留undo历史记录{{{2
 " vim 7.3 版本新增功能
 if version >= 703
-    call system("mkdir -p ~/.vim/.undo")
+    call system("mkdir -p ~/.vimundo")
     set undofile
-    set undodir=~/.vim/.undo
+    set undodir=~/.vimundo
 endif
 " }}}2
 " 杂项设置{{{2
@@ -1205,7 +1205,7 @@ if has("gui_running")
     " 设置窗口位置和大小
     "    winpos 120 0
     set columns=120
-    set lines=40
+    set lines=38
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
