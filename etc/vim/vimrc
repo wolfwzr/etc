@@ -125,7 +125,7 @@ function! W_code_common_setting()
     " 显示特殊字符
     set list
     "set listchars=tab:\|\ ,trail:-,nbsp:%
-    set listchars=tab:\|\ ,trail:•,nbsp:%
+    set listchars=tab:»\ ,trail:•,nbsp:%,extends:>,precedes:<
     " 警示行尾多余空格
     " match Error /\s\+$/
     " 显示缩进垂直对齐线
@@ -301,8 +301,8 @@ function! W_set_colorscheme(color)
     endif
 
     if g:W_color_scheme == "solarized"
-        "hi Normal   guibg=#00222C guifg=#A0B5B7
-        hi Normal   guibg=#122927 guifg=#A0B5B7
+        hi Normal   guibg=#00222C guifg=#A0B5B7
+        "hi Normal   guibg=#122927 guifg=#A0B5B7
         hi Function gui=bold guifg=#2AA198
         hi Comment  guifg=#606F83
         hi Folded   gui=bold
@@ -762,6 +762,10 @@ endfunction
 "}}}1
 
 " 基础设置 {{{1
+" 设置脚本编码格式 {{{
+scriptencoding utf-8
+set encoding=utf-8
+" }}}
 " 设置显示相对行号，方便jk跳转 "{{{
 set relativenumber
 set number
@@ -815,9 +819,9 @@ endif
 " Tab占四个空格的长度
 set ts=4
 " 显示特殊字符（listchars选项所配置的特殊字符）
-set nolist
+set list
 " 配置要显示的特殊字符
-set listchars=tab:\|\ ,nbsp:%,trail:-
+set listchars=tab:»\ ,trail:•,nbsp:%,extends:>,precedes:<
 " 配置特殊字符显示配色
 " hi SpecialKey ...
 " 醒目显示行尾多余空格

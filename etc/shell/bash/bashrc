@@ -17,6 +17,12 @@ export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
 
+if [ -n "$SSH_CONNECTION" ]
+then
+    REMOTE_IP=$(echo $SSH_CONNECTION | awk '{print $1}')
+    export DISPLAY=$REMOTE_IP:0
+fi
+
 ############################################################
 # basic functions
 ############################################################
@@ -292,7 +298,7 @@ function ex ()
             *.tgz)          tar xzf "$file" -C "$dst_dir" ;;
             *.7z)           7z x    "$file" -o "$dst_dir" ;;
             *.zip)          unzip   "$file" -d "$dst_dir" ;;
-            *.rar)          unrar e "$file"    "$dst_dir" ;;
+            *.rar)          unrar x "$file"    "$dst_dir" ;;
             *.bz2)          bunzip2 "$file" ;;
             *.gz)           gunzip "$file" ;;
             *.Z)            uncompress "$file" ;;
