@@ -83,7 +83,8 @@ nnoremap sg :tab jwsssearch
 " p open url from clipboard in current tab
 " P open url from clipboard in new tab
 " nnoremap V          p
-nnoremap v          P
+"nnoremap v          P
+nnoremap v          <C-l><C-v><Enter>
 
 colorscheme default
 " modify colors for default scheme
