@@ -635,4 +635,5 @@ function wrestart()
 }
 
 safe_source ~/.self.bashrc
+
 # vim: set ft=sh:
