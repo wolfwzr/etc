@@ -156,7 +156,8 @@ function lspkg ()
 {
     local fullpath
 
-    fullpath=$(whence -p $1)
+    #fullpath=$(whence -p $1)
+    fullpath=$(which $1)
     [ $? -eq 0 ] && rpm -qf $fullpath
 }
 
@@ -235,11 +236,11 @@ function lscmd ()
         return
     fi
 
-    grep "$keyword" "$CMD_INDEX" | while read cmd
+    grep -i "$keyword" "$CMD_INDEX" | while read cmd
     do
         show_cmd_info $cmd
     done | tr -s ' ' | sed 's/^\([^ ]*\) /\1※/g' | column -t -s '※' | \
-    grep --color=auto "$keyword"
+    grep --color=auto -i "$keyword"
 }
 
 # cd and ls
@@ -328,6 +329,9 @@ append_to_path "/usr/sbin"
 append_to_path "/usr/local/bin"
 append_to_path "/usr/local/sbin"
 append_to_path "/usr/libexec"
+append_to_path "/home/wolfwzr/bin"
+append_to_path "/home/wolfwzr/bin/search"
+append_to_path "/home/wolfwzr/bin/network"
 if [ "$OS_TYPE" = "osx" ]
 then
     append_to_path "$HOME_DIR/.local/bin"
@@ -346,7 +350,8 @@ fi
 
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
-export MANPAGER="most -s"
+#export MANPAGER="most -s"
+export MANPAGER="less"
 
 if [ "$OS_TYPE" = "linux" ]
 then
@@ -387,6 +392,9 @@ if cmd_available colordiff
 then
     alias diff='colordiff'
 fi
+
+
+alias chwolf='sudo chown wolfwzr:users -R'
 
 if [ "$OS_TYPE" = "osx" ] 
 then
@@ -441,24 +449,24 @@ fi
 if cmd_available zypper
 then
     #alias s='zypper search -d'
-    alias s='zypper search'
-    alias i='sudo zypper install'
-    alias u='sudo zypper update'
+    alias sc='zypper search'
+    alias ist='sudo zypper install'
+    alias upd='sudo zypper update'
 elif cmd_available yum
 then
-    alias s='yum search'
-    alias i='sudo yum install'
-    alias u='sudo yum update'
+    alias sc='yum search'
+    alias ist='sudo yum install'
+    alias upd='sudo yum update'
 elif cmd_available apt-get
 then
-    alias s='apt-cache search --names-only'
-    alias i='sudo apt-get install'
-    alias u='sudo apt-get update'
+    alias sc='apt-cache search --names-only'
+    alias ist='sudo apt-get install'
+    alias upd='sudo apt-get update'
 elif cmd_available brew
 then
-    alias s='brew search'
-    alias i='brew install'
-    alias u='brew update'
+    alias sc='brew search'
+    alias ist='brew install'
+    alias upd='brew update'
 fi
 
 alias o='open'
@@ -472,6 +480,7 @@ alias .5='cd ../../../..'
 alias .6='cd ../../../../..'
 alias .7='cd ../../../../../..'
 alias iconvcat='iconv -f gbk -t utf8'
+alias icat='iconv -f gbk -t utf8'
 alias man_cn='LANG=zh_CN.utf8 man'
 alias info='info --vi-keys'
 alias wget='wget -c -L'
@@ -483,6 +492,8 @@ alias o='open'
 alias g='grep'
 alias f='find . -iname'
 
+alias deb2rpm='sudo alien --to-rpm --scripts'
+alias rpm2deb='sudo alien --to-deb --scripts'
 # makescript with the last command
 alias makescript='fc -rnl | head -1 >'
 
@@ -507,7 +518,7 @@ else
 fi
 
 alias src='source /etc/wolfwzr.bashrc'
-alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme"
+alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme $HOME_DIR/.tmux.conf"
 alias virc="vi -p $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc $HOME_DIR/.vim/mac-alt-map.vimrc"
 alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
@@ -531,6 +542,11 @@ alias trace-open='sudo strace -ff -e trace=open'
 # etc folder
 _etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
 alias getc='cd "$_etc"'
+
+# tmux
+alias tma='tmux attach -t'
+alias tmls='tmux ls'
+alias tmn='tmux new -s'
 
 ############################################################
 # z - a better cd
@@ -635,5 +651,6 @@ function wrestart()
 }
 
 safe_source ~/.self.bashrc
+safe_source /etc/self.bashrc
 
 # vim: set ft=sh:

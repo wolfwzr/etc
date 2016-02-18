@@ -1,13 +1,18 @@
-nnoremap <C-j>      gt
-nnoremap <C-k>      gT
+" Tab manager
+nnoremap <C-t>      :tabnew<CR>
 nnoremap d          <C-w>
-
-" Group tabs
-nnoremap <C-e>      <C-S-e>
+nnoremap D          u
 
 " duplicate tab
 " nnoremap <C-d>      :tabduplicate<Return>
 nnoremap <C-d>   	yP
+
+nnoremap <C-j>      gt
+nnoremap <C-k>      gT
+
+" Group tabs
+nnoremap <C-e>      <C-S-e>
+
 
 " nnoremap e          :emenu Tools.Clearly<Return>
 " reader view is imported since firefox 38
@@ -24,9 +29,9 @@ nnoremap <C-[>      :back<Return>
 nnoremap <C-]>      :forward<Return>
 
 " quick search
-nnoremap <C-v>      :tab    ydsearch <C-v><Enter>
-nnoremap V          :tab  ssbcsearch <C-v><Enter>
-nnoremap <C-S-v>    :tab bdpansearch <C-v><Enter>
+nnoremap V          <C-c>:tabopen dht <C-v><Enter>
+nnoremap <C-v>      <C-c>:tabopen g <C-v> site:pan.baidu.com<Enter>
+nnoremap <C-S-v>    <C-c>:tabopen tk <C-v><Enter>
 
 nnoremap <Leader><Leader>   /<C-v><Enter>
 
@@ -38,27 +43,22 @@ nnoremap <Leader><Leader>   /<C-v><Enter>
 
 " shortcut in edit area
 "
-" <C-a> Jump to begining of field
 " <C-e> Jump to end of field
+inoremap <C-b>      <C-Home>
 "
 " <C-u> Delete all chars before current cursor
 " <C-k> Delete all chars after current cursor
 "
-" <C-h> Delete a char before current cursor
-" <C-d> Delete a char after current cursor
-"       Use <C-l> instead <C-d>
-inoremap <C-l>      <Del>
-"
 " <C-w> Delete a word before current cursor
-" <C-d> map to Delete a word after current cursor
-inoremap <C-d>      <C-t>dwi
+" <C-S-w> map to Delete a word after current cursor
+inoremap <C-S-w>      <C-t>dwi
 "
-inoremap <C-f>      <Right>
-inoremap <C-b>      <Left>
+inoremap <C-]>      <Right>
+inoremap <C-[>      <Left>
 " move cursor to next word
-inoremap <C-S-f>    <C-t>wa
+inoremap <C-}>    <C-t>wa
 " move cursor to prev word
-inoremap <C-S-b>    <C-t>bi
+inoremap <C-{>    <C-t>bi
 "
 " <C-z> Undo delete
 "
@@ -70,9 +70,7 @@ inoremap <C-S-b>    <C-t>bi
 " A-Enter in addresss bar to open url in new tab
 inoremap <C-Enter>  <A-Enter>
 " Select All in insert mode
-inoremap <C-S-a>      <C-Home><S-C-End>
-" copy all in insert mode
-inoremap <C-S-c>      <C-Home><S-C-End><C-c><Right>
+inoremap <C-a>      <C-Home><S-C-End>
 
 cnoremap <C-f>      <Right>
 cnoremap <C-b>      <Left>
