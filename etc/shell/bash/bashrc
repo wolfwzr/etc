@@ -96,20 +96,17 @@ function wolf_update_ps1()
 
     if [ $exit_code -ne 0 ]
     then
-        # reverse on error ✘
-        #last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
-
         # warnning in PS1 head
-        last_cmd_exit_code="\[\033[35;40m\]${exit_code}✘\[\033[0m\]"
+        last_cmd_exit_code="\[\033[35m\]${exit_code}✘ \[\033[0m\]"
     fi
 
-    if [ "$TERMINAL_PROFILE" = "Light" ]
+    if [ "$TERMINAL_PROFILE" = "Dark" ]
     then
-        prefix="\[\033[47;37m\]"
-    else
         prefix="\[\033[40;37m\]"
+    else
+        prefix="\[\033[47;37m\]"
     fi
-    prefix="$prefix\[\033[37m\]["
+    prefix="$prefix\[\033[38m\]["
 
     time="\[\033[37m\]\t"
     if [ "$UID" = '0' ]
@@ -119,9 +116,9 @@ function wolf_update_ps1()
         username="\[\033[38m\]\u"
     fi
     at="\[\033[33m\]@"
-    hostname="\[\033[37m\]\h"
+    hostname="\[\033[36m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\]"
+    suffix="\[\033[38m\]]\[\033[0m\]"
 
     export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
@@ -319,8 +316,16 @@ function ex ()
 ############################################################
 # settings
 ############################################################
-set -o vi
-export EDITOR=vim
+if [ "$CURRENT_SHELL" = "bash" ]; then
+    set -o vi
+    export EDITOR=vim
+    bind '"\C-n": next-history'
+    bind '"\C-p": previous-history'
+    bind '"\C-f": vi-forward-word'
+    bind '"\C-b": vi-backward-word'
+    bind '"\C-a": beginning-of-line'
+    bind '"\C-e": end-of-line'
+fi
 
 append_to_path "/bin"
 append_to_path "/sbin"
@@ -519,7 +524,6 @@ fi
 
 alias src='source /etc/wolfwzr.bashrc'
 alias vishrc="vi /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme $HOME_DIR/.tmux.conf"
-alias virc="vi $HOME_DIR/.vim/vimrc /usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
 alias visshconf="vi $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 
@@ -527,9 +531,11 @@ if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
     alias vikbconf="vi $HOME_DIR/Library/Application\ Support/Karabiner/private.xml"
+    alias virc="vi $HOME_DIR/.vim/vimrc /usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
 else
     alias vismbconf="vi /etc/samba/smb.conf"
     alias vikbconf="vi $HOME_DIR/.Xmodmap"
+    alias virc="vi $HOME_DIR/.vim/vimrc"
 fi
 
 alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push origin dev'
@@ -652,5 +658,7 @@ function wrestart()
 
 safe_source ~/.self.bashrc
 safe_source /etc/self.bashrc
+
+:
 
 # vim: set ft=sh:

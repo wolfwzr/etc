@@ -10,7 +10,7 @@ Plugin 'gmarik/Vundle.vim'
 " a插件 {{{1
 " jump between .h and .c files
 Bundle 'vim-scripts/a.vim'
-"nnoremap <Leader>a :A<CR>
+nnoremap <Leader>a :A<CR>
 "if mapcheck("<Leader>is", "i") != ""
 "    set columns=100
 "    iunmap <Leader>is

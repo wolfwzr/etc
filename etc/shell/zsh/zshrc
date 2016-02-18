@@ -68,8 +68,12 @@ bindkey '^Y' vi-put-before
 bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
 #bindkey -s '^E' '^[I#^m'
-#bindkey -s '^o' '^[kA'
-bindkey '^o' up-history
+bindkey '^n' down-history
+bindkey '^p' up-history
+bindkey -M viins '^f' vi-forward-word
+bindkey -M viins '^b' vi-backward-word
+bindkey -M viins '^a' vi-beginning-of-line
+bindkey -M viins '^e' vi-end-of-line
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -130,7 +134,7 @@ function comment-command-line () {
 	zle -U ''
 }
 zle -N comment-command-line
-bindkey '^E' comment-command-line
+#bindkey '^E' comment-command-line
 
 source /etc/wolfwzr.bashrc
 alias src='source ~/.zshrc'
