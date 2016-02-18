@@ -312,7 +312,7 @@ function ex ()
 ############################################################
 # settings
 ############################################################
-set -o vi
+#set -o vi
 export EDITOR=vim
 
 append_to_path "/bin"
@@ -324,7 +324,7 @@ append_to_path "/usr/local/sbin"
 append_to_path "/usr/libexec"
 if [ "$OS_TYPE" = "osx" ]
 then
-    append_to_path "$HOME_DIR/.local/bin"
+    append_to_path "$HOME_DIR/local/bin"
 else
     append_to_path "/opt/cross-mips32/bin"
 fi
@@ -340,7 +340,8 @@ fi
 
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
-export MANPAGER="most -s"
+#export MANPAGER="most -s"
+export MANPAGER="less"
 
 if [ "$OS_TYPE" = "linux" ]
 then
@@ -391,11 +392,11 @@ then
     alias top='top -o cpu'
     alias t='htop'
     alias um='diskutil umount'
-    alias briss="java -jar $HOME_DIR/.local/share/briss-0.9/briss-0.9.jar"
+    alias briss="java -jar $HOME_DIR/local/share/briss-0.9/briss-0.9.jar"
     alias df='df -Ph'
     alias ds='d * | sort -g'
     alias sdcv='sdcv --color --utf8-input --utf8-output'
-    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,comm | grep -i'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,command | grep -i'
 
     alias ports='netstat -na'
     alias tcp='netstat -na -p tcp'
@@ -434,25 +435,25 @@ fi
 
 if cmd_available zypper
 then
-    #alias s='zypper search -d'
-    alias s='zypper search'
-    alias i='sudo zypper install'
-    alias u='sudo zypper update'
+    #alias sc='zypper search -d'
+    alias sc='zypper search'
+    alias ist='sudo zypper install'
+    alias upd='sudo zypper update'
 elif cmd_available yum
 then
-    alias s='yum search'
-    alias i='sudo yum install'
-    alias u='sudo yum update'
+    alias sc='yum search'
+    alias ist='sudo yum install'
+    alias upd='sudo yum update'
 elif cmd_available apt-get
 then
-    alias s='apt-cache search --names-only'
-    alias i='sudo apt-get install'
-    alias u='sudo apt-get update'
+    alias sc='apt-cache search --names-only'
+    alias ist='sudo apt-get install'
+    alias upd='sudo apt-get update'
 elif cmd_available brew
 then
-    alias s='brew search'
-    alias i='brew install'
-    alias u='brew update'
+    alias sc='brew search'
+    alias ist='brew install'
+    alias upd='brew update'
 fi
 
 alias o='open'
@@ -487,7 +488,7 @@ alias path='echo -e ${PATH//:/\\n}'
 if [ -n "$DISPLAY" ]
 then
     if cmd_available gvim
-    then 
+    then
         alias vi='gvim'
     elif cmd_available vim
     then
@@ -501,9 +502,9 @@ else
 fi
 
 alias src='source /etc/wolfwzr.bashrc'
-alias vishrc="vi -p /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi $HOME_DIR/.vim/vimrc"
-alias visshconf="vi -p $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
+alias vishrc="vi /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme $HOME_DIR/.tmux.conf"
+alias virc="vi $HOME_DIR/.vim/vimrc /usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
+alias visshconf="vi $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 
 if [ "$OS_TYPE" = "osx" ]
@@ -529,10 +530,10 @@ alias getc='cd "$_etc"'
 ############################################################
 # z - a better cd
 ############################################################
-if [ "$OS_TYPE" = "osx" ]
-then
-    source /usr/local/etc/profile.d/z.sh
-fi
+#if [ "$OS_TYPE" = "osx" ]
+#then
+#    source /usr/local/etc/profile.d/z.sh
+#fi
 
 ############################################################
 # Service control

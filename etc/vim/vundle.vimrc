@@ -10,17 +10,17 @@ Plugin 'gmarik/Vundle.vim'
 " a插件 {{{1
 " jump between .h and .c files
 Bundle 'vim-scripts/a.vim'
-nnoremap <Leader>a :A<CR>
-" if mapcheck("<Leader>is", "i") != ""
-"     set columns=100
-"     iunmap <Leader>is
-" endif
-" if mapcheck("<Leader>ih", "i") != ""
-"     iunmap <Leader>ih
-" endif
-" if mapcheck("<Leader>ihn", "i") != ""
-"     iunmap <Leader>ihn
-" endif
+"nnoremap <Leader>a :A<CR>
+"if mapcheck("<Leader>is", "i") != ""
+"    set columns=100
+"    iunmap <Leader>is
+"endif
+"if mapcheck("<Leader>ih", "i") != ""
+"    iunmap <Leader>ih
+"endif
+"if mapcheck("<Leader>ihn", "i") != ""
+"    iunmap <Leader>ihn
+"endif
 " }}}1
 
 " NERDTree插件 {{{1

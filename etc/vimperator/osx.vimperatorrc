@@ -10,16 +10,20 @@ nnoremap d          <M-w>
 " go to https
 nnoremap gs  		<M-L><Left>https://<Return>
 
-nnoremap <M-d>      :tabduplicate<Return>
+nnoremap <M-S-d>    :tabduplicate<Return>
 
 " Group tabs
 nnoremap <M-e>      <M-S-e>
 
 " quick search
-nnoremap <M-v>      :tab    ydsearch <M-v><Enter>
-nnoremap V          :tab  ssbcsearch <M-v><Enter>
-nnoremap <M-S-v>    :tab bdpansearch <M-v><Enter>
-
+nnoremap v          <M-c>P
+nnoremap V          <M-c>:tab  ssbcsearch <M-v><Enter>
+nnoremap <M-v>      <M-c>:tab    bdpansearch <M-v><Enter>
+nnoremap <F2>       :emenu Tools.Manager<Enter>
+nnoremap <M-r>      :emenu View.Enter Reader View<Enter>
+nnoremap <M-S-r>    :emenu View.Close Reader View<Enter>
+nnoremap <M-d>      :emenu Tools.Add to Wiznote<Enter>
+nnoremap <F3>       y:!open -a safari "<M-v>"<Enter><Esc>
 inoremap <M-Enter>  <A-Enter>
 
 inoremap <M-j>      <Down>
