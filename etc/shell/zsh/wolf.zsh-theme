@@ -21,18 +21,19 @@
 local ret_status="%(?:%{$fg_bold[green]%}➜ :%{$fg_bold[red]%}➜ %s)"
 PROMPT='%{$fg_bold[cyan]%}%c ${ret_status}%{$reset_color%} '
 
-# right prompt(RPROMPT): vi mode
-VIMODE=''
-function zle-line-init zle-keymap-select {
-    #VIMODE="${${KEYMAP/vicmd/NOR}/(main|viins)/INS}"
-    VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/}"
-    zle reset-prompt
-}
-function zle-line-finish {
-    VIMODE=''
-    zle reset-prompt
-}
-zle -N zle-line-init 
-zle -N zle-line-finish
-zle -N zle-keymap-select
-RPROMPT='%{$bg[white]%}%{$fg[green]%}${VIMODE}%{$reset_color%}'
+# if using vi mode command line edit, please uncomment this lines to set right-side prompt
+#   right prompt(RPROMPT): vi mode
+   VIMODE=''
+   function zle-line-init zle-keymap-select {
+       #VIMODE="${${KEYMAP/vicmd/NOR}/(main|viins)/INS}"
+       VIMODE="${${KEYMAP/vicmd/N}/(main|viins)/}"
+       zle reset-prompt
+   }
+   function zle-line-finish {
+       VIMODE=''
+       zle reset-prompt
+   }
+   zle -N zle-line-init 
+   zle -N zle-line-finish
+   zle -N zle-keymap-select
+   RPROMPT='%{$bg[black]%}%{$fg[green]%}${VIMODE}%{$reset_color%}'

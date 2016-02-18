@@ -1,10 +1,7 @@
-" vim config quick references:
-"
-" ~wlfwzr/.vim/vimrc
-" ~wolfwzr/.vim/vundle.vimrc
-" ~wolfwzr/.vim/mac-alt-map.vimrc
+" Vim config file list:
+"     Main: ~wlfwzr/.vim/vimrc
+"   Vundle: ~wolfwzr/.vim/vundle.vimrc
 
-" 变量定义 {{{1
 let s:W_TRUE  = 1
 let s:W_FALSE = 0
 
@@ -14,10 +11,11 @@ let s:W_last_insert_im_status = 0
 
 let s:W_last_mark_idx = 5
 let s:W_cscope_is_from_symbol = s:W_FALSE
-" }}}1
 
-" 函数定义 {{{1
-" W_get_visual_selected_text {{{2
+let mapleader=' '
+
+" 辅助函数 {{{
+" W_get_visual_selected_text {{{
 function! W_get_visual_selected_text()
     " Check if is in visual mode ?
     let l:reg_bakup = @x
@@ -26,34 +24,8 @@ function! W_get_visual_selected_text()
     let @x = l:reg_bakup
     return l:ret
 endfunction
-"}}}2
-" W_mark: 高亮单词，用于替换Mark插件（Mark插件性能不行）{{{2
-function! W_mark(str, is_a_word)
-    let l:syn_num = 6
-	let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
-    if 0 == match(l:cur_syn, "W_MarkWord")
-        "let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
-        execute 'syn match none /\<' . a:str . '\>/'
-    else " Choose a color and mark a:str
-        " 高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
-        hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
-        hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
-        hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
-        hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
-        hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
-        hi W_MarkWord5 ctermbg=Blue    ctermfg=White guibg=#9999FF guifg=Black
-
-        let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % l:syn_num
-        let l:exec_str = 'syn match W_MarkWord' . s:W_last_mark_idx
-        if s:W_TRUE == a:is_a_word
-            execute l:exec_str . ' /\<' . a:str . '\>/'
-        else
-            execute l:exec_str . ' /' . a:str . '/'
-        endif
-    endif
-endfunction
-" }}}2
-" W_source: source 一个文件 {{{2
+"}}}
+" W_source: source 一个文件 {{{
 function! W_source(file)
     if filereadable(a:file)
         source a:file
@@ -61,8 +33,8 @@ function! W_source(file)
     endif
     return s:W_FALSE
 endfunction
-" }}}2
-" W_exec_cmd: execute an command{{{2
+" }}}
+" W_exec_cmd: execute an command{{{
 function! W_exec_cmd(cmd)
     if exists(a:cmd)
         source a:cmd
@@ -70,110 +42,14 @@ function! W_exec_cmd(cmd)
     endif
     return s:W_FALSE
 endfunction
-" }}}2
-" W_eatchar: 吃掉一个字符 {{{2
+" }}}
+" W_eatchar: 吃掉一个字符 {{{
 function! W_eatchar(char)
     let c = nr2char(getchar())
     return (c =~ a:char) ? '' : c
 endfunction
-" }}}2
-" W_common_replace: 通用自动替换 {{{2
-function! W_common_replace()
-    "iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
-    "iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
-    "iabbrev { {<CR>}<Esc>%a
-
-    inoremap " ""<Left>
-    inoremap ' ''<Left>
-    inoremap ` ``<Left>
-    inoremap ( ()<Left>
-    inoremap [ []<Left>
-    inoremap { {<CR>}<Esc>O
-    inoremap <C-l> <Right>
-endfunction
-" }}}2
-" W_C_replace: C语言自动替换 {{{2
-function! W_C_replace()
-    " 考虑到({等符号已成对匹配，以下替换也做了相应修改
-    "iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    "iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
-    "iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    "iabbrev fore for ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
-    "iabbrev doo do<CR>{<CR>}<CR>while ();<Left><Left><C-r>=W_eatchar(' ')<CR>
-
-    iabbrev iff if (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev forr for (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev whilee while (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
-    iabbrev doo do<CR>{<Esc>ddowhile (<Right>;<Left><Left><C-r>=W_eatchar(' ')<CR>
-    iabbrev elsee else<CR>{<C-r>=W_eatchar('')<CR>
-
-    iabbrev inc #include <.h><Left><Left><Left><C-r>=W_eatchar(' ')<CR>
-endfunction
-" }}}2
-" W_code_common_setting: 代码通用设置 {{{2
-function! W_code_common_setting()
-    syntax on
-    set cindent
-    set tabstop=4
-    set shiftwidth=4
-    set expandtab
-    set nofoldenable
-
-    "set cursorline
-    "set colorcolumn=100
-
-    " 显示特殊字符
-    set list
-    "set listchars=tab:\|\ ,trail:-,nbsp:%
-    set listchars=tab:»\ ,trail:•,nbsp:%,extends:>,precedes:<
-    " 警示行尾多余空格
-    " match Error /\s\+$/
-    " 显示缩进垂直对齐线
-    "call W_exec_cmd("IndentLinesEnable")
-
-    " 按<Leader><Leader>执行make并打开quickfix窗口
-    " 然后跳到第一个错误处(如果有错误的话)
-    nnoremap <Leader><SPACE> :make<CR><CR>:cw<CR>:cc<CR>
-
-    " 将选中的代码按 '=' 对齐
-    vnoremap <Leader>= :Tabularize /=<CR>
-
-    " 快速插入函数注释头
-    command! Ifc call W_insert_function_header('cn')
-    command! Ife call W_insert_function_header('en')
-    " 不知道为什么会多输出一个0,所以用<BS>删除
-    inoremap <Leader>ifc <C-r>=W_insert_function_header('cn')<CR><BS><C-o>A
-    inoremap <Leader>ife <C-r>=W_insert_function_header('en')<CR><BS><C-o>A
-
-    call W_common_replace()
-    call W_set_colorscheme("solarized")
-endfunction
-"}}}2
-" W_set_guifont: 设置GUI字体{{{2
-function! W_set_guifont()
-    if !has("gui_running")
-        return
-    endif
-
-    if has("macunix")
-        "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        set guifont=Monaco:h15
-        " 单独设置中文字体
-        " 备用字体
-        " Hannotate\ SC\ Regular
-        " Libian\ SC\ Regular
-        " Yuanti\ SC\ Regular
-        " Xingkai\ SC\ Light
-        set guifontwide=Kaiti\ SC\ Regular
-    else
-        "YaHei Consolas Hybrid字体不知为何会使powerline的状态栏占用命令栏
-        "set guifont=YaHei\ Consolas\ Hybrid\ 13
-        "set guifont=Source\ Code\ Pro\ 13
-        set guifont=Courier\ 10\ Pitch\ 13
-    endif
-endfunction
-"}}}2
-" W_color_modify: 颜色加减运算 {{{2
+" }}}
+" W_color_modify: 颜色加减运算 {{{
 " 正确的实现方法: RGB->HSV,修改V值->RGB
 function! W_color_modify(color, oper, modify_value)
     if a:color == ""
@@ -210,16 +86,421 @@ function! W_color_modify(color, oper, modify_value)
              \ . printf("%02x", l:col_g)
              \ . printf("%02x", l:col_b)
 endfunction
-"}}}2
-" W_set_colorscheme: 设置配色方案 {{{2
+"}}}
+" W_winpos_adjust: 调整GVIM窗口坐标 {{{
+function! W_winpos_adjust(x_inc, y_inc)
+    let l:winpos_x = getwinposx() + a:x_inc
+    let l:winpos_y = getwinposy() + a:y_inc
+    execute 'winpos '.l:winpos_x.' '.l:winpos_y
+endfunction
+" }}}
+" W_font_review: 临时在vim中预览字体效果 {{{
+"用法，先创建一个快捷键Ctrl+Enter来执行当前行命令
+" nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
+" 再查找出当前系统字体，linux下可运行如下命令：
+" fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq| sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
+" 我是通过man -k font,在里面找到fc-list命令的。
+function! W_font_review()
+    nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
+
+    " 比较好的字体
+    set guifont=YaHei\ Consolas\ Hybrid\ 14
+    set guifont=Courier\ 10\ Pitch\ 14
+    set guifont=Inconsolata\-dz\ for\ Powerline\ 14
+    set guifont=Source\ Code\ Pro\ 14
+    set guifont=SimSun\ 16
+
+    " 一般的字体
+    set guifont=Anonymice\ Powerline\ 15
+    set guifont=Anonymous\ Pro\ for\ Powerline\ 15
+    set guifont=Inconsolata\ for\ Powerline\ 16
+    set guifont=Meslo\ LG\ L\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ L\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ M\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline\ 13
+    set guifont=Meslo\ LG\ S\ for\ Powerline\ 13
+    set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
+    set guifont=Adobe\ Courier\ 14
+    set guifont=B&H\ LucidaTypewriter\ 13
+    set guifont=Bitstream\ Terminal\ 14
+    set guifont=Courier\ 14
+    set guifont=Droid\ Sans\ Mono\ 14
+    set guifont=DejaVu\ Sans\ Mono\ 14
+    set guifont=FreeMono\ 14
+    set guifont=Liberation\ Mono\ 14
+    set guifont=Luxi\ Mono\ 14
+    set guifont=Misc\ Fixed\ 15
+    set guifont=Sony\ Fixed\ 15
+    set guifont=Source\ Code\ Pro\ Black\ 14
+    set guifont=Source\ Code\ Pro\ ExtraLight\ 14
+    set guifont=Source\ Code\ Pro\ Light\ 14
+    set guifont=Source\ Code\ Pro\ Semibold\ 14
+    set guifont=Ubuntu\ Mono\ 14
+endfunction
+"}}}
+" W_set_fcitx: Insert/Normal模式切换时自动切换fcitx状态{{{
+function! W_set_fcitx(event)
+    if a:event == "InsertEnter"
+        if s:W_last_insert_im_status == 1       " fcitx is inactive
+            call system("fcitx-remote -c")      " inactive fcitx
+        elseif s:W_last_insert_im_status == 2   " fcitx is active
+            call system("fcitx-remote -o")      " active fcitx
+        endif
+    elseif a:event == "InsertLeave"
+        if executable("fcitx-remote")
+            let s:W_last_insert_im_status =
+                \ system("fcitx-remote | tr -d '\r\n'")
+        endif
+        if s:W_last_insert_im_status == 2       " fcitx is active
+            call system("fcitx-remote -c")      " inactive fcitx
+        endif
+    endif
+endfunction
+"}}}
+" }}}
+" 通用函数 {{{
+" W_basic_setting: 基础设置 {{{
+function! W_basic_setting()
+    " 设置显示相对行号，方便jk跳转 "{{{
+    set relativenumber
+    set number
+    "}}}
+    " runtimepath管理 "{{{
+    set runtimepath-=~wolfwzr/.vim
+    set runtimepath+=~wolfwzr/.vim
+    set runtimepath-=~wolfwzr/.vim/bundle/Vundle.vim
+    set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
+    "}}}
+    " VI兼容性设置 {{{
+    set nocp
+    " }}}
+    " 搜索效果设置 {{{
+    set hlsearch
+    set incsearch
+    " }}}
+    " 设置新建窗口时新窗口的位置 {{{
+    set splitbelow
+    set splitright
+    " }}}
+    " 退格键设置(设置<BS>可删除的内容） {{{
+    set backspace=indent,eol,start
+    " }}}
+    " 文件编码设置 "{{{
+    set encoding=utf-8
+    set fileencodings=ucs-bom,utf-8,default,latin1
+    "}}}
+    " 状态栏设置 {{{
+    set laststatus=2   " Always show the statusline
+    " 使用powerline代替
+    hi StatusLine cterm=bold gui=bold
+    set statusline=
+        \%F\ %r\ %m\ %q
+        \%=
+        \[%Y,%{&fileencoding},%{&fileformat}]
+        \\ [%l,%02v]\ [%L,%02P]
+    " }}}
+    " 空格与Tab相关{{{
+    " Tab占四个空格的长度
+    set ts=4
+    " 显示特殊字符（listchars选项所配置的特殊字符）
+    set nolist
+    " 配置要显示的特殊字符
+    set listchars=tab:\|\ ,nbsp:%,trail:-
+    " 配置特殊字符显示配色
+    " hi SpecialKey ...
+    " 醒目显示行尾多余空格
+    " match Error /\s\+$/
+    " }}}
+    " 输入法切换设置{{{
+    " 切换到Normal模式时自动使用英文输入法
+    " 切换到Insert模式时自动使用上次在Insert模式下使用的输入法
+    if has("macunix")
+        set noimdisable
+    elseif has("unix")
+        au InsertEnter * call W_set_fcitx("InsertEnter")
+        au InsertLeave * call W_set_fcitx("InsertLeave")
+    endif
+    "}}}
+    " 鼠标设置{{{
+    set mouse=a
+    " mousemodel 设置为 popup 时：
+    " 单击左键   - 光标跳转
+    " 单击右键   - 弹出菜单
+    " 拖动左键   - 选择文本
+    " 双击左键   - 选择单词
+    " Ctrl+左键  - Ctrl+]
+    " Ctrl+右键  - Ctrl+t
+    " Shift+左键 - 拓展选区
+    " Shift+右键 - 搜索单词
+    set mousemodel=popup
+    " 可用作 keymap 的鼠标动作
+    "
+    " ScrollWheel: (help scroll-mouse-wheel)
+    " <ScrollWheelUp>
+    " <ScrollWheelDown>
+    " <ScrollWheelLeft>
+    " <ScrollWheelRight>
+    "
+    " :help <MiddleRelease>
+    " code            mouse button               normal action
+    " <LeftMouse>     left pressed               set cursor position
+    " <LeftDrag>      left moved while pressed   extend selection
+    " <LeftRelease>   left released              set selection end
+    " <MiddleMouse>   middle pressed             paste text at cursor position
+    " <MiddleDrag>    middle moved while pressed -
+    " <MiddleRelease> middle released            -
+    " <RightMouse>    right pressed              extend selection
+    " <RightDrag>     right moved while pressed  extend selection
+    " <RightRelease>  right released             set selection end
+
+    " double click
+    nmap <2-LeftMouse> <Leader>m
+
+    nmap <S-ScrollWheelUp>   <C-o>
+    nmap <S-ScrollWheelDown> <C-i>
+
+    " Auto copy on select
+    "vnoremap <LeftRelease> "+ygv<LeftRelease>
+    "vnoremap v             "+y
+    "set go+=P
+
+    "}}}
+    " 杂项设置{{{
+    set wrap
+    " 取消CursorLine
+    " 因为我喜欢CursorLine有淡淡的背景色，但这样会有两个问题：
+    "   1. 当前行被 mark.vim 加背景色的单词背景变全黑，非常难看
+    "   2. 影响VIM效率
+    " 因此取消了CursorLine
+    set nocursorline
+    " }}}
+endfunction
+" }}}
+" W_shortcut_setting: 快捷键设置 {{{
+function! W_shortcut_setting()
+    " {}()跳转 {{{
+    "   跳到上一个或下一个位于行首的{或}
+    "   [[ 跳到上一个位于行首的{（默认行为）
+    "   [] 跳到上一个位于行首的}（默认行为）
+    "   ][ 跳到下一个位于行首的{（默认行为）
+    "   ]] 跳到下一个位于行首的}（默认行为）
+    " 补充：
+    " 当光标在一个{}块内部时:
+    "   [{ 上跳到{处（默认行为）
+    "   ]} 下跳到}处（默认行为）
+    " 当光标在一个()块内部时:
+    "   [( 上跳到(处（默认行为）
+    "   ]) 下跳到)处（默认行为）
+    " 当光标在一个{}/()/[]的一边上时:
+    "   % 跳到另一边（默认行为）
+    " }}}
+    " Buffer/Tab/Window/GUI窗口相关{{{
+    if has("gui_running")
+        " Tab
+        nnoremap <C-j>     gt
+        nnoremap <C-k>     gT
+        nnoremap <Leader>1 :tabnext 1<CR>
+        nnoremap <Leader>2 :tabnext 2<CR>
+        nnoremap <Leader>3 :tabnext 3<CR>
+        nnoremap <Leader>4 :tabnext 4<CR>
+        nnoremap <Leader>5 :tabnext 5<CR>
+        nnoremap <Leader>6 :tabnext 6<CR>
+        nnoremap <Leader>7 :tabnext 7<CR>
+        nnoremap <Leader>8 :tabnext 8<CR>
+        nnoremap <Leader>9 :tabnext 9<CR>
+        nnoremap <Leader>t :tabnew<CR>
+        " Windows
+        "nnoremap <Leader>j <C-w>j
+        "nnoremap <Leader>k <C-w>k
+        "nnoremap <Leader>h <C-w>h
+        "nnoremap <Leader>l <C-w>l
+        " Buffer
+        nmap <Leader><Leader>   :ls<CR>:b! 
+        nnoremap <Leader>p      :bprev!<CR>
+        nnoremap <Leader>n      :bnext!<CR>
+        nnoremap <Leader><Del>  :bdelete! %<CR>
+        nnoremap <C-n>          :enew!<CR>i
+    endif
+    " }}}
+    " 复制/剪切/粘贴 {{{
+    if has("gui_running")
+        " copy
+        vnoremap <C-c> "+y
+        vnoremap Y     "+y
+        " cut
+        vnoremap <C-x> "+x
+        vnoremap X     "+x
+        " paste
+        cnoremap <C-v> <C-r>+
+        inoremap <C-v> <C-r>+
+        inoremap <C-S-v> <Space><BS><Esc>:set paste<CR>a<C-R>+<Esc>:set nopaste<CR>a
+    endif
+    " }}}
+    " 以 root 权限保存文件 {{{
+    command! W :execute ':silent w !sudo tee % > /dev/null' | :edit!
+    " }}}
+    " 代码折叠快捷键 {{{
+    " zi : set foldenable!
+    " za : toggle fold
+    " zo : open fold
+    " zc : close fold
+    " nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
+    " nnoremap <Leader><SPACE> za
+    " }}}
+    " 查看当前光标下单词的帮助信息 {{{
+    " 单词字典查询 {{{
+    command! -nargs=1 Sdcv call W_dict_qurey("<args>")
+    nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
+    " }}}
+    " Buffer Grep {{{
+    " 在当前Buffer中Grep
+    nnoremap <Leader>g :g/\<<C-R>=expand("<cword>")<CR>\>/p<CR>
+    vnoremap <Leader>g :<C-u>g/<C-R>=W_get_visual_selected_text()<CR>/p<CR>
+
+    command! -nargs=1 Grep call W_grep("<args>")
+    nnoremap <Leader>G :call W_grep('\<<C-R>=expand("<cword>")<CR>\>')<CR>
+    vnoremap <Leader>G :<C-u>call W_grep('<C-R>=W_get_visual_selected_text()<CR>')<CR>
+    " 在所有Buffer中Grep
+    " nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
+    " }}}
+    " }}}
+    " cmdline模式下的光标移动 {{{
+    if has("gui_running")
+        " Tips:
+        "
+        " C-d : Show available completion
+        " C-f : go to command line window
+        "
+        " C-i : <Tab>
+        " C-n : <Tab> else <Down>
+        " C-p : <S-Tab> else <Up>
+        "
+        " C-h : backspace
+        " C-u : delete whole line
+        " C-w : delete one word
+        "
+        " C-b : cursor to Begin of command-line
+        " C-e : cursor to End of command-line
+
+        cnoremap <C-j> <Right>
+        cnoremap <C-k> <Left>
+        cnoremap <C-l> <Del>
+    endif
+    " }}}
+    " Edit/Source vimrc{{{
+    command! EditRc   :tabnew ~wolfwzr/.vim/vimrc
+    command! SourceRc :source ~wolfwzr/.vim/vimrc
+    "}}}
+    " Mark 当前单词 {{{
+    nmap <Leader>m :call W_mark(expand("<cword>"), 1)<CR>
+    vmap <Leader>m :call W_mark(W_get_visual_selected_text(), 0)<CR>
+    "}}}
+    " 删除当前 buffer {{{
+    nmap <Leader><BS> :bdelete %<CR>
+    "}}}
+    " 其它 {{{
+    nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
+    " 快速预览当前光标下的 ColorScheme
+    "noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
+
+    nmap <Leader>r :! 
+
+    nmap <Leader>w :w<CR>
+
+    nmap <Leader>q :q<CR>
+    nmap <Leader>z :qa!<CR>
+    "}}}"
+endfunction
+" }}}
+" W_gui_setting: GUI设置 {{{
+function! W_gui_setting()
+    if !has("gui_running")
+        return
+    endif
+
+    " 去掉菜单栏、工具栏等
+    set go=
+
+    " 显示GUI标签栏（与字符界面的标签不同）
+    "   - 字符界面的标签可通过set tabline来定制
+    "   - GUI 界面的标签可通过set guitablabel来定制
+    "   - 语法参考 statusline
+    set go+=e
+    set guitablabel=%m%N:\ %t
+    "在/usr/local/Cellar/macvim/7.4-88/MacVim.app/Contents/Resources/vim/gvimrc
+    "文件中将重写guitablabel
+
+    " 自动复制选区
+    set go+=P
+
+    " 设置窗口位置和大小
+    "    winpos 120 0
+    set columns=108
+    set lines=32
+
+    " 设置默认配色方案
+    if s:W_colorscheme_applied == 0
+        set background=dark
+        call W_set_colorscheme("solarized")
+    endif
+
+    " 光标设置 (:help 'guicursor')
+    set guicursor=n-v-c:block-Cursor/lCursor
+    set guicursor+=ve:ver35-Cursor
+    set guicursor+=o:hor50-Cursor
+    set guicursor+=i-ci:ver25-Cursor/lCursor
+    set guicursor+=r-cr:hor20-Cursor/lCursor
+    set guicursor+=sm:block-Cursor
+    set guicursor+=a:blinkon0
+
+    if has("macunix")
+        "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
+        set guifont=Monaco:h15
+        " 单独设置中文字体
+        " 备用字体
+        " Hannotate\ SC\ Regular
+        " Libian\ SC\ Regular
+        " Yuanti\ SC\ Regular
+        " Xingkai\ SC\ Light
+        set guifontwide=Kaiti\ SC\ Regular
+    else
+        "YaHei Consolas Hybrid字体不知为何会使powerline的状态栏占用命令栏
+        "set guifont=YaHei\ Consolas\ Hybrid\ 13
+        "set guifont=Source\ Code\ Pro\ 13
+        set guifont=Courier\ 10\ Pitch\ 13
+    endif
+endfunction
+"}}}
+" W_common_replace: 通用自动替换 {{{
+function! W_common_replace()
+    "iabbrev ( ()<Left><C-r>=W_eatchar(')')<CR>
+    "iabbrev [ []<Left><C-r>=W_eatchar(']')<CR>
+    "iabbrev { {<CR>}<Esc>%a
+
+    inoremap " ""<Left>
+    inoremap ' ''<Left>
+    inoremap ` ``<Left>
+    inoremap ( ()<Left>
+    inoremap [ []<Left>
+    inoremap { {}<Left>
+    inoremap <C-l> <Right>
+endfunction
+" }}}
+" W_set_colorscheme: 设置配色方案 {{{
 function! W_set_colorscheme(color)
     if ! has("gui_running")
         return
     endif
 
+    colorscheme colorzone
+    highlight StatusLine guibg=#DBDFD7
+    highlight TabLineFill guifg=#EFF0F1
+    return
+
     let g:W_color_scheme = a:color
 
-    " 设置配色方案{{{3
+    " 设置配色方案{{{
     " 还可以的 light 主题 {{{
     " biogoo
     " bmichaelsen
@@ -291,9 +572,9 @@ function! W_set_colorscheme(color)
     "}}}
     execute 'colorscheme ' . g:W_color_scheme
     let s:W_colorscheme_applied = 1
-    "}}}3
+    "}}}
 
-    " 调整配色方案{{{3
+    " 调整配色方案{{{
     if &background != 'dark'
         " 以下调整均针对 dark 类主题
         " light 类主题很少用，所以不进行调整
@@ -403,132 +684,269 @@ function! W_set_colorscheme(color)
         hi Cursor term=reverse cterm=reverse
     endif
 
-    " }}}3
-    " 重新加载mark.vim（否则mark.vim将失效） {{{3
-    " 下面的autocmd命令无预期效果, why?
-    " autocmd ColorScheme * source  ~wolfwzr/.vim/bundle/Mark/plugin/mark.vim
-    " call W_source("~wolfwzr/.vim/bundle/Mark/plugin/mark.vim")
+    " }}}
     if s:W_TRUE == W_source("~wolfwzr/.vim/bundle/rainbow/plugin/rainbow.vim")
         RainbowLoad
     endif
-    " }}}3
 endfunction
-" }}}2
-" W_filetype_setting: FileType处理 {{{2
-function! W_filetype_setting()
-    " 避免重复设置{{{
-    if &filetype == ""                      ||
-        \ &filetype == s:W_last_filetype    ||
-        \ s:W_last_filetype == "man"        || &filetype == "man"       ||
-        \ s:W_last_filetype == "help"       || &filetype == "help"      ||
-        \ s:W_last_filetype == "qf"         || &filetype == "qf"        ||
-        \ s:W_last_filetype == "tarbar"     || &filetype == "tagbar"    ||
-        \ s:W_last_filetype == "nerdtree"   || &filetype == "nerdtree"
-        let s:W_last_filetype = &filetype
+" }}}
+" W_dict_qurey: 单词字典查询 {{{
+function! W_dict_qurey(word)
+    if a:word == ""
         return
     endif
-    "}}}
 
-    " C/CPP/H/NASL/LEX/YACC/BISON/JAVA {{{3
-    if &filetype == "c"     ||
-     \ &filetype == "h"     ||
-     \ &filetype == "cpp"   ||
-     \ &filetype == "nasl"  ||
-     \ &filetype == "lex"   ||
-     \ &filetype == "yacc"  ||
-     \ &filetype == "bison" ||
-     \ &filetype == "java"
-        if s:W_last_filetype == "c"     ||
-         \ s:W_last_filetype == "h"     ||
-         \ s:W_last_filetype == "cpp"   ||
-         \ s:W_last_filetype == "nasl"  ||
-         \ s:W_last_filetype == "lex"   ||
-         \ s:W_last_filetype == "yacc"  ||
-         \ s:W_last_filetype == "bison" ||
-         \ s:W_last_filetype == "java"
-            let s:W_last_filetype = &filetype
-            return
-        endif
-        " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
-        set foldmethod=syntax
-        call W_code_common_setting()
+    let l:tmp_file_prefix = "/tmp/vim_dict_"
 
-        " 用缩写(abbreivations)自定义代码块的补全
-        " source ~/usr/etc/abbreviations.vim
+    " 备份寄存器a
+    let l:bakup_reg_a = @a
 
-        " gruvbox (要使这个主题生效，得先设置主题为greyblue)
-        "call W_set_colorscheme("greyblue")
-        "call W_set_colorscheme("gruvbox")
-        "call W_set_colorscheme("yeller")
-        "call W_set_colorscheme("solarized")
-
-        "setlocal cc=100
-        highlight WarningCols gui=undercurl
-        match WarningCols /\%>100v/
-
-        call W_C_replace()
-    " ASM {{{3
-    elseif &filetype == "asm"
-        set foldmethod=marker
-        set commentstring=;%s
-        call W_code_common_setting()
-
-        "call W_set_colorscheme("rainbow_neon")
-        setlocal syntax=nasm
-        if has("gui_running")
-            "call W_exec_cmd("IndentLinesDisable")
-            setlocal nolist
-        endif
-    " PYTHON {{{3
-    elseif &filetype == "python"
-        set foldmethod=indent
-        call W_code_common_setting()
-    " SH {{{3
-    elseif &filetype == "sh"
-        set foldmethod=indent
-        call W_code_common_setting()
-        "call W_set_colorscheme("neon")
-        inoremap { {}<Left>
-    " VIM {{{3
-    elseif &filetype == "vim"
-        set foldmethod=marker
-        call W_code_common_setting()
-        "call W_set_colorscheme("codeschool")
-    " MKD {{{3
-    elseif &filetype == "mkd"
-        call W_code_common_setting()
-        setlocal foldenable
-        setlocal nonu
-        setlocal norelativenumber
-        call W_set_colorscheme("two2tango")
-    " HTML/XML/CSS/JS/XSL/XSLT {{{3
-    elseif &filetype == "html"  ||
-         \ &filetype == "xml"   ||
-         \ &filetype == "css"   ||
-         \ &filetype == "js"    ||
-         \ &filetype == "xsl"   ||
-         \ &filetype == "xslt"
-        if s:W_last_filetype == "html"  ||
-         \ s:W_last_filetype == "xml"   ||
-         \ s:W_last_filetype == "css"   ||
-         \ s:W_last_filetype == "js"    ||
-         \ s:W_last_filetype == "xsl"   ||
-         \ s:W_last_filetype == "xslt"
-            let s:W_last_filetype = &filetype
-            return
-        endif
-        call W_code_common_setting()
-        "call W_set_colorscheme("corn")
-    " CONF {{{3
-    elseif &filetype == "conf"
-        call W_code_common_setting()
+    if has("unix")
+        " sdcv -n: 非交互模式
+        let @a = system('sdcv -n --utf8-input --utf8-output '.a:word)
+    else
+        let @a = l:bakup_reg_a
+        return
     endif
-    " }}}3
-    let s:W_last_filetype = &filetype
-    silent! PowerlineReloadColorscheme
+
+    let l:nr = bufwinnr(l:tmp_file_prefix . "*")
+    if l:nr != -1
+        execute nr . "wincmd w"
+        normal ggVGd
+    else
+        " mktemp -u 只会生成文件名，不会创建文件
+        execute "split" . system("mktemp -u ". l:tmp_file_prefix . "XXXXXXX")
+    endif
+    normal "ap
+
+    nnoremap <buffer> q :q!<CR>
+    nnoremap <buffer> <SPACE>
+                \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
+    nnoremap <buffer> <S-SPACE> <C-o>
+
+    " 恢复寄存器a
+    let @a = l:bakup_reg_a
 endfunction
-" }}}2
-" W_insert_function_header: 设置GUI字体{{{2
+" }}}
+" W_grep: grep in current buffer{{{
+" Use Bgrep command(in Bgrep plugin) to grep with all buffers
+function! W_grep(word)
+    call setqflist([])
+    silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
+    botright cw
+endfunction
+" }}}
+" W_vundle_setting: Vundle及插件设置 {{{
+function! W_vundle_setting()
+    " ~/.vim/bundle/Vundle.vim/Vundle.vimrc
+    " Vundle是一个管理插件的插件
+    " 这里配置文件里面包含了各个插件的配置
+    " source ~wolfwzr/.vim/bundle/Vundle.vim/Vundle.vimrc
+    source ~wolfwzr/.vim/vundle.vimrc
+endfunction
+" }}}
+" W_ft_c(){{{
+function! W_ft_c()
+    " 因为在cscope中跳转回来时打开的折叠又变为折叠，所以默认关闭折叠
+    set foldmethod=syntax
+
+    "setlocal cc=100
+    highlight WarningCols gui=undercurl
+    match WarningCols /\%>100v/
+
+    " 查看QuickFix List的上一项/下一项
+    " Tips:
+    "   :colder 查看上一个quickfix窗口
+    "   :cnewer 查看下一个quickfix窗口
+    nnoremap <F2> :botright cw<CR>
+    nnoremap <F3> :cp<CR>
+    nnoremap <F4> :cn<CR>
+
+    call W_cscope_init()
+    call W_C_replace()
+
+    runtime ftplugin/man.vim
+    nnoremap K :Man <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>M9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
+
+    nnoremap <buffer> <Leader>o
+        \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
+    nnoremap <buffer> <C-LeftMouse>
+        \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
+    nnoremap <buffer> <Leader>b :call W_cscope_back()<CR>
+    nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>
+    nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>
+
+    " remove auto_cd group
+    autocmd! auto_cd
+endfunction
+" }}}
+" W_ft_asm(){{{
+function! W_ft_asm()
+    set foldmethod=marker
+    set commentstring=;%s
+
+    setlocal syntax=nasm
+    if has("gui_running")
+        setlocal nolist
+    endif
+endfunction
+" }}}
+" W_ft_python(){{{
+function! W_ft_python()
+    set foldmethod=indent
+endfunction
+" }}}
+" W_ft_help(){{{
+function! W_ft_help()
+    nnoremap <buffer> <BS> <C-t>
+    nnoremap <buffer> q    :q<CR>
+    set ts=4
+endfunction
+" }}}
+" W_ft_sh(){{{
+function! W_ft_sh()
+    set foldmethod=indent
+    "call W_set_colorscheme("neon")
+    inoremap { {}<Left>
+endfunction
+" }}}
+" W_ft_vim(){{{
+function! W_ft_vim()
+    set foldmethod=marker
+    iunmap "
+    inoremap < <><Left>
+    nnoremap <buffer> <F1>          :help <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <buffer> <S-F1>        :help <C-R>=expand("<cWORD>")<CR><CR>
+    nnoremap <buffer> <C-LeftMouse> :help <C-R>=expand("<cword>")<CR><CR>
+endfunction
+" }}}
+" W_ft_mkd(){{{
+function! W_ft_mkd()
+    setlocal foldenable
+    setlocal nonu
+    setlocal norelativenumber
+    call W_set_colorscheme("two2tango")
+
+    nnoremap <buffer> <F5>  :!mkd_preview.sh %<CR>
+    nnoremap <buffer> <C-t> :Toch<CR>
+    nnoremap <buffer> o     A<CR>
+endfunction
+" }}}
+" W_ft_qf(){{{
+function! W_ft_qf()
+    nnoremap <buffer> o             <CR>
+    nmap     <buffer> <2-LeftMouse> <CR>
+    nnoremap <buffer> q             :q<CR>
+    resize 5
+endfunction
+" }}}
+" W_ft_man(){{{
+function! W_ft_man()
+    nmap     <buffer> <2-LeftMouse> <Leader>m
+    nnoremap <buffer> q             :q<CR>
+    setlocal ts=8
+endfunction
+" }}}
+
+" }}}
+" 专用函数 {{{
+" W_mark: 高亮单词，用于替换Mark插件（Mark插件性能不行）{{{
+function! W_mark(str, is_a_word)
+    let l:syn_num = 6
+	let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
+    if 0 == match(l:cur_syn, "W_MarkWord")
+        "let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
+        execute 'syn match none /\<' . a:str . '\>/'
+    else " Choose a color and mark a:str
+        " 高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
+        hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
+        hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
+        hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
+        hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
+        hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
+        hi W_MarkWord5 ctermbg=Blue    ctermfg=White guibg=#9999FF guifg=Black
+
+        let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % l:syn_num
+        let l:exec_str = 'syn match W_MarkWord' . s:W_last_mark_idx
+        if s:W_TRUE == a:is_a_word
+            execute l:exec_str . ' /\<' . a:str . '\>/'
+        else
+            execute l:exec_str . ' /' . a:str . '/'
+        endif
+    endif
+endfunction
+" }}}
+" W_code_common_setting: 代码通用设置 {{{
+function! W_code_common_setting()
+    syntax on
+    set cindent
+    set tabstop=4
+    set shiftwidth=4
+    set expandtab
+    set nofoldenable
+
+    "set cursorline
+    "set colorcolumn=100
+
+    " 显示特殊字符
+    set list
+    "set listchars=tab:\|\ ,trail:-,nbsp:%
+    set listchars=tab:\|\ ,trail:•,nbsp:%
+    " 警示行尾多余空格
+    " match Error /\s\+$/
+    " 显示缩进垂直对齐线
+    "call W_exec_cmd("IndentLinesEnable")
+
+    " 按<Leader><Leader>执行make并打开quickfix窗口
+    " 然后跳到第一个错误处(如果有错误的话)
+    "nnoremap <Leader><SPACE> :make<CR><CR>:cw<CR>:cc<CR>
+
+    " 将选中的代码按 '=' 对齐
+    vnoremap <Leader>= :Tabularize /=<CR>
+
+    " 快速插入函数注释头
+    command! Ifc call W_insert_function_header('cn')
+    command! Ife call W_insert_function_header('en')
+    " 不知道为什么会多输出一个0,所以用<BS>删除
+    "inoremap <Leader>ifc <C-r>=W_insert_function_header('cn')<CR><BS><C-o>A
+    "inoremap <Leader>ife <C-r>=W_insert_function_header('en')<CR><BS><C-o>A
+
+    call W_common_replace()
+    call W_set_colorscheme("solarized")
+endfunction
+"}}}
+" W_C_replace: C语言自动替换 {{{
+function! W_C_replace()
+
+    inoremap { {<CR>}<Esc>O
+
+    " 考虑到({等符号已成对匹配，以下替换也做了相应修改
+    "iabbrev iff if ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev elsee else<CR>{<CR>}<Esc>O<C-r>=W_eatchar(' ')<CR>
+    "iabbrev whilee while ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev fore for ()<CR>{<CR>}<Esc>kk$i<C-r>=W_eatchar(' ')<CR>
+    "iabbrev doo do<CR>{<CR>}<CR>while ();<Left><Left><C-r>=W_eatchar(' ')<CR>
+
+    iabbrev iff if (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev forr for (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev whilee while (<C-o>o{<Esc>ddkk$i<C-r>=W_eatchar(' ')<CR>
+    iabbrev doo do<CR>{<Esc>ddowhile (<Right>;<Left><Left><C-r>=W_eatchar(' ')<CR>
+    iabbrev elsee else<CR>{<C-r>=W_eatchar('')<CR>
+
+    iabbrev inc #include <.h><Left><Left><Left><C-r>=W_eatchar(' ')<CR>
+endfunction
+" }}}
+" W_insert_function_header: {{{
 function! W_insert_function_header(lang)
     let b:reg_bakup = @a
     "中文版{{{
@@ -570,61 +988,8 @@ function! W_insert_function_header(lang)
     normal "ap10k$
     let @a = b:reg_bakup
 endfunction
-"}}}2
-" W_winpos_adjust: 调整GVIM窗口坐标 {{{2
-function! W_winpos_adjust(x_inc, y_inc)
-    let l:winpos_x = getwinposx() + a:x_inc
-    let l:winpos_y = getwinposy() + a:y_inc
-    execute 'winpos '.l:winpos_x.' '.l:winpos_y
-endfunction
-" }}}2
-" W_dict_qurey: 单词字典查询 {{{2
-function! W_dict_qurey(word)
-    if a:word == ""
-        return
-    endif
-
-    let l:tmp_file_prefix = "/tmp/vim_dict_"
-
-    " 备份寄存器a
-    let l:bakup_reg_a = @a
-
-    if has("unix")
-        " sdcv -n: 非交互模式
-        let @a = system('sdcv -n --utf8-input --utf8-output '.a:word)
-    else
-        let @a = l:bakup_reg_a
-        return
-    endif
-
-    let l:nr = bufwinnr(l:tmp_file_prefix . "*")
-    if l:nr != -1
-        execute nr . "wincmd w"
-        normal ggVGd
-    else
-        " mktemp -u 只会生成文件名，不会创建文件
-        execute "split" . system("mktemp -u ". l:tmp_file_prefix . "XXXXXXX")
-    endif
-    normal "ap
-
-    nnoremap <buffer> q :q!<CR>
-    nnoremap <buffer> <SPACE>
-                \ :call W_dict_qurey('<C-r>=expand("<cword>")<CR>')<CR>
-    nnoremap <buffer> <S-SPACE> <C-o>
-
-    " 恢复寄存器a
-    let @a = l:bakup_reg_a
-endfunction
-" }}}2
-" W_grep: grep in current buffer{{{2
-" Use Bgrep command(in Bgrep plugin) to grep with all buffers
-function! W_grep(word)
-    call setqflist([])
-    silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
-    botright cw
-endfunction
-" }}}2
-" W_cscope_init_db: init cscope database {{{2
+"}}}
+" W_cscope_init_db: init cscope database {{{
 function! W_cscope_init_db()
     let l:cwd_bakup = fnameescape(getcwd())
     let l:tmp_dir = ''
@@ -663,580 +1028,22 @@ function! W_cscope_init_db()
         endif
     endif
 endfunction
-" }}}2
-" W_cscope_update_db: update cscope database {{{2
+" }}}
+" W_cscope_update_db: update cscope database {{{
 function! W_cscope_update_db()
     call system('cscope -Rbq')
     cs reset
 endfunction
-" }}}2
-" W_font_review: 临时在vim中预览字体效果 {{{2
-"用法，先创建一个快捷键Ctrl+Enter来执行当前行命令
-" nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
-" 再查找出当前系统字体，linux下可运行如下命令：
-" fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq| sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
-" 我是通过man -k font,在里面找到fc-list命令的。
-function! W_font_review()
-    nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
-
-    " 比较好的字体
-    set guifont=YaHei\ Consolas\ Hybrid\ 14
-    set guifont=Courier\ 10\ Pitch\ 14
-    set guifont=Inconsolata\-dz\ for\ Powerline\ 14
-    set guifont=Source\ Code\ Pro\ 14
-    set guifont=SimSun\ 16
-
-    " 一般的字体
-    set guifont=Anonymice\ Powerline\ 15
-    set guifont=Anonymous\ Pro\ for\ Powerline\ 15
-    set guifont=Inconsolata\ for\ Powerline\ 16
-    set guifont=Meslo\ LG\ L\ DZ\ for\ Powerline\ 13
-    set guifont=Meslo\ LG\ L\ for\ Powerline\ 13
-    set guifont=Meslo\ LG\ M\ DZ\ for\ Powerline\ 13
-    set guifont=Meslo\ LG\ M\ for\ Powerline\ 13
-    set guifont=Meslo\ LG\ S\ DZ\ for\ Powerline\ 13
-    set guifont=Meslo\ LG\ S\ for\ Powerline\ 13
-    set guifont=YaHei\ Consolas\ Hybrid\ for\ Powerline\ 14
-    set guifont=Adobe\ Courier\ 14
-    set guifont=B&H\ LucidaTypewriter\ 13
-    set guifont=Bitstream\ Terminal\ 14
-    set guifont=Courier\ 14
-    set guifont=Droid\ Sans\ Mono\ 14
-    set guifont=DejaVu\ Sans\ Mono\ 14
-    set guifont=FreeMono\ 14
-    set guifont=Liberation\ Mono\ 14
-    set guifont=Luxi\ Mono\ 14
-    set guifont=Misc\ Fixed\ 15
-    set guifont=Sony\ Fixed\ 15
-    set guifont=Source\ Code\ Pro\ Black\ 14
-    set guifont=Source\ Code\ Pro\ ExtraLight\ 14
-    set guifont=Source\ Code\ Pro\ Light\ 14
-    set guifont=Source\ Code\ Pro\ Semibold\ 14
-    set guifont=Ubuntu\ Mono\ 14
-endfunction
-"}}}2
-" W_set_fcitx: Insert/Normal模式切换时自动切换fcitx状态{{{2
-function! W_set_fcitx(event)
-    if a:event == "InsertEnter"
-        if s:W_last_insert_im_status == 1       " fcitx is inactive
-            call system("fcitx-remote -c")      " inactive fcitx
-        elseif s:W_last_insert_im_status == 2   " fcitx is active
-            call system("fcitx-remote -o")      " active fcitx
-        endif
-    elseif a:event == "InsertLeave"
-        if executable("fcitx-remote")
-            let s:W_last_insert_im_status =
-                \ system("fcitx-remote | tr -d '\r\n'")
-        endif
-        if s:W_last_insert_im_status == 2       " fcitx is active
-            call system("fcitx-remote -c")      " inactive fcitx
-        endif
-    endif
-endfunction
-"}}}2
-" W_cscope_lookup_define_or_symbol: 使用cscope查询定义或符号{{{2
-" 使用 cscope 查询，先查询符号定义，若查到则跳到定义处，
-" 若没有查到，则查询符号引用处并跳到第一个引用的地方。
-function! W_cscope_lookup_define_or_symbol(pattern)
-    let l:msg_bakup = v:errmsg
-    let v:errmsg = ""
-    execute "cs find g " . a:pattern
-    if v:errmsg == ""
-        let v:errmsg = l:msg_bakup
-    else
-        execute "cs find s " . a:pattern
-        let s:W_cscope_is_from_symbol = s:W_TRUE
-    endif
-endfunction
-"}}}2
-" W_cscope_back: 针对W_cscope_lookup_define_or_symbol函数的返回{{{2
-function! W_cscope_back()
-    if s:W_cscope_is_from_symbol == s:W_TRUE
-        execute "normal \<C-o>"
-        let s:W_cscope_is_from_symbol = s:W_FALSE
-    else
-        execute "normal \<C-t>"
-    endif
-endfunction
-"}}}2
-"}}}1
-
-" 基础设置 {{{1
-" 设置脚本编码格式 {{{
-scriptencoding utf-8
-set encoding=utf-8
 " }}}
-" 设置显示相对行号，方便jk跳转 "{{{
-set relativenumber
-set number
-"}}}
-" runtimepath管理 "{{{
-set runtimepath-=~wolfwzr/.vim
-set runtimepath+=~wolfwzr/.vim
-set runtimepath-=~wolfwzr/.vim/bundle/Vundle.vim
-set runtimepath+=~wolfwzr/.vim/bundle/Vundle.vim
-"}}}
-" VI兼容性设置 {{{2
-set nocp
-" }}}2
-" mapleader设置 {{{2
-let mapleader='\'
-" }}}2
-" 搜索效果设置 {{{2
-set hlsearch
-set incsearch
-" }}}2
-" 设置新建窗口时新窗口的位置 {{{2
-set splitbelow
-set splitright
-" }}}2
-" 退格键设置(设置<BS>可删除的内容） {{{2
-set backspace=indent,eol,start
-" }}}2
-" 文件编码设置 "{{{
-set encoding=utf-8
-set fileencodings=ucs-bom,utf-8,default,latin1
-"}}}
-" 状态栏设置 {{{2
-set laststatus=2   " Always show the statusline
-" 使用powerline代替
-hi StatusLine cterm=bold gui=bold
-set statusline=
-    \%f\ %r\ %m\ %q
-    \%=
-    \[%Y,%{&fileencoding},%{&fileformat}]
-    \\ [%l,%02v]\ [%L,%02P]
-" }}}2
-" 打开文件时恢复光标位置 {{{2
-if has("autocmd")
-    autocmd BufReadPost *
-        \ if line("'\"") > 0 && line("'\"") <= line("$") |
-        \ exe "normal g`\"" |
-        \ endif
-endif
-" }}}2
-" 空格与Tab相关{{{2
-" Tab占四个空格的长度
-set ts=4
-" 显示特殊字符（listchars选项所配置的特殊字符）
-set list
-" 配置要显示的特殊字符
-set listchars=tab:»\ ,trail:•,nbsp:%,extends:>,precedes:<
-" 配置特殊字符显示配色
-" hi SpecialKey ...
-" 醒目显示行尾多余空格
-" match Error /\s\+$/
-" }}}2
-" 输入法切换设置{{{2
-" 切换到Normal模式时自动使用英文输入法
-" 切换到Insert模式时自动使用上次在Insert模式下使用的输入法
-if has("macunix")
-    set noimdisable
-elseif has("unix")
-    au InsertEnter * call W_set_fcitx("InsertEnter")
-    au InsertLeave * call W_set_fcitx("InsertLeave")
-endif
-"}}}2
-" 鼠标设置{{{2
-set mouse=a
-" mousemodel 设置为 popup 时：
-" 单击左键   - 光标跳转
-" 单击右键   - 弹出菜单
-" 拖动左键   - 选择文本
-" 双击左键   - 选择单词
-" Ctrl+左键  - Ctrl+]
-" Ctrl+右键  - Ctrl+t
-" Shift+左键 - 拓展选区
-" Shift+右键 - 搜索单词
-set mousemodel=popup
-" 可用作 keymap 的鼠标动作
-"
-" ScrollWheel: (help scroll-mouse-wheel)
-" <ScrollWheelUp>
-" <ScrollWheelDown>
-" <ScrollWheelLeft>
-" <ScrollWheelRight>
-"
-" :help <MiddleRelease>
-" code            mouse button               normal action
-" <LeftMouse>     left pressed               set cursor position
-" <LeftDrag>      left moved while pressed   extend selection
-" <LeftRelease>   left released              set selection end
-" <MiddleMouse>   middle pressed             paste text at cursor position
-" <MiddleDrag>    middle moved while pressed -
-" <MiddleRelease> middle released            -
-" <RightMouse>    right pressed              extend selection
-" <RightDrag>     right moved while pressed  extend selection
-" <RightRelease>  right released             set selection end
-
-" double click
-nmap <2-LeftMouse> <Leader>m
-
-nmap <S-ScrollWheelUp>   <C-o>
-nmap <S-ScrollWheelDown> <C-i>
-
-" Auto copy on select
-"vnoremap <LeftRelease> "+ygv<LeftRelease>
-"vnoremap v             "+y
-"set go+=P
-
-"}}}2
-" 永久保留undo历史记录{{{2
-" vim 7.3 版本新增功能
-if version >= 703
-    call system("mkdir -p ~/.vimundo")
-    set undofile
-    set undodir=~/.vimundo
-endif
-" }}}2
-" 杂项设置{{{2
-set wrap
-" 取消CursorLine
-" 因为我喜欢CursorLine有淡淡的背景色，但这样会有两个问题：
-"   1. 当前行被 mark.vim 加背景色的单词背景变全黑，非常难看
-"   2. 影响VIM效率
-" 因此取消了CursorLine
-set nocursorline
-" }}}2
-" }}}1
-
-" Vundle及插件设置入口 {{{1
-" ~/.vim/bundle/Vundle.vim/Vundle.vimrc
-" Vundle是一个管理插件的插件
-" 这里配置文件里面包含了各个插件的配置
-source ~wolfwzr/.vim/bundle/Vundle.vim/Vundle.vimrc
-" }}}1
-
-" 快捷键设置 {{{1
-
-" 重设字体 (Bug?){{{
-" 不知为何，当打开一些没有特殊处理的类型文件时
-" （不在 W_filetype_setting 函数处理的类型）
-" 偶尔会出现状态栏位于最底一行，把命令行给侵占了
-" 通过debug发现重现设置字体能解决这问题。于是有了这个快捷键
-" 但根本原因还是未找到，为何字体会造成这样的影响？
-" !!!!!更新，最新观察，似乎是因为字体引起的，YaHei字体会出现这个问题
-" 换成其它字体后到目前为止没再出现过,且Mac上一直没有出现过。
-" nnoremap <Leader>1 :call W_set_guifont()<CR>
-" }}}
-
-" hardmode {{{2
-" <C-h> 删除一个字符
-" <C-w> 删除一个word
-" <C-u> 删除整行
-"inoremap <BS> <NOP>
-"cnoremap <BS> <NOP>
-inoremap <BS> <C-w>
-cnoremap <BS> <C-w>
-" }}}2
-
-" 翻页设置 {{{2
-"nnoremap <SPACE> <C-f>
-"nnoremap <TAB> <C-b>
-" }}}2
-
-" 快速查看QuickFix List的上一项/下一项 {{{2
-if has("gui_running")
-    nnoremap <F2> :botright cw<CR>
-    nnoremap <F3> :cp<CR>
-    nnoremap <F4> :cn<CR>
-
-    nnoremap <Leader>q :botright cw<CR>
-    nnoremap <Leader>] :cn<CR>
-    nnoremap <Leader>[ :cp<CR>
-
-    " Tips:
-    "   :colder 查看上一个quickfix窗口
-    "   :cnewer 查看下一个quickfix窗口
-endif
-" }}}2
-
-" {}()跳转 {{{2
-"   跳到上一个或下一个位于行首的{或}
-"   [[ 跳到上一个位于行首的{（默认行为）
-"   [] 跳到上一个位于行首的}（默认行为）
-"   ][ 跳到下一个位于行首的{（默认行为）
-"   ]] 跳到下一个位于行首的}（默认行为）
-" 补充：
-" 当光标在一个{}块内部时:
-"   [{ 上跳到{处（默认行为）
-"   ]} 下跳到}处（默认行为）
-" 当光标在一个()块内部时:
-"   [( 上跳到(处（默认行为）
-"   ]) 下跳到)处（默认行为）
-" 当光标在一个{}/()/[]的一边上时:
-"   % 跳到另一边（默认行为）
-nnoremap ][ ]]
-nnoremap ]] ][
-" }}}2
-
-" Tab/Window/GUI窗口相关{{{2
-if has("gui_running")
-    " Tab Navigate
-    nnoremap <C-j>     :tabnext<CR>
-    nnoremap <C-k>     :tabprev<CR>
-    " Duplication current window to a new tab
-    nnoremap <C-n>     :tabnew %<CR>
-
-    " Window跳转 {{{
-    nnoremap <Leader>j <C-w>j
-    nnoremap <Leader>k <C-w>k
-    nnoremap <Leader>h <C-w>h
-    nnoremap <Leader>l <C-w>l
-    "}}}
-
-    if has("macunix")
-        " 调整GVIM窗口大小 {{{
-        "nmap <C-j> :set lines+=1<CR>
-        "nmap <C-k> :set lines-=1<CR>
-        "nmap <C-h> :set columns-=3<CR>
-        "nmap <C-l> :set columns+=3<CR>
-        " }}}
-    else
-        " 调整GVIM窗口大小 {{{
-        nmap <A-j> :set lines+=1<CR>
-        nmap <A-k> :set lines-=1<CR>
-        nmap <A-h> :set columns-=3<CR>
-        nmap <A-l> :set columns+=3<CR>
-        "}}}
-        " 调整GVIM窗口位置 {{{
-        nmap <A-S-j> :call W_winpos_adjust(0,10)<CR>
-        nmap <A-S-k> :call W_winpos_adjust(0,-10)<CR>
-        nmap <A-S-h> :call W_winpos_adjust(-20,0)<CR>
-        nmap <A-S-l> :call W_winpos_adjust(20,0)<CR>
-        " }}}
-    endif
-endif
-" }}}
-
-" 复制/剪切/粘贴 {{{2
-if has("gui_running")
-    if ! has("maxunix")
-        vnoremap <C-c> "+y
-        vnoremap Y     "+y
-        vnoremap <C-x> "+x
-        vnoremap X     "+x
-        inoremap <C-v> <Space><BS><Esc>:set paste<CR>a<C-R>+<Esc>:set nopaste<CR>a
-        cnoremap <C-v> <C-r>+
-    endif
-endif
-" }}}2
-"
-" 以 root 权限保存文件 {{{2
-command W :echo 'Required Root Password: ' | execute ':silent w !sudo tee % > /dev/null' | :edit!
-" }}}2
-
-" 代码折叠快捷键 {{{2
-" zi : set foldenable!
-" za : toggle fold
-" zo : open fold
-" zc : close fold
-" nnoremap <Leader><SPACE> @=((foldclosed(line('.'))<0)?'zc':'zo')<CR>
-" nnoremap <Leader><SPACE> za
-" }}}2
-
-" 查看当前光标下单词的帮助信息 {{{2
-
-" VIM的帮助信息 {{{3
-nnoremap <Leader>h :help <C-R>=expand("<cword>")<CR><CR>
-nnoremap <Leader>H :help <C-R>=expand("<cWORD>")<CR><CR>
-
-nnoremap <F1>   :help <C-R>=expand("<cword>")<CR><CR>
-nnoremap <S-F1> :help <C-R>=expand("<cWORD>")<CR><CR>
-" }}}3
-
-" linux的man手册 {{{3
-runtime ftplugin/man.vim
-nnoremap K :Man <C-r>=expand("<cword>")<CR><CR>
-" use <Leader>[0-9] ?
-nnoremap <Leader>sm0 :Man 0 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm1 :Man 1 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm2 :Man 2 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm3 :Man 3 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm4 :Man 4 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm5 :Man 5 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm6 :Man 6 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm7 :Man 7 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
-nnoremap <Leader>sm9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
-" }}}3
-
-" 单词字典查询 {{{3
-command! -nargs=1 Sdcv call W_dict_qurey("<args>")
-nnoremap <Leader>d :Sdcv '<C-R>=expand("<cword>")<CR>'<CR>
-" }}}3
-
-" Buffer Grep {{{3
-" 在当前Buffer中Grep
-nnoremap <Leader>g :g/\<<C-R>=expand("<cword>")<CR>\>/p<CR>
-vnoremap <Leader>g :<C-u>g/<C-R>=W_get_visual_selected_text()<CR>/p<CR>
-
-command! -nargs=1 Grep call W_grep("<args>")
-nnoremap <Leader>G :call W_grep('\<<C-R>=expand("<cword>")<CR>\>')<CR>
-vnoremap <Leader>G :<C-u>call W_grep('<C-R>=W_get_visual_selected_text()<CR>')<CR>
-" 在所有Buffer中Grep
-" nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
-" }}}3
-
-" }}}2
-
-" 快速预览当前光标下的 ColorScheme {{{2
-noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
-" }}}2
-
-" cmdline模式下的光标移动 {{{2
-if has("gui_running")
-    " Tips:
-    "
-    " C-d : Show available completion
-    " C-f : go to command line window
-    "
-    " C-i : <Tab>
-    " C-n : <Tab> else <Down>
-    " C-p : <S-Tab> else <Up>
-    "
-    " C-h : backspace
-    " C-u : delete whole line
-    " C-w : delete one word
-    "
-    " C-b : cursor to Begin of command-line
-    " C-e : cursor to End of command-line
-
-    cnoremap <C-j> <Right>
-    cnoremap <C-k> <Left>
-    cnoremap <C-l> <Del>
-endif
-" }}}2
-
-" MacVim alt键映射 {{{2
-if has("gui_running") && has("macunix")
-    " MacVim无法映射alt键(<A-,<M-)都不行
-    " 但可以通过直接输入<A-x>(在键盘上按住alt再按x键，得到一个乱码字符）得到
-    " 于是可以通过 nmap ê <C-w>j 来创建映射
-    " 但直接写在本文件中无效，在新文件中有效,所以将Mac下的alt映射放在新文件中
-    " 猜测可能是因为本文件包含中文的原因，新文件中若不包含中文就有效
-    source ~wolfwzr/.vim/mac-alt-map.vimrc
-endif
-" }}}2
-
-" Quick Edit/Source vimrc{{{
-command! EditRc   :tabnew ~wolfwzr/.vim/vimrc
-command! SourceRc :source ~wolfwzr/.vim/vimrc
-"}}}
-
-" 刷新 ColorScheme {{{
-"nmap <Leader>c :call W_set_colorscheme(g:W_color_scheme)<CR>
-"}}}"
-
-" Mark 当前单词 {{{
-nmap <Leader>m :call W_mark(expand("<cword>"), 1)<CR>
-vmap <Leader>m :call W_mark(W_get_visual_selected_text(), 0)<CR>
-"}}}
-
-" 删除当前 buffer {{{
-nmap <Leader><BS> :bdelete %<CR>
-"}}}
-
-" 其它 {{{
-nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
-"}}}"
-" }}}1
-
-" 文件类型相关设置 {{{1
-if has("autocmd")
-    " 指定某些后缀的文件类型
-    autocmd BufRead,BufNewFile *.wsgi               set filetype=python
-    autocmd BufRead,BufNewFile *.bashrc             set filetype=sh
-    autocmd BufRead,BufNewFile *.vimrc              set filetype=vim
-    autocmd BufRead,BufNewFile *.{nasl,inc}         set filetype=nasl
-    autocmd BufRead,BufNewFile *.{md,mkd,markdown}  set filetype=mkd
-
-    " 根据不同的文件类型做不同的设置
-    "autocmd VimEnter * call W_filetype_setting()
-    autocmd BufEnter  * call W_filetype_setting()
-    nnoremap <Leader>w :call W_filetype_setting()<CR>
-
-    " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
-    autocmd CmdWinEnter : nnoremap <buffer> o <CR>
-
-    " 根据不同的文件类型设置按键映射
-    augroup filetype_autocmd
-        autocmd FileType c,cpp,h,flex,bison,yacc,asm,nasl
-            \ nnoremap <buffer> <SPACE>             :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>|
-            \ nnoremap <buffer> <S-SPACE>           :call W_cscope_back()<CR>|
-            \ nnoremap <buffer> <S-CR>              :Csg .*.*<Left><Left>|
-            \ nnoremap <buffer> <C-CR>              :Csg <C-r>+<CR>|
-            \ nmap     <buffer> <C-LeftMouse>       <SPACE>|
-            \ nmap     <buffer> <C-ScrollWheelUp>   <Leader>fc|
-            \ nmap     <buffer> <C-ScrollWheelDown> <Leader>fs
-        autocmd FileType help
-            \ nnoremap <buffer> <SPACE>             <C-]>|
-            \ nnoremap <buffer> <S-SPACE>           <C-t>|
-            \ nnoremap <buffer> <BS>                <C-t>|
-            \ nnoremap <buffer> q                   :q<CR>|
-            \ set ts=4
-        autocmd FileType vim
-            \ nmap     <buffer> <C-LeftMouse>       <Leader>h|
-            \ nmap     <buffer> <SPACE>             <Leader>h|
-            \ nnoremap <buffer> <S-SPACE>           <C-t>|
-            \ nnoremap <buffer> <BS>                <C-o>|
-            \ nnoremap <buffer> <C-CR>              :<C-r>+<CR>
-        autocmd FileType mkd
-            \ nnoremap <buffer> <F5>                :!mkd_preview.sh %<CR>|
-            \ nnoremap <buffer> <C-t>               :Toch<CR>|
-            \ nnoremap <buffer> o                   A<CR>
-        autocmd FileType qf
-            \ nnoremap <buffer> o                   <CR>|
-            \ nmap     <buffer> <2-LeftMouse>       o|
-            \ nnoremap <buffer> q                   :q<CR>|
-            \ resize 5
-        autocmd FileType man
-            \ nnoremap <buffer> <SPACE>             :Man <C-r>=expand("<cword>")<CR><CR>|
-            \ nnoremap <buffer> <S-SPACE>           <C-o>|
-            \ nmap     <buffer> <2-LeftMouse>       <SPACE>|
-            \ nnoremap <buffer> q                   :q<CR>|
-            \ setlocal ts=8
-    augroup end
-endif
-" }}}1
-
-" GUI设置 {{{1
-if has("gui_running")
-    " 去掉菜单栏、工具栏等
-    set go=
-
-    " 自动复制选区
-    set go+=P
-
-    call W_set_guifont()
-
-    " 设置窗口位置和大小
-    "    winpos 120 0
-    set columns=135
-    set lines=42
-
-    " 设置默认配色方案
-    if s:W_colorscheme_applied == 0
-        set background=dark
-        call W_set_colorscheme("solarized")
-    endif
-
-    " 光标设置 (:help 'guicursor')
-    set guicursor=n-v-c:block-Cursor/lCursor
-    set guicursor+=ve:ver35-Cursor
-    set guicursor+=o:hor50-Cursor
-    set guicursor+=i-ci:ver25-Cursor/lCursor
-    set guicursor+=r-cr:hor20-Cursor/lCursor
-    set guicursor+=sm:block-Cursor
-    set guicursor+=a:blinkon0
-endif
-" }}}1
-
-" cscope设置 {{{1
+" W_cscope_init: 初始化cscope {{{
 " See more:
 "   :help cscope
 "   http://vim.wikia.com/wiki/Cscope
-if has("cscope")
+function! W_cscope_init()
+    if ! has("cscope")
+        return
+    endif
+
     "set csprg=/usr/bin/cscope
     set csprg=cscope
     set csto=0
@@ -1255,6 +1062,7 @@ if has("cscope")
     nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>c  :cs find 
 
     " show result in new window
     nnoremap <Leader>fS :split<CR>:cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -1280,7 +1088,72 @@ if has("cscope")
 
     command! Csu call W_cscope_update_db()
     command! Csl call W_cscope_init_db()
-endif
-" }}}1
+endfunction
+" }}}
+" W_cscope_lookup_define_or_symbol: 使用cscope查询定义或符号{{{
+" 使用 cscope 查询，先查询符号定义，若查到则跳到定义处，
+" 若没有查到，则查询符号引用处并跳到第一个引用的地方。
+function! W_cscope_lookup_define_or_symbol(pattern)
+    let l:msg_bakup = v:errmsg
+    let v:errmsg = ""
+    execute "cs find g " . a:pattern
+    if v:errmsg == ""
+        let v:errmsg = l:msg_bakup
+    else
+        execute "cs find s " . a:pattern
+        let s:W_cscope_is_from_symbol = s:W_TRUE
+    endif
+endfunction
+"}}}
+" W_cscope_back: 针对W_cscope_lookup_define_or_symbol函数的返回{{{
+function! W_cscope_back()
+    if s:W_cscope_is_from_symbol == s:W_TRUE
+        execute "normal \<C-o>"
+        let s:W_cscope_is_from_symbol = s:W_FALSE
+    else
+        execute "normal \<C-t>"
+    endif
+endfunction
+" }}}
+" }}}
+
+call W_vundle_setting()
+call W_basic_setting()
+call W_shortcut_setting()
+call W_gui_setting()
+
+augroup auto_cd
+    autocmd BufEnter * cd %:p:h
+augroup end
+
+augroup wolfwzr_autocmd
+    autocmd BufRead,BufNewFile *.bashrc             set filetype=sh
+    autocmd BufRead,BufNewFile *.vimrc              set filetype=vim
+    autocmd BufRead,BufNewFile *.wsgi               set filetype=python
+    autocmd BufRead,BufNewFile *.{md,mkd,markdown}  set filetype=mkd
+
+    " 打开文件时恢复光标位置
+    autocmd BufReadPost *
+        \ if line("'\"") > 0 && line("'\"") <= line("$") |
+        \   exe "normal g`\"" |
+        \ endif
+
+    " CommandLine Windows <CR>可以被映射成其它用途了，所以使用'o'来执行命令
+    autocmd CmdWinEnter : nnoremap <buffer> o <CR>
+
+    autocmd FileType c,cpp,h,asm,vim,mkd,conf,sh,python,html,xml,css,js,xsl,xslt,flex,bison,yacc
+        \ call W_code_common_setting()
+    autocmd FileType c,cpp,h,flex,bison,yacc,asm,nasl call W_ft_c()
+    autocmd FileType sh     call W_ft_sh()
+    autocmd FileType help   call W_ft_help()
+    autocmd FileType vim    call W_ft_vim()
+    autocmd FileType mkd    call W_ft_mkd()
+    autocmd FileType qf     call W_ft_qf()
+    autocmd FileType man    call W_ft_man()
+    autocmd FileType python call W_ft_python()
+augroup end
+
+" more gui settings (after this config file):
+"   /usr/local/Cellar/macvim/7.4-88/MacVim.app/Contents/Resources/vim/gvimrc
 
 " vim: set ft=vim:

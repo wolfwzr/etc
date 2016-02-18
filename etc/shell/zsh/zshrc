@@ -5,8 +5,8 @@ export ZSH=~wolfwzr/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
-ZSH_THEME="wolf"
+ZSH_THEME="robbyrussell"
+#ZSH_THEME="wolf"
 #ZSH_THEME="random"
 
 DISABLE_UPDATE_PROMPT=true
@@ -67,7 +67,9 @@ bindkey '^_' run-help
 bindkey '^Y' vi-put-before
 bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
-bindkey -s '^E' '^[I#^m'
+#bindkey -s '^E' '^[I#^m'
+#bindkey -s '^o' '^[kA'
+bindkey '^o' up-history
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8

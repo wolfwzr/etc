@@ -35,7 +35,7 @@ nnoremap i           :pageinfo<Return>
 nnoremap <F2>       :emenu Tools.DownThemAll! Tools.Manager<Return>
 
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e  :silent !gvim -p ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return>
+nnoremap <Leader>e  :!/usr/local/bin/gvim ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return><Esc>
 nnoremap <S-Return> :set fullscreen!<Return>
 
 " copy current tab url
@@ -51,65 +51,62 @@ nnoremap C :js util.copyToClipboard('['+ buffer.title + '](' + buffer.URL + ')')
 " (custom search engine using http://mycroftproject.com/submitos.html)
 set defsearch=g
 " search commands
-"command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
-"command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
-"command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
-"command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
-"command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
-"command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
-"command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
-"command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
-"command! -nargs=* gsearch       open https://safesearch.avira.com/#web/result?q=<args>
+command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
+command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
+command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
+command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
+command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
+command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
+command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
+command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
+command! -nargs=* ggsearch      open http://g2.hxgoogle.com/search.jsp?myq=<args>
 "command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
 
 " Add Search Engine Using firefox bookmark keyword search
-silent! bmark -keyword="jd"  -title="jd search" "http://search.jd.com/Search?keyword=%s&enc=utf-8"
-silent! bmark -keyword="yd"  -title="youdao search" "http://dict.youdao.com/search?q=%s"
-silent! bmark -keyword="bd"  -title="baidu search" "https://www.baidu.com/s?ie=utf-8&wd=%s"
-silent! bmark -keyword="tb"  -title="taobao search" "http://s.taobao.com/search?q=%s"
-silent! bmark -keyword="ip"  -title="ip search" "http://www.ip138.com/ips138.asp?ip=%s&action=2"
-silent! bmark -keyword="ph"  -title="phone number search" "http://www.ip138.com:8080/search.asp?action=mobile&mobile=%s"
-silent! bmark -keyword="dht" -title="shousibaocai dht search" "http://www.cilizhushou.com/search/%s/"
-"silent! bmark -keyword="g"   -title="google search" "https://g.wen.lu/#newwindow=1&q=%s"
-"silent! bmark -keyword="g"   -title="google search" "https://www.ko50.com/search?newwindow=1&gws_rd=ssl&q=%s"
-"silent! bmark -keyword="g"   -title="google search" "https://goge.ml/#newwindow=1&q=%s"
-silent! bmark -keyword="g"   -title="google search" "http://g.hxgoogle.com/search.jsp?myq=%s"
-silent! bmark -keyword="tk"  -title="torrent search" "http://www.torrentkitty.org/search/%s/"
+"silent bmark -title="jd search" -keyword="jd" http://search.jd.com/Search?keyword=%s&enc=utf-8
+"silent bmark -title="youdao dictionary search" -keyword="yd" http://dict.youdao.com/search?q=%s
+"silent bmark -title="baidu search" -keyword="bd" https://www.baidu.com/s?ie=utf-8&wd=%s
+"silent bmark -title="taobao search" -keyword="tb" http://s.taobao.com/search?q=%s
+"silent bmark -title="ip search" -keyword="ip" http://www.ip138.com/ips138.asp?ip=%s&action=2
+"silent bmark -title="phone number search" -keyword="ph" http://www.ip138.com:8080/search.asp?action=mobile&mobile=%s
+"silent bmark -title="shousibaocai dht search" -keyword="ssbc" http://www.shousibaocai.com/search/%s/1
+"silent bmark -title="baidu yun pan search" -keyword="bdpan" %s site:pan.baidu.com
+"silent bmark -title="gfsoso search" -keyword="gf" http://www.gfsoso.com/?q=%s
 
-nnoremap sb :tabopen bd 
-nnoremap sj :tabopen jd 
-nnoremap st :tabopen tb 
-nnoremap sy :tabopen yd 
-nnoremap si :tabopen ip 
-nnoremap ss :tabopen dht 
-nnoremap sp :tabopen b site:pan.baidu.com 
-nnoremap sg :tabopen g 
+nnoremap sb :tab bdsearch 
+nnoremap sj :tab jdsearch 
+nnoremap st :tab tbsearch 
+nnoremap sy :tab ydsearch 
+nnoremap si :tab ipsearch 
+nnoremap sm :tab mbsearch 
+nnoremap ss :tab ssbcsearch 
+nnoremap sp :tab bdpansearch 
+nnoremap sg :tab ggsearch 
 
 " Quick url access or search using current search engine
 " p open url from clipboard in current tab
 " P open url from clipboard in new tab
 " nnoremap V          p
-"nnoremap v          P
-nnoremap v          <C-c><C-l><C-v><Enter>
+" nnoremap v          P
 
-colorscheme default
+"colorscheme default
 " modify colors for default scheme
-highlight Normal color: white; background: #152F2C;
-highlight CmdLine color: white; background: #112624;
-highlight CompItem[selected] background: #1D4341; box-shadow: 0px 0px 1px #377E7A;
-highlight CompTitle font-weight: bold; background: #124342; color: white;
-highlight CompTitle>* font-weight: bold; background: #124342; color: white;
-highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0; color: #58C3BD;
-highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
-highlight InfoMsg color: yellow; background: transparent;
-highlight MoreMsg color: green; background: transparent;
-highlight Question color: green; background: transparent; font-weight: bold;
-highlight WarningMsg color: red; background: transparent;
-highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
-highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
-highlight Object color: #6CBD7B
-highlight Function color: #B2AE64;
-colorscheme default
+"highlight Normal color: white; background: #152F2C;
+"highlight CmdLine color: white; background: #112624;
+"highlight CompItem[selected] background: #1D4341; box-shadow: 0px 0px 1px #377E7A;
+"highlight CompTitle font-weight: bold; background: #124342; color: white;
+"highlight CompTitle>* font-weight: bold; background: #124342; color: white;
+"highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0; color: #58C3BD;
+"highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
+"highlight InfoMsg color: yellow; background: transparent;
+"highlight MoreMsg color: green; background: transparent;
+"highlight Question color: green; background: transparent; font-weight: bold;
+"highlight WarningMsg color: red; background: transparent;
+"highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
+"highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
+"highlight Object color: #6CBD7B
+"highlight Function color: #B2AE64;
+"colorscheme default
 
 " press <C-]> to complete
 iabbrev ww wolfwzr
