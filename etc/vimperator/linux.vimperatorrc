@@ -28,29 +28,54 @@ nnoremap <C-v>      :tab    ydsearch <C-v><Enter>
 nnoremap V          :tab  ssbcsearch <C-v><Enter>
 nnoremap <C-S-v>    :tab bdpansearch <C-v><Enter>
 
+nnoremap <Leader><Leader>   /<C-v><Enter>
+
 " Ctrl-Shift-n - next tabgroup
 " Ctrl-Shift-p - prev tabgroup
 " Ctrl-Shift-a - addons
 " Ctrl-Shift-y - downloads
 " b            - buffer list
 
-" <C-i> edit in external gvim
+" shortcut in edit area
+"
+" <C-a> Jump to begining of field
+" <C-e> Jump to end of field
+"
+" <C-u> Delete all chars before current cursor
+" <C-k> Delete all chars after current cursor
+"
+" <C-h> Delete a char before current cursor
+" <C-d> Delete a char after current cursor
+"       Use <C-l> instead <C-d>
 inoremap <C-l>      <Del>
-inoremap <C-[>      <Left>
-inoremap <C-]>      <Right>
-inoremap <C-b>      <Home>
-inoremap <C-e>      <End>
-
-" go to https
-nnoremap gs  		<C-l><Left>https://<Return>
+"
+" <C-w> Delete a word before current cursor
+" <C-d> map to Delete a word after current cursor
+inoremap <C-d>      <C-t>dwi
+"
+inoremap <C-f>      <Right>
+inoremap <C-b>      <Left>
+" move cursor to next word
+inoremap <C-S-f>    <C-t>wa
+" move cursor to prev word
+inoremap <C-S-b>    <C-t>bi
+"
+" <C-z> Undo delete
+"
+" <C-i> call the external text editor, when in Insert and TextArea modes.
+"       external text editor can be set by :set editor="gvim -f", default is "gvim -f"
+" <C-]> Expand an Insert-mode abbreviation
+" <C-t> enter textarea mode, like a sample vi normal mode, can use vi comands like h/j/k/l ...
 
 " A-Enter in addresss bar to open url in new tab
 inoremap <C-Enter>  <A-Enter>
 " Select All in insert mode
-inoremap <C-a>      <C-Home><S-C-End>
+inoremap <C-S-a>      <C-Home><S-C-End>
+" copy all in insert mode
+inoremap <C-S-c>      <C-Home><S-C-End><C-c><Right>
 
-cnoremap <C-j>      <Right>
-cnoremap <C-k>      <Left>
+cnoremap <C-f>      <Right>
+cnoremap <C-b>      <Left>
 cnoremap <C-l>      <Del>
 
 cnoremap <C-i>      <Down>
@@ -58,12 +83,15 @@ cnoremap <C-o>      <Up>
 cnoremap <C-n>      <S-Down>
 cnoremap <C-p>      <S-Up>
 
-cnoremap <C-b>      <Home>
-cnoremap <C-e>      <End>
+" Select All in command line mode
+cnoremap <C-S-a>      <C-Home><S-C-End>
+" copy all in command line mode"
+cnoremap <C-S-c>      <C-Home><S-C-End><C-c><Right>
 
-" Select All in command mode
-cnoremap <C-a>      <C-Home><S-C-End>
-" Repeat last vimperator command
-nnoremap <C-a>      :<Up><Return>
+" DANGER: Repeat last vimperator command
+" nnoremap <C-a>      :<Up><Return>
+
+" go to https
+nnoremap gs  		<C-l><Left>https://<Return>
 
 " vim: set ft=vim:
