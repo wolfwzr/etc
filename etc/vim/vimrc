@@ -9,7 +9,9 @@ let s:W_colorscheme_applied = 0
 let s:W_last_filetype = ""
 let s:W_last_insert_im_status = 0
 
-let s:W_last_mark_idx = 5
+let s:W_MarkColorPattern = {}
+let s:syn_num = 12
+let s:W_last_mark_idx = 12
 let s:W_cscope_is_from_symbol = s:W_FALSE
 
 let mapleader=' '
@@ -98,7 +100,8 @@ endfunction
 "用法，先创建一个快捷键Ctrl+Enter来执行当前行命令
 " nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
 " 再查找出当前系统字体，linux下可运行如下命令：
-" fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq| sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
+" fc-list  | awk -F ':' '{print $2}' | sed 's/,/\n/g' | sort | uniq | 
+"   sed 's/^ *//g;s/ *$/\ 14/g;s/ /\\ /g;s/^/set guifont=/g' > /tmp/pwall
 " 我是通过man -k font,在里面找到fc-list命令的。
 function! W_font_review()
     nmap <C-Enter> j$v^<S-Enter>:<S-Enter><CR>
@@ -142,21 +145,29 @@ endfunction
 " W_set_fcitx: Insert/Normal模式切换时自动切换fcitx状态{{{
 function! W_set_fcitx(event)
     if a:event == "InsertEnter"
-        if s:W_last_insert_im_status == 1       " fcitx is inactive
-            call system("fcitx-remote -c")      " inactive fcitx
-        elseif s:W_last_insert_im_status == 2   " fcitx is active
-            call system("fcitx-remote -o")      " active fcitx
+        if s:W_last_insert_im_status == 1       " fcitx is inactive in laststatus
+            echom "make fcitx inactive"
+            call system("fcitx-remote -c")      " make fcitx inactive
+        elseif s:W_last_insert_im_status == 2   " fcitx is active in laststatus
+            echom "make fcitx active"
+            call system("fcitx-remote -o")      " make fcitx active
         endif
     elseif a:event == "InsertLeave"
         if executable("fcitx-remote")
-            let s:W_last_insert_im_status =
-                \ system("fcitx-remote | tr -d '\r\n'")
+            let s:W_last_insert_im_status = system("fcitx-remote | tr -d '\r\n'")
         endif
         if s:W_last_insert_im_status == 2       " fcitx is active
+            echom "make fcitx inactive"
             call system("fcitx-remote -c")      " inactive fcitx
         endif
     endif
 endfunction
+"}}}
+" W_OpenDirOfCurFile: 打开当前文件所在目录 {{{
+function! W_OpenDirOfCurFile()
+    call system('xdg-open '.expand('%:p:h'))
+endfunction
+nnoremap <S-F8> :call W_OpenDirOfCurFile()<CR>
 "}}}
 " }}}
 " 通用函数 {{{
@@ -195,7 +206,7 @@ function! W_basic_setting()
     " 使用powerline代替
     hi StatusLine cterm=bold gui=bold
     set statusline=
-        \%F\ %r\ %m\ %q
+        \%f\ %r\ %m\ %q
         \%=
         \[%Y,%{&fileencoding},%{&fileformat}]
         \\ [%l,%02v]\ [%L,%02P]
@@ -218,8 +229,10 @@ function! W_basic_setting()
     if has("macunix")
         set noimdisable
     elseif has("unix")
-        au InsertEnter * call W_set_fcitx("InsertEnter")
-        au InsertLeave * call W_set_fcitx("InsertLeave")
+        augroup wolf_fcitxswitch
+            au InsertEnter * call W_set_fcitx("InsertEnter")
+            au InsertLeave * call W_set_fcitx("InsertLeave")
+        augroup end
     endif
     "}}}
     " 鼠标设置{{{
@@ -233,7 +246,7 @@ function! W_basic_setting()
     " Ctrl+右键  - Ctrl+t
     " Shift+左键 - 拓展选区
     " Shift+右键 - 搜索单词
-    set mousemodel=popup
+    set mousemodel=popup_setpos
     " 可用作 keymap 的鼠标动作
     "
     " ScrollWheel: (help scroll-mouse-wheel)
@@ -273,7 +286,8 @@ function! W_basic_setting()
     "   1. 当前行被 mark.vim 加背景色的单词背景变全黑，非常难看
     "   2. 影响VIM效率
     " 因此取消了CursorLine
-    set nocursorline
+    "set nocursorline
+    set cursorline
     " }}}
 endfunction
 " }}}
@@ -309,14 +323,15 @@ function! W_shortcut_setting()
         nnoremap <Leader>7 :tabnext 7<CR>
         nnoremap <Leader>8 :tabnext 8<CR>
         nnoremap <Leader>9 :tabnext 9<CR>
-        nnoremap <Leader>t :tabnew<CR>
+        "nnoremap <Leader>T :tabnew<CR>
         " Windows
         "nnoremap <Leader>j <C-w>j
         "nnoremap <Leader>k <C-w>k
         "nnoremap <Leader>h <C-w>h
         "nnoremap <Leader>l <C-w>l
         " Buffer
-        nmap <Leader><Leader>   :ls<CR>:b! 
+        "nmap <Leader><Leader>   :ls<CR>:b! 
+        nmap <Leader><Leader>   :CtrlPBuffer<CR>
         nnoremap <Leader>p      :bprev!<CR>
         nnoremap <Leader>n      :bnext!<CR>
         nnoremap <Leader><Del>  :bdelete! %<CR>
@@ -355,14 +370,16 @@ function! W_shortcut_setting()
     " }}}
     " Buffer Grep {{{
     " 在当前Buffer中Grep
-    nnoremap <Leader>g :g/\<<C-R>=expand("<cword>")<CR>\>/p<CR>
-    vnoremap <Leader>g :<C-u>g/<C-R>=W_get_visual_selected_text()<CR>/p<CR>
-
+    "nnoremap <Leader>g :g/\<<C-R>=expand("<cword>")<CR>\>/p<CR>
+    "vnoremap <Leader>g :<C-u>g/<C-R>=W_get_visual_selected_text()<CR>/p<CR>
+    nnoremap <Leader>g :call W_grep('\<<C-R>=expand("<cword>")<CR>\>')<CR>
+    vnoremap <Leader>g :<C-u>call W_grep('<C-R>=W_get_visual_selected_text()<CR>')<CR>
     command! -nargs=1 Grep call W_grep("<args>")
-    nnoremap <Leader>G :call W_grep('\<<C-R>=expand("<cword>")<CR>\>')<CR>
-    vnoremap <Leader>G :<C-u>call W_grep('<C-R>=W_get_visual_selected_text()<CR>')<CR>
+    nnoremap <Leader>/ :Grep 
+
     " 在所有Buffer中Grep
     " nnoremap <Leader>G :Bgrep <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>G :Ack <C-R>=expand("<cword>")<CR><CR>
     " }}}
     " }}}
     " cmdline模式下的光标移动 {{{
@@ -395,22 +412,50 @@ function! W_shortcut_setting()
     " Mark 当前单词 {{{
     nmap <Leader>m :call W_mark(expand("<cword>"), 1)<CR>
     vmap <Leader>m :call W_mark(W_get_visual_selected_text(), 0)<CR>
+    "nmap <Leader>m :call MultipleSearch#MultipleSearch(0, expand("<cword>"))<CR>
+    "vmap <Leader>m :call MultipleSearch#MultipleSearch(0, W_get_visual_selected_text())<CR>
     "}}}
     " 删除当前 buffer {{{
     nmap <Leader><BS> :bdelete %<CR>
     "}}}
     " 其它 {{{
     nmap <Leader>c :echo synIDattr(synID(line("."), col("."), 1), "name")<CR>
+
     " 快速预览当前光标下的 ColorScheme
     "noremap <Leader>C :color <C-r>=expand("<cWORD>")<CR><CR>
 
-    nmap <Leader>r :! 
+    " 自动调整窗口大小
+    nmap <Leader><Return> :call W_auto_set_window_size()<CR>:silent !center-current-window.sh<CR>
 
+    "nmap <Leader>r :! 
     nmap <Leader>w :w<CR>
-
     nmap <Leader>q :q<CR>
     nmap <Leader>z :qa!<CR>
-    "}}}"
+
+    " 查看QuickFix List的上一项/下一项
+    " Tips:
+    "   :colder 查看上一个quickfix窗口
+    "   :cnewer 查看下一个quickfix窗口
+    nnoremap <F2>   :belowright copen<CR>
+    nnoremap <F3>   :cprev<CR>
+    nnoremap <F4>   :cnext<CR>
+
+    nnoremap <S-F2> :cclose<CR>
+    nnoremap <S-F3> :colder<CR>
+    nnoremap <S-F4> :cnewer<CR>
+
+    "如果带数字进行上下移动，如5j, 5k，则保留原有jk
+    "否则使用gj/gk代替
+    noremap <silent> <expr> j (v:count == 0 ? 'gj' : 'j')
+    noremap <silent> <expr> k (v:count == 0 ? 'gk' : 'k')
+
+    " 插入模式下Esc快速返回命令模式
+    augroup FastEsc
+        autocmd InsertEnter * set timeoutlen=50
+        autocmd InsertLeave * set timeoutlen=1000
+    augroup end
+
+    "}}}
 endfunction
 " }}}
 " W_gui_setting: GUI设置 {{{
@@ -436,13 +481,17 @@ function! W_gui_setting()
 
     " 设置窗口位置和大小
     "    winpos 120 0
-    set columns=108
-    set lines=32
+    "set columns=108
+    "set lines=32
+    call W_auto_set_window_size()
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
+        "set background=light
+        "call W_set_colorscheme("colorzone")
         set background=dark
         call W_set_colorscheme("solarized")
+        "call W_set_colorscheme("tango2")
     endif
 
     " 光标设置 (:help 'guicursor')
@@ -453,6 +502,27 @@ function! W_gui_setting()
     set guicursor+=r-cr:hor20-Cursor/lCursor
     set guicursor+=sm:block-Cursor
     set guicursor+=a:blinkon0
+
+    "鼠标设置 （:help 'mouseshape'）
+    "指定鼠标在选择文本时的形状
+    "   beam: I形鼠标
+    "   pencil: 铅笔形状鼠标
+    set mouseshape+=n:beam,v:beam
+
+    "右键菜单
+    aunmenu PopUp.Select\ Word
+    aunmenu PopUp.Select\ Sentence
+    aunmenu PopUp.Select\ Paragraph
+    aunmenu PopUp.Select\ Line
+    aunmenu PopUp.Select\ Block
+
+    amenu   PopUp.-Oper- :
+    amenu   PopUp.&Back             <Leader>b
+    amenu   PopUp.&Highlight        <Leader>m
+    amenu   PopUp.-Goto- :
+    amenu   PopUp.Goto\ &Define     <CR>
+    amenu   PopUp.Goto\ &References <Leader>fs
+    amenu   PopUp.Goto\ &Caller     <Leader>fc
 
     if has("macunix")
         "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
@@ -466,9 +536,13 @@ function! W_gui_setting()
         set guifontwide=Kaiti\ SC\ Regular
     else
         "YaHei Consolas Hybrid字体不知为何会使powerline的状态栏占用命令栏
-        "set guifont=YaHei\ Consolas\ Hybrid\ 13
-        "set guifont=Source\ Code\ Pro\ 13
-        set guifont=Courier\ 10\ Pitch\ 13
+        "set guifont=YaHei\ Consolas\ Hybrid\ 12
+        "set guifont=Source\ Code\ Pro\ 12
+        "set guifont=Courier\ 10\ Pitch\ 13
+        " Monaco + YaHei
+        set guifont=Microsoft\ YaHei\ 11
+        " 单独设置中文字体
+        set guifontwide=PingFang\ SC\ 11
     endif
 endfunction
 "}}}
@@ -493,10 +567,10 @@ function! W_set_colorscheme(color)
         return
     endif
 
-    colorscheme colorzone
-    highlight StatusLine guibg=#DBDFD7
-    highlight TabLineFill guifg=#EFF0F1
-    return
+    "colorscheme colorzone
+    "highlight StatusLine guibg=#DBDFD7
+    "highlight TabLineFill guifg=#EFF0F1
+    "return
 
     let g:W_color_scheme = a:color
 
@@ -575,113 +649,142 @@ function! W_set_colorscheme(color)
     "}}}
 
     " 调整配色方案{{{
-    if &background != 'dark'
-        " 以下调整均针对 dark 类主题
-        " light 类主题很少用，所以不进行调整
-        return
-    endif
-
-    if g:W_color_scheme == "solarized"
-        hi Normal   guibg=#00222C guifg=#A0B5B7
-        "hi Normal   guibg=#122927 guifg=#A0B5B7
-        hi Function gui=bold guifg=#2AA198
-        hi Comment  guifg=#606F83
-        hi Folded   gui=bold
-    elseif g:W_color_scheme == "gruvbox"
-        hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
-        "hi Normal guibg=#303030
-        hi String guibg=#373A17
-        "hi Normal  guibg=#2D2C25
-        "hi Normal  guibg=#252D2B
-        hi Normal  guibg=#18261D
-    elseif g:W_color_scheme == "neon"
-        hi Folded  guibg=#003040 guifg=Grey
-        hi Comment guifg=#909090
-        hi NonText guibg=#282828
-        "hi String guifg=#80BADF guibg=#2A3A45
-    elseif g:W_color_scheme == "yeller"
-        hi Normal   guibg=#16241B
-        hi Function guifg=#73BD93
-    elseif g:W_color_scheme == "two2tango"
-        hi Normal   guibg=#122927
-        hi NonText  guibg=#122927
-    endif
-
-    if has("gui_running")
-        let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
-        let l:normal_fg = synIDattr(hlID("Normal"), "fg#", "gui")
-
-        " LineNr/CursorLineNr
-        execute 'hi LineNr       guibg=' . W_color_modify(l:normal_bg, 'add', 0x6)
-                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x70)
-        execute 'hi CursorLineNr guibg=' . l:normal_bg . ' gui=none'
-                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x90)
-
-        " StatusLine/StatusLineNC
-        execute 'hi StatusLine   gui=none'
-                              \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x1D)
-                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x88)
-        execute 'hi StatusLineNC gui=none'
-                              \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x10)
-                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x70)
-
-        execute 'hi VertSplit    guibg=' . W_color_modify(l:normal_bg, 'add', 0x1A)
-                              \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x45)
-
-        execute 'hi Function     gui=bold'
-        hi! link vimFunction Function
-        execute 'hi Constant     guibg=' . W_color_modify(l:normal_bg, 'add', 0xA)
-
-        " SpecialKey/Conceal
-        " SpecialKey for chars setting by (:set listchars)
-        execute 'hi SpecialKey gui=bold guibg=' . l:normal_bg
-                  \ ' guifg=' . W_color_modify(l:normal_bg, 'add', 0x48)
-        " Conceal for indentline plugin
-        hi! link Conceal SpecialKey
-
-        " Folded
-        execute 'hi Folded guibg=' . W_color_modify(l:normal_bg, 'add', 0x20)
-
-        " Pmenu/PmenuSel/ColorColumn
-        "hi! link Pmenu LineNr
-        "hi! link PmenuSel Cursor
-        execute 'hi Pmenu gui=NONE guibg=' . W_color_modify(l:normal_bg, "add", 0x10)
-                                \ 'guifg=' . W_color_modify(l:normal_fg, 'sub', 0x25)
-        execute 'hi PmenuSel guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
-                          \ 'guifg=' . W_color_modify(l:normal_fg, 'add', 0x30)
-        hi! link ColorColumn Pmenu
-
-        " Visual
-        hi Visual NONE
-        execute 'hi Visual guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
-
-        " TabLine/TabLineSel/TabLineFill
-        let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x20)
-        execute 'hi TabLine     gui=none guibg=' . l:tmp_color . ' guifg=' . l:normal_fg
-        execute 'hi TabLineFill gui=none guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
-        execute 'hi TabLineSel  gui=bold guibg=' . l:normal_bg . ' guifg=#D2A458'
-
-        " Search/Cursor
-        "hi Search NONE
-        "hi Search gui=reverse
-        let l:tmp_color = synIDattr(hlID("String"), "fg#", "gui")
-        if l:tmp_color != ""
-            execute 'hi Search gui=NONE guifg=#222222 guibg=' . l:tmp_color
+    if &background == 'light'
+        " 针对 light 类主题
+        if g:W_color_scheme == "colorzone"
+            hi Normal       guibg=#F2F2F3
+            hi Special      guibg=#F2F2F3
+            hi SpecialKey   guifg=#B7B8BA
+            hi NonText      guifg=#F2F2F3 guibg=#F2F2F3
+            hi StatusLine   guifg=white   guibg=#8F92E6
+            hi StatusLineNR guifg=white   guibg=#CBE68F
+            hi LineNr       guibg=#EAEAEB guifg=#157C10
+            hi CursorLine   none
+            hi CursorLine   guibg=#E0E0E1
+            hi CursorLineNr guibg=#DBDBDC guifg=#157C10
+            hi Visual       none
+            hi Visual       term=reverse ctermbg=10 guibg=#DBDBDC
         endif
-        hi Cursor NONE
-        hi Cursor gui=reverse
-    else
-        hi Pmenu    ctermbg=0 ctermfg=7
-        hi PmenuSel ctermbg=1 ctermfg=8
+    elseif &background == 'dark'
+        " 针对 dark 类主题
+        if g:W_color_scheme == "solarized"
+            hi Normal   guibg=#00303C guifg=#A5C8C8
+            hi Comment  guifg=#6E7F96
+            hi Folded   gui=bold
+            hi Function  guifg=#5ED25C
+            hi Statement guifg=#95C807
+            hi PreProc   guifg=#D24B16
+            hi cPreCondit guifg=#D24B16
+            hi Type      guifg=#D29E00
+            hi Constant  guifg=#64BEB5 guibg=#114350
+            hi! link Special Constant
+            hi helpHeader guifg=yellow
+        elseif g:W_color_scheme == "gruvbox"
+            hi cFunctions gui=bold guifg=#ffcc88 cterm=bold ctermfg=DarkBlue
+            "hi Normal guibg=#303030
+            hi String guibg=#373A17
+            "hi Normal  guibg=#2D2C25
+            "hi Normal  guibg=#252D2B
+            hi Normal  guibg=#18261D
+        elseif g:W_color_scheme == "neon"
+            hi Folded  guibg=#003040 guifg=Grey
+            hi Comment guifg=#909090
+            hi NonText guibg=#282828
+            "hi String guifg=#80BADF guibg=#2A3A45
+        elseif g:W_color_scheme == "yeller"
+            hi Normal   guibg=#16241B
+            hi Function guifg=#73BD93
+        elseif g:W_color_scheme == "two2tango"
+            hi Normal   guibg=#122927
+            hi NonText  guibg=#122927
+        elseif g:W_color_scheme == "tango2"
+            hi Normal       guibg=#414C5A
+            hi LineNr       guibg=#424E5C
+            hi Identifier   guifg=#1ECCEA
+            "hi CursorLineNr guibg=#414C5A
+            hi Statement    guifg=#7DB2DA
+            hi shFunctionTwo guifg=#9BCF8D
+            hi NonText      guifg=grey50
+            hi SpecialKey   guifg=#485564
+        endif
 
-        hi Visual NONE
-        hi Visual cterm=reverse term=reverse
+        if has("gui_running")
+            let l:normal_bg = synIDattr(hlID("Normal"), "bg#", "gui")
+            let l:normal_fg = synIDattr(hlID("Normal"), "fg#", "gui")
 
-        hi Search NONE
-        hi Search term=reverse cterm=reverse
+            " LineNr/CursorLineNr/CursorLine
+            execute 'hi CursorLine   guibg=' . W_color_modify(l:normal_bg, 'add', 0x12)
+            execute 'hi CursorLineNr guibg=' . W_color_modify(l:normal_bg, 'add', 0x12)
+                                  \ 'guifg=' . W_color_modify(l:normal_fg, 'add', 0x10)
+            execute 'hi LineNr       guibg=' . W_color_modify(l:normal_bg, 'add', 0x10)
+                                  \ 'guifg=' . W_color_modify(l:normal_fg, 'sub', 0x20)
 
-        hi Cursor NONE
-        hi Cursor term=reverse cterm=reverse
+            " StatusLine/StatusLineNC
+            execute 'hi StatusLine   gui=none'
+                                  \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x1D)
+                                  \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x88)
+            execute 'hi StatusLineNC gui=none'
+                                  \ 'guibg=' . W_color_modify(l:normal_bg, 'add', 0x10)
+                                  \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x70)
+
+            execute 'hi VertSplit    guibg=' . W_color_modify(l:normal_bg, 'add', 0x1A)
+                                  \ 'guifg=' . W_color_modify(l:normal_bg, 'add', 0x45)
+
+            "execute 'hi Function     gui=bold'
+            hi! link vimFunction Function
+            execute 'hi Constant     guibg=' . W_color_modify(l:normal_bg, 'add', 0xA)
+
+            " SpecialKey/Conceal
+            " SpecialKey for chars setting by (:set listchars)
+            execute 'hi SpecialKey gui=bold guibg=' . l:normal_bg
+                      \ ' guifg=' . W_color_modify(l:normal_bg, 'add', 0x48)
+            " Conceal for indentline plugin
+            hi! link Conceal SpecialKey
+
+            " Folded
+            execute 'hi Folded guibg=' . W_color_modify(l:normal_bg, 'add', 0x20)
+
+            " Pmenu/PmenuSel/ColorColumn
+            "hi! link Pmenu LineNr
+            "hi! link PmenuSel Cursor
+            execute 'hi Pmenu gui=NONE guibg=' . W_color_modify(l:normal_bg, "add", 0x10)
+                                    \ 'guifg=' . W_color_modify(l:normal_fg, 'sub', 0x25)
+            execute 'hi PmenuSel guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
+                              \ 'guifg=' . W_color_modify(l:normal_fg, 'add', 0x30)
+            hi! link ColorColumn Pmenu
+
+            " Visual
+            hi Visual NONE
+            execute 'hi Visual guibg=' . W_color_modify(l:normal_bg, 'add', 0x25)
+
+            " TabLine/TabLineSel/TabLineFill
+            let l:tmp_color = W_color_modify(l:normal_bg, 'add', 0x20)
+            execute 'hi TabLine     gui=none guibg=' . l:tmp_color . ' guifg=' . l:normal_fg
+            execute 'hi TabLineFill gui=none guibg=' . l:tmp_color . ' guifg=' . l:tmp_color
+            execute 'hi TabLineSel  gui=bold guibg=' . l:normal_bg . ' guifg=#D2A458'
+
+            " Search/Cursor
+            "hi Search NONE
+            "hi Search gui=reverse
+            let l:tmp_color = synIDattr(hlID("String"), "fg#", "gui")
+            if l:tmp_color != ""
+                execute 'hi Search gui=NONE guifg=#222222 guibg=' . l:tmp_color
+            endif
+            hi Cursor NONE
+            hi Cursor gui=reverse
+        else
+            hi Pmenu    ctermbg=0 ctermfg=7
+            hi PmenuSel ctermbg=1 ctermfg=8
+
+            hi Visual NONE
+            hi Visual cterm=reverse term=reverse
+
+            hi Search NONE
+            hi Search term=reverse cterm=reverse
+
+            hi Cursor NONE
+            hi Cursor term=reverse cterm=reverse
+        endif
     endif
 
     " }}}
@@ -732,8 +835,13 @@ endfunction
 " Use Bgrep command(in Bgrep plugin) to grep with all buffers
 function! W_grep(word)
     call setqflist([])
-    silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{'type': 'l', 'col':1, 'bufnr': winbufnr('.'), 'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
-    botright cw
+    "搜索当前buffer（未保存的也可以）
+    silent execute "g/" . a:word . "/if &buftype == '' | call setqflist([{"
+                 \ "'type': 'l', 'col':1, 'bufnr': winbufnr('.'), "
+                 \ "'lnum': line('.'), 'text':getline('.')}], 'a') | endif"
+    "execute "grepadd " . a:word . " " . %
+    "botright cw
+    belowright copen
 endfunction
 " }}}
 " W_vundle_setting: Vundle及插件设置 {{{
@@ -751,16 +859,8 @@ function! W_ft_c()
     set foldmethod=syntax
 
     "setlocal cc=100
-    highlight WarningCols gui=undercurl
-    match WarningCols /\%>100v/
-
-    " 查看QuickFix List的上一项/下一项
-    " Tips:
-    "   :colder 查看上一个quickfix窗口
-    "   :cnewer 查看下一个quickfix窗口
-    nnoremap <F2> :botright cw<CR>
-    nnoremap <F3> :cp<CR>
-    nnoremap <F4> :cn<CR>
+    "highlight WarningCols gui=undercurl
+    "match WarningCols /\%>100v/
 
     call W_cscope_init()
     call W_C_replace()
@@ -778,7 +878,7 @@ function! W_ft_c()
     nnoremap <Leader>M8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
     nnoremap <Leader>M9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 
-    nnoremap <buffer> <Leader>o
+    nnoremap <buffer> <CR>
         \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
     nnoremap <buffer> <C-LeftMouse>
         \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
@@ -808,9 +908,10 @@ endfunction
 " }}}
 " W_ft_help(){{{
 function! W_ft_help()
+    nnoremap <buffer> <CR> <C-]>
     nnoremap <buffer> <BS> <C-t>
     nnoremap <buffer> q    :q<CR>
-    set ts=4
+    set ts=8
 endfunction
 " }}}
 " W_ft_sh(){{{
@@ -825,6 +926,7 @@ function! W_ft_vim()
     set foldmethod=marker
     iunmap "
     inoremap < <><Left>
+    nnoremap <buffer> <Leader>h     :help <C-R>=expand("<cword>")<CR><CR>
     nnoremap <buffer> <F1>          :help <C-R>=expand("<cword>")<CR><CR>
     nnoremap <buffer> <S-F1>        :help <C-R>=expand("<cWORD>")<CR><CR>
     nnoremap <buffer> <C-LeftMouse> :help <C-R>=expand("<cword>")<CR><CR>
@@ -835,7 +937,7 @@ function! W_ft_mkd()
     setlocal foldenable
     setlocal nonu
     setlocal norelativenumber
-    call W_set_colorscheme("two2tango")
+    "call W_set_colorscheme("two2tango")
 
     nnoremap <buffer> <F5>  :!mkd_preview.sh %<CR>
     nnoremap <buffer> <C-t> :Toch<CR>
@@ -846,8 +948,13 @@ endfunction
 function! W_ft_qf()
     nnoremap <buffer> o             <CR>
     nmap     <buffer> <2-LeftMouse> <CR>
+    nnoremap <buffer> p             <CR>:belowright copen<CR>
+    nmap     <buffer> j             jp
+    nmap     <buffer> k             kp
     nnoremap <buffer> q             :q<CR>
-    resize 5
+    nnoremap <buffer> <C-p>         :colder<CR>
+    nnoremap <buffer> <C-n>         :cnewer<CR>
+    "resize 15
 endfunction
 " }}}
 " W_ft_man(){{{
@@ -860,29 +967,57 @@ endfunction
 
 " }}}
 " 专用函数 {{{
+" W_InitMarkColor {{{
+" 注意，将颜色定义放到当前 colorscheme.vim 中去
+function! W_InitMarkColor()
+    " 高亮的颜色，添加颜色时记得要更新s:syn_num的初始值"
+    hi W_MarkWord0  ctermbg=Cyan    ctermfg=Black guibg=#EA8E8E guifg=Black
+    hi W_MarkWord1  ctermbg=Green   ctermfg=Black guibg=#8EEAEA guifg=Black
+    hi W_MarkWord2  ctermbg=Yellow  ctermfg=Black guibg=#EABC8E guifg=Black
+    hi W_MarkWord3  ctermbg=Red     ctermfg=Black guibg=#8EBCEA guifg=Black
+    hi W_MarkWord4  ctermbg=Magenta ctermfg=Black guibg=#EAEA8E guifg=Black
+    hi W_MarkWord5  ctermbg=Blue    ctermfg=White guibg=#8E8EEA guifg=Black
+    hi W_MarkWord6  ctermbg=Cyan    ctermfg=Black guibg=#BCEA8E guifg=Black
+    hi W_MarkWord7  ctermbg=Green   ctermfg=Black guibg=#BC8EEA guifg=Black
+    hi W_MarkWord8  ctermbg=Yellow  ctermfg=Black guibg=#8EEA8E guifg=Black
+    hi W_MarkWord9  ctermbg=Red     ctermfg=Black guibg=#EA8EEA guifg=Black
+    hi W_MarkWord10 ctermbg=Magenta ctermfg=Black guibg=#8EEABC guifg=Black
+    hi W_MarkWord11 ctermbg=Blue    ctermfg=White guibg=#EA8EBC guifg=Black
+
+    "hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
+    "hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
+    "hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
+    "hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
+    "hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
+    "hi W_MarkWord5 ctermbg=Blue    ctermfg=White guibg=#9999FF guifg=Black
+endfunction
+"}}}
+
 " W_mark: 高亮单词，用于替换Mark插件（Mark插件性能不行）{{{
 function! W_mark(str, is_a_word)
-    let l:syn_num = 6
-	let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
-    if 0 == match(l:cur_syn, "W_MarkWord")
-        "let s:W_last_mark_idx = (s:W_last_mark_idx + l:syn_num - 1) % l:syn_num
-        execute 'syn match none /\<' . a:str . '\>/'
-    else " Choose a color and mark a:str
-        " 高亮的颜色，添加颜色时记得要更新l:syn_num的初始值"
-        hi W_MarkWord0 ctermbg=Cyan    ctermfg=Black guibg=#8CCBEA guifg=Black
-        hi W_MarkWord1 ctermbg=Green   ctermfg=Black guibg=#A4E57E guifg=Black
-        hi W_MarkWord2 ctermbg=Yellow  ctermfg=Black guibg=#FFDB72 guifg=Black
-        hi W_MarkWord3 ctermbg=Red     ctermfg=Black guibg=#FF7272 guifg=Black
-        hi W_MarkWord4 ctermbg=Magenta ctermfg=Black guibg=#FFB3FF guifg=Black
-        hi W_MarkWord5 ctermbg=Blue    ctermfg=White guibg=#9999FF guifg=Black
+    let l:default="__XXX_wzr_not_found_XXX__"
+    let l:id=0
 
-        let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % l:syn_num
-        let l:exec_str = 'syn match W_MarkWord' . s:W_last_mark_idx
-        if s:W_TRUE == a:is_a_word
-            execute l:exec_str . ' /\<' . a:str . '\>/'
-        else
-            execute l:exec_str . ' /' . a:str . '/'
-        endif
+    if s:W_TRUE == a:is_a_word
+        let l:pat = '\<' . a:str . '\>'
+    else
+        let l:pat = a:str
+    endif
+
+    "let l:cur_syn = synIDattr(synID(line("."), col("."), 1), "name")
+    "if 0 == match(l:cur_syn, "W_MarkWord")
+    "    execute 'match none /\<' . a:str . '\>/'
+    "execute "match " . l:group . " /" . l:pat . "/"
+    if has_key(s:W_MarkColorPattern, l:pat)
+       let l:id = get(s:W_MarkColorPattern, l:pat, l:default)
+       if l:default != l:id
+            call matchdelete(l:id)
+            call remove(s:W_MarkColorPattern, l:pat)
+       endif
+    else " Choose a color and mark a:str
+        let s:W_last_mark_idx = (s:W_last_mark_idx + 1) % s:syn_num
+        let l:group = 'W_MarkWord' . s:W_last_mark_idx
+        let s:W_MarkColorPattern[l:pat] = matchadd(l:group, l:pat)
     endif
 endfunction
 " }}}
@@ -895,7 +1030,7 @@ function! W_code_common_setting()
     set expandtab
     set nofoldenable
 
-    "set cursorline
+    set cursorline
     "set colorcolumn=100
 
     " 显示特殊字符
@@ -922,6 +1057,14 @@ function! W_code_common_setting()
     "inoremap <Leader>ife <C-r>=W_insert_function_header('en')<CR><BS><C-o>A
 
     call W_common_replace()
+
+    "light colorscheme
+    "set background=light
+    "call W_set_colorscheme("colorzone")
+
+    "dark colorscheme
+    set background=dark
+    "call W_set_colorscheme("tango2")
     call W_set_colorscheme("solarized")
 endfunction
 "}}}
@@ -950,7 +1093,7 @@ endfunction
 function! W_insert_function_header(lang)
     let b:reg_bakup = @a
     "中文版{{{
-    if a:lang == 'cn' 
+    if a:lang == 'cn'
         let @a="
 \/*************************************************************************\n
 \ 函数名称: \n
@@ -1048,21 +1191,24 @@ function! W_cscope_init()
     set csprg=cscope
     set csto=0
     set cst
-    set cscopequickfix=s-,c-,d-,i-,t-,e-
+    " '+' indicates that results must be appended to quickfix window,
+    " '-' implies previous results clearance, '0' or command absence - don't use quickfix
+    "set cscopequickfix=s-,c-,d-,i-,t-,e-
+    set cscopequickfix=s+,c+,d+,i+,t+,e+
 
     set nocsverb
     call W_cscope_init_db()
     set csverb
 
-    nnoremap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR>
     nnoremap <Leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <Leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <Leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <Leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR>
     nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
-    nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR>
-    nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR>
-    nnoremap <Leader>c  :cs find 
+    nnoremap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>r  :cs find s <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>fc :cs find c <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>ft :cs find t <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>fe :cs find e <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>fi :cs find i <C-R>=expand("<cfile>")<CR><CR><C-o>:belowright copen<CR>
+    nnoremap <Leader>fd :cs find d <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
 
     " show result in new window
     nnoremap <Leader>fS :split<CR>:cs find s <C-R>=expand("<cword>")<CR><CR>
@@ -1076,6 +1222,7 @@ function! W_cscope_init()
 
     nnoremap <Leader>fu :call W_cscope_update_db()<CR>
     nnoremap <Leader>fl :call W_cscope_init_db()<CR>
+    nnoremap <F5>       :call W_cscope_update_db()<CR>
 
     command! -nargs=1 Css cs find s <args>
     command! -nargs=1 Csg cs find g <args>
@@ -1094,6 +1241,7 @@ endfunction
 " 使用 cscope 查询，先查询符号定义，若查到则跳到定义处，
 " 若没有查到，则查询符号引用处并跳到第一个引用的地方。
 function! W_cscope_lookup_define_or_symbol(pattern)
+    normal :<Esc>
     let l:msg_bakup = v:errmsg
     let v:errmsg = ""
     execute "cs find g " . a:pattern
@@ -1115,6 +1263,39 @@ function! W_cscope_back()
     endif
 endfunction
 " }}}
+" W_auto_set_window_size: 自动根据内容设置窗口大小{{{
+function! W_auto_set_window_size()
+    " get line: head -n 50 | wc -l
+    " get maxwidth: wc -L
+
+    let l:cmd_output = system("head -n 40 \"" . bufname("%") . "\" | wc -l | xargs -I {} echo -n {}")
+    "echom "lines: " . l:cmd_output
+    if l:cmd_output < 20
+        let l:cmd_output = 20
+    endif
+    let l:cmd_output += 4
+    if &lines != l:cmd_output
+        execute "set lines=" . l:cmd_output
+    endif
+
+    let l:cmd_output = system("head -n 100000 \"" . bufname("%") . "\" | wc -L | xargs -I {} echo -n {}")
+    "echom "columns: " . l:cmd_output
+    if l:cmd_output < 70
+        let l:cmd_output = 70
+    endif
+    if l:cmd_output > 130
+        let l:cmd_output = 130
+    endif
+    let l:cmd_output += 10
+    if &columns != l:cmd_output
+        execute "set columns=" . l:cmd_output
+    endif
+
+    "if has("unix") && ! has("macunix")
+    "    execute "silent !center-current-window.sh"
+    "endif
+endfunction
+" }}}
 " }}}
 
 call W_vundle_setting()
@@ -1128,6 +1309,7 @@ augroup end
 
 augroup wolfwzr_autocmd
     autocmd BufRead,BufNewFile *.bashrc             set filetype=sh
+    autocmd BufRead,BufNewFile *.bochsrc            set filetype=bochs
     autocmd BufRead,BufNewFile *.vimrc              set filetype=vim
     autocmd BufRead,BufNewFile *.wsgi               set filetype=python
     autocmd BufRead,BufNewFile *.{md,mkd,markdown}  set filetype=mkd
