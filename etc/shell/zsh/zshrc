@@ -1,3 +1,5 @@
+source /etc/bash.bashrc
+
 # Path to your oh-my-zsh installation.
 export ZSH=~wolfwzr/.oh-my-zsh
 
@@ -146,7 +148,6 @@ bindkey -s '^g' 'ls^M'
 bindkey -s '^j' 'cd -^M'
 bindkey -s '^k' 'cd ..^M'
 
-source /etc/wolfwzr.bashrc
 alias src='source ~/.zshrc'
 
 # history options

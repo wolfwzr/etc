@@ -484,29 +484,25 @@ fi
 
 if cmd_available zypper
 then
+    alias zp='sudo proxychains4 zypper'
     #alias sc='zypper search -d'
     alias sc='zypper search'
-    alias ist='sudo zypper install -n -l'
-    alias upd='sudo zypper update'
+    alias ist='zp install -n -l'
 elif cmd_available yum
 then
     alias sc='yum search'
     alias ist='sudo yum install -y'
-    alias upd='sudo yum update'
 elif cmd_available apt-get
 then
     alias sc='apt-cache search --names-only'
     alias ist='sudo apt-get install'
-    alias upd='sudo apt-get update'
 elif cmd_available brew
 then
     alias sc='brew search'
     alias ist='brew install'
-    alias upd='brew update'
 fi
 
 alias o='open'
-alias lb='lsblk'
 alias qu='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
@@ -523,7 +519,6 @@ alias info='info --vi-keys'
 alias wget='wget -c -L'
 alias pstree='pstree -sp'
 alias gpu='lspci | grep -i "vga\|3d\|2d"'
-alias p8='ping 8.8.8.8'
 
 alias o='open'
 alias g='grep'
@@ -559,8 +554,8 @@ alias tmux='tmux -2'
 alias tmls='tmux ls'
 alias tmat='tmux at -t'
 
-alias src='source /etc/wolfwzr.bashrc'
-alias vishrc='vi /etc/wolfwzr.bashrc \
+alias src='source /etc/bash.bashrc'
+alias vishrc='vi /etc/bash.bashrc \
                  $HOME_DIR/.zshrc \
                  $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme \
                  $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme \
@@ -592,7 +587,7 @@ alias tma='tmux attach -t'
 alias tmls='tmux ls'
 alias tmn='tmux new -s'
 
-alias pc='proxychains'
+alias pc='proxychains4'
 
 ############################################################
 # z - a better cd
