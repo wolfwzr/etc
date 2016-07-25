@@ -49,17 +49,17 @@ nnoremap C :js util.copyToClipboard('['+ buffer.title + '](' + buffer.URL + ')')
 
 " search skills
 " (custom search engine using http://mycroftproject.com/submitos.html)
-set defsearch=g
+"set defsearch=g
 " search commands
-command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
-command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
-command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
-command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
-command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
-command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
-command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
-command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
-command! -nargs=* ggsearch      open http://g2.hxgoogle.com/search.jsp?myq=<args>
+"command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
+"command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
+"command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
+"command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
+"command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
+"command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
+"command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
+"command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
+"command! -nargs=* ggsearch      open http://g2.hxgoogle.com/search.jsp?myq=<args>
 "command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
 
 " Add Search Engine Using firefox bookmark keyword search
@@ -73,15 +73,15 @@ command! -nargs=* ggsearch      open http://g2.hxgoogle.com/search.jsp?myq=<args
 "silent bmark -title="baidu yun pan search" -keyword="bdpan" %s site:pan.baidu.com
 "silent bmark -title="gfsoso search" -keyword="gf" http://www.gfsoso.com/?q=%s
 
-nnoremap sb :tab bdsearch 
-nnoremap sj :tab jdsearch 
-nnoremap st :tab tbsearch 
-nnoremap sy :tab ydsearch 
-nnoremap si :tab ipsearch 
-nnoremap sm :tab mbsearch 
-nnoremap ss :tab ssbcsearch 
-nnoremap sp :tab bdpansearch 
-nnoremap sg :tab ggsearch 
+"nnoremap sb :tab bdsearch 
+"nnoremap sj :tab jdsearch 
+"nnoremap st :tab tbsearch 
+"nnoremap sy :tab ydsearch 
+"nnoremap si :tab ipsearch 
+"nnoremap sm :tab mbsearch 
+"nnoremap ss :tab ssbcsearch 
+"nnoremap sp :tab bdpansearch 
+"nnoremap sg :tab ggsearch 
 
 " Quick url access or search using current search engine
 " p open url from clipboard in current tab
