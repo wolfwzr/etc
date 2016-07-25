@@ -371,7 +371,6 @@ fi
 ############################################################
 
 alias a='./a.out'
-alias b='bochs -f bochsrc'
 alias d='du -sh'
 alias h='history | less +G --'
 alias t='top'
@@ -550,9 +549,20 @@ _etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
 alias getc='cd "$_etc"'
 
 # tmux
-alias tma='tmux attach -t'
+alias tmat='tmux attach -t'
 alias tmls='tmux ls'
 alias tmn='tmux new -s'
+
+function b()
+{
+    local bochsrc="bochs.bochsrc"
+
+    if [ -f "$bochsrc" ]; then
+        bochs -f "$bochsrc"
+    else
+        vi "$bochsrc"
+    fi
+}
 
 ############################################################
 # z - a better cd

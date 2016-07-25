@@ -456,7 +456,7 @@ function! W_gui_setting()
 
     if has("macunix")
         "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        set guifont=Monaco:h15
+        set guifont=Monaco:h14
         " 单独设置中文字体
         " 备用字体
         " Hannotate\ SC\ Regular
@@ -1128,6 +1128,7 @@ augroup end
 
 augroup wolfwzr_autocmd
     autocmd BufRead,BufNewFile *.bashrc             set filetype=sh
+    autocmd BufRead,BufNewFile *.bochsrc             set filetype=bochs
     autocmd BufRead,BufNewFile *.vimrc              set filetype=vim
     autocmd BufRead,BufNewFile *.wsgi               set filetype=python
     autocmd BufRead,BufNewFile *.{md,mkd,markdown}  set filetype=mkd

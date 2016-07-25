@@ -267,6 +267,13 @@ Bundle 'octol/vim-cpp-enhanced-highlight'
 " 未启用插件
 " }}}
 
+" vim=templates 插件 {{{
+Bundle 'ap/vim-templates'
+" See: https://github.com/ap/vim-templates
+" add templates in .vim/templates
+let g:templates_empty_files = 1
+" }}}
+
 " 未启动的插件
 
 " bufexplorer.zip插件(未启用) {{{1
