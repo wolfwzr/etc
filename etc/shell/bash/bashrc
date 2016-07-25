@@ -16,6 +16,7 @@ fi
 export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
 # variable for cscope
 export CSCOPE_EDITOR=vim
+export LANG=en_US.UTF-8
 
 if [ -n "$SSH_CONNECTION" ]
 then
@@ -102,11 +103,12 @@ function wolf_update_ps1()
 
     if [ "$TERMINAL_PROFILE" = "Dark" ]
     then
-        prefix="\[\033[40;37m\]"
+        prefix="\[\033[40m\]"
     else
-        prefix="\[\033[47;37m\]"
+        prefix="\[\033[47m\]"
     fi
-    prefix="$prefix\[\033[38m\]["
+    prefix=""
+    prefix="$prefix\[\033[33m\]["
 
     time="\[\033[37m\]\t"
     if [ "$UID" = '0' ]
@@ -118,7 +120,7 @@ function wolf_update_ps1()
     at="\[\033[33m\]@"
     hostname="\[\033[36m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[38m\]]\[\033[0m\]"
+    suffix="\[\033[33m\]]\[\033[0m\]"
 
     export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
@@ -240,6 +242,30 @@ function lscmd ()
     grep --color=auto -i "$keyword"
 }
 
+# (copy) absoluate path
+function ap()
+{
+    local target
+
+    if [ -n "$1" ]; then
+        target=$(readlink -f "$1")
+    else
+        target=$PWD
+    fi
+
+    echo "\"$target\" has copied to clipboard!"
+
+    copy_string "$target"
+}
+
+# ldd check
+function lddchk()
+{
+    [ -z "$1" ] && return
+
+    ldd $(which "$1") | grep -i "not found"
+}
+
 # cd and ls
 cls () { cd $1; ls;}
 
@@ -335,7 +361,7 @@ append_to_path "/usr/local/bin"
 append_to_path "/usr/local/sbin"
 append_to_path "/usr/libexec"
 append_to_path "/home/wolfwzr/bin"
-append_to_path "/home/wolfwzr/bin/search"
+append_to_path "/home/wolfwzr/bin/web_search"
 append_to_path "/home/wolfwzr/bin/network"
 if [ "$OS_TYPE" = "osx" ]
 then
@@ -355,8 +381,8 @@ fi
 
 export PROMPT_COMMAND="wolf_update_ps1"
 #export PROMPT_DIRTRIM=
-#export MANPAGER="most -s"
-export MANPAGER="less"
+export MANPAGER="most -s"
+#export MANPAGER="less"
 
 if [ "$OS_TYPE" = "linux" ]
 then
@@ -374,7 +400,7 @@ alias a='./a.out'
 alias d='du -sh'
 alias h='history | less +G --'
 alias t='top'
-alias j='jobs -l'
+#alias j='jobs -l'
 alias grep='grep --color=auto'
 alias tree='tree -C'
 alias pgrep='pgrep -lf'
@@ -385,18 +411,21 @@ alias cf='copy_file'
 alias cs='copy_string'
 alias cpwd='copy_string "$PWD"'
 
-if cmd_available clear
-then
-    alias c='clear'
-else
-    alias c="printf '\033c'"
-fi
+#if cmd_available clear
+#then
+#    alias c='clear'
+#else
+#    alias c="printf '\033c'"
+#fi
+function c()
+{
+    cd "$1" && ls
+}
 
 if cmd_available colordiff
 then
     alias diff='colordiff'
 fi
-
 
 alias chwolf='sudo chown wolfwzr:users -R'
 
@@ -405,6 +434,7 @@ then
     alias r='netstat -f inet -rn'
     alias ls='ls -G'
     alias ll='ls -Glh'
+    alias lt='ls -tr'
     alias la='ls -GlhA'
     alias top='top -o cpu'
     alias t='htop'
@@ -416,13 +446,14 @@ then
     alias pg='env COLUMNS=500 ps -eo user,pid,ppid,command | grep -i'
 
     alias ports='netstat -na'
-    alias tcp='netstat -na -p tcp'
-    alias udp='netstat -na -p udp'
+    alias tcp='sudo netstat -na -p tcp'
+    alias udp='sudo netstat -na -p udp'
 else
     #alias r='route -n'
     alias r='netstat -rn'
-    alias ls='ls --color=auto'
+    alias ls='ls --color=auto --show-control-chars'
     alias ll='ls --color=auto -lh'
+    alias lt='ls -tr'
     alias la='ls --color=auto -lhA'
     alias um='sudo umount -l'
     alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
@@ -444,22 +475,22 @@ else
     #   -a : show all (listening + not listening)
     #   -n : show numberic (ip, port and uid)
     #   -p : show process name
-    alias ports='netstat -pantu'
-    alias tcp='netstat -plnt'
-    alias udp='netstat -panu'
-    alias unix='netstat -plnx'
+    alias ports='sudo netstat -pantu'
+    alias tcp='sudo netstat -plnt'
+    alias udp='sudo netstat -panu'
+    alias unix='sudo netstat -plnx'
 fi
 
 if cmd_available zypper
 then
     #alias sc='zypper search -d'
     alias sc='zypper search'
-    alias ist='sudo zypper install'
+    alias ist='sudo zypper install -n -l'
     alias upd='sudo zypper update'
 elif cmd_available yum
 then
     alias sc='yum search'
-    alias ist='sudo yum install'
+    alias ist='sudo yum install -y'
     alias upd='sudo yum update'
 elif cmd_available apt-get
 then
@@ -475,6 +506,7 @@ fi
 
 alias o='open'
 alias lb='lsblk'
+alias qu='cd ..'
 alias ..='cd ..'
 alias ...='cd ../..'
 alias .2='cd ..'
@@ -494,6 +526,7 @@ alias p8='ping 8.8.8.8'
 
 alias o='open'
 alias g='grep'
+alias gi='grep -i'
 alias f='find . -iname'
 
 alias deb2rpm='sudo alien --to-rpm --scripts'
@@ -503,7 +536,7 @@ alias makescript='fc -rnl | head -1 >'
 
 # ${var/pattern/string}
 # is pattern begin with /, all matchs of pattern are replaced with string
-alias path='echo -e ${PATH//:/\\n}'
+alias path='echo -e ${PATH//:/\\n} | uniq'
 
 if [ -n "$DISPLAY" ]
 then
@@ -521,8 +554,16 @@ else
     fi
 fi
 
+alias tmux='tmux -2'
+alias tmls='tmux ls'
+alias tmat='tmux at -t'
+
 alias src='source /etc/wolfwzr.bashrc'
-alias vishrc="vi /etc/wolfwzr.bashrc $HOME_DIR/.zshrc $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme $HOME_DIR/.tmux.conf"
+alias vishrc='vi /etc/wolfwzr.bashrc \
+                 $HOME_DIR/.zshrc \
+                 $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme \
+                 $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme \
+                 $HOME_DIR/.tmux.conf'
 alias visshconf="vi $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
 alias vihosts="vi /etc/hosts"
 
@@ -530,11 +571,12 @@ if [ "$OS_TYPE" = "osx" ]
 then
     alias vismbconf="vi /usr/local/etc/smb.conf"
     alias vikbconf="vi $HOME_DIR/Library/Application\ Support/Karabiner/private.xml"
-    alias virc="vi $HOME_DIR/.vim/vimrc /usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
+    alias virc="vi $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc " \
+               "/usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
 else
     alias vismbconf="vi /etc/samba/smb.conf"
     alias vikbconf="vi $HOME_DIR/.Xmodmap"
-    alias virc="vi $HOME_DIR/.vim/vimrc"
+    alias virc="vi $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc"
 fi
 
 alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push origin dev'
@@ -543,10 +585,6 @@ alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 # take over stdout and stderr of the pid-specific process
 alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
 alias trace-open='sudo strace -ff -e trace=open'
-
-# etc folder
-_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
-alias getc='cd "$_etc"'
 
 # tmux
 alias tmat='tmux attach -t'
@@ -563,6 +601,7 @@ function b()
         vi "$bochsrc"
     fi
 }
+alias pc='proxychains'
 
 ############################################################
 # z - a better cd

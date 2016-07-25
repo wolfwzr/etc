@@ -136,6 +136,16 @@ function comment-command-line () {
 zle -N comment-command-line
 #bindkey '^E' comment-command-line
 
+function open-current-folder() {
+    xdg-open .
+}
+zle -N open-current-folder
+bindkey '^o' open-current-folder
+
+bindkey -s '^g' 'ls^M'
+bindkey -s '^j' 'cd -^M'
+bindkey -s '^k' 'cd ..^M'
+
 source /etc/wolfwzr.bashrc
 alias src='source ~/.zshrc'
 
@@ -159,3 +169,7 @@ alias -s jpg=xview
 alias -s jpeg=xview
 alias -s png=xview
 alias -s pdf=o
+alias -s exe=wine
+
+[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+autoload -U compinit && compinit -u
