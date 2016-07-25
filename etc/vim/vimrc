@@ -487,10 +487,10 @@ function! W_gui_setting()
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
-        "set background=light
-        "call W_set_colorscheme("colorzone")
-        set background=dark
-        call W_set_colorscheme("solarized")
+        set background=light
+        call W_set_colorscheme("colorzone")
+        "set background=dark
+        "call W_set_colorscheme("solarized")
         "call W_set_colorscheme("tango2")
     endif
 
@@ -526,7 +526,7 @@ function! W_gui_setting()
 
     if has("macunix")
         "set guifont=Monaco\ for\ Powerline:h16,Monaco:h16
-        set guifont=Monaco:h14
+        set guifont=Monaco:h15
         " 单独设置中文字体
         " 备用字体
         " Hannotate\ SC\ Regular
@@ -1059,13 +1059,13 @@ function! W_code_common_setting()
     call W_common_replace()
 
     "light colorscheme
-    "set background=light
-    "call W_set_colorscheme("colorzone")
+    set background=light
+    call W_set_colorscheme("colorzone")
 
     "dark colorscheme
-    set background=dark
+    "set background=dark
     "call W_set_colorscheme("tango2")
-    call W_set_colorscheme("solarized")
+    "call W_set_colorscheme("solarized")
 endfunction
 "}}}
 " W_C_replace: C语言自动替换 {{{
@@ -1193,8 +1193,8 @@ function! W_cscope_init()
     set cst
     " '+' indicates that results must be appended to quickfix window,
     " '-' implies previous results clearance, '0' or command absence - don't use quickfix
-    "set cscopequickfix=s-,c-,d-,i-,t-,e-
-    set cscopequickfix=s+,c+,d+,i+,t+,e+
+    set cscopequickfix=s-,c-,d-,i-,t-,e-
+    "set cscopequickfix=s+,c+,d+,i+,t+,e+
 
     set nocsverb
     call W_cscope_init_db()
@@ -1244,12 +1244,13 @@ function! W_cscope_lookup_define_or_symbol(pattern)
     normal :<Esc>
     let l:msg_bakup = v:errmsg
     let v:errmsg = ""
-    execute "cs find g " . a:pattern
+    execute "silent! cs find g " . a:pattern
     if v:errmsg == ""
+        execute "cs find g " . a:pattern
         let v:errmsg = l:msg_bakup
     else
-        execute "cs find s " . a:pattern
         let s:W_cscope_is_from_symbol = s:W_TRUE
+        execute "cs find s " . a:pattern
     endif
 endfunction
 "}}}
