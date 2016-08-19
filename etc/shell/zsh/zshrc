@@ -55,7 +55,7 @@ DISABLE_UPDATE_PROMPT=true
 
 # User configuration
 
-export PATH="/home/wolfwzr/perl5/bin:/home/wolfwzr/perl5/bin:/usr/lib/mpi/gcc/openmpi/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/opt/kde3/bin:/usr/lib/mit/bin:/usr/lib/qt3/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/libexec:/opt/cross-mips32/bin:/sbin:/usr/sbin:/home/wolfwzr/usr/bin:/sbin:/usr/sbin:/home/wolfwzr/usr/bin"
+export PATH="/home/wolfwzr/bin:/home/wolfwzr/usr/bin/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/X11:/opt/kde3/bin:/usr/lib/qt3/bin:/usr/libexec:/usr/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -171,6 +171,7 @@ alias -s jpeg=xview
 alias -s png=xview
 alias -s pdf=o
 alias -s exe=wine
+alias -s py=python
 
 [[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
 autoload -U compinit && compinit -u

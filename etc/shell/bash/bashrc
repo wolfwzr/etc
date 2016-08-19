@@ -485,7 +485,7 @@ if cmd_available zypper
 then
     alias zp='sudo proxychains4 zypper'
     #alias sc='zypper search -d'
-    alias sc='zypper search'
+    alias sc='zp se'
     alias ist='zp install -n -l'
 elif cmd_available yum
 then
@@ -578,13 +578,29 @@ alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push 
 alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
 
 # take over stdout and stderr of the pid-specific process
-alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
-alias trace-open='sudo strace -ff -e trace=open'
+# make sure strace has suid set by "sudo chmod u+s $(which strace)"
+alias intercept='strace -ff -e trace=write -e write=1,2 -p'
+alias trace-open='strace -ff -e trace=open'
 
 # tmux
 alias tmat='tmux attach -t'
 alias tmls='tmux ls'
 alias tmn='tmux new -s'
+
+function build_cscope()
+{
+    # cscope supported language(incomplete list):
+    #   c,cpp,lex,yacc
+    #   asm
+    #   python
+    #   shell
+    find . -iname "*.[chlysS]" \
+        -o -iname "*.cpp" \
+        -o -iname "*.asm" \
+        -o -iname "*.py" \
+        -o -iname "*.sh"  > cscope.files
+    cscope -Rb
+}
 
 function b()
 {
@@ -605,100 +621,6 @@ alias pc='proxychains4'
 #then
 #    source /usr/local/etc/profile.d/z.sh
 #fi
-
-############################################################
-# Service control
-############################################################
-function wolf_service_control()
-{
-    # function parameter
-    #   $1 - service name (eg. smb|ssh|http)
-    #   $2 - action (eg. start|stop|restart|status)
-
-    local service_name=$1
-    local action=$2
-    local service_script=""
-
-    if [ "$OS_TYPE" == "linux" ]
-    then
-        service_script="/etc/init.d/${service_name}"
-    elif [ "$OS_TYPE" == "osx" ]
-    then
-        service_script="/System/Library/LaunchDaemons/${service_name}.plist"
-    else
-        echo "Unknown System: $(uname -a)"
-        return 1
-    fi
-
-    [ -z "$service_name" ] && echo "please specific a service name" && return 2
-    if [ ! -e "$service_script" ]
-    then
-        echo "$service_script: no such service"
-        return 3
-    fi
-
-    if [ "$OS_TYPE" == "linux" ]
-    then
-        case "$action" in
-            "status")
-                sudo $service_script status
-                ;;
-            "start")
-                sudo $service_script start
-                ;;
-            "stop")
-                sudo $service_script stop
-                ;;
-            "restart")
-                sudo $service_script stop
-                sudo $service_script start
-                ;;
-            *)
-                echo "$action: Invalid action, use [status|start|stop|restart]"
-                ;;
-        esac
-    elif [ "$OS_TYPE" == "osx" ]
-    then
-        case "$action" in
-            "status")
-                sudo -s launchctl list | grep "$service_name"
-                ;;
-            "start")
-                sudo -s launchctl load -w $service_script
-                ;;
-            "stop")
-                sudo -s launchctl unload -w $service_script
-                ;;
-            "restart")
-                sudo -s launchctl unload -w $service_script
-                sudo -s launchctl load -w $service_script
-                ;;
-            *)
-                echo "$action: Invalid action, use [status|start|stop|restart]"
-                ;;
-        esac
-    fi
-}
-
-function wstatus()
-{
-    wolf_service_control "$1" status
-}
-
-function wstart()
-{
-    wolf_service_control "$1" start
-}
-
-function wstop()
-{
-    wolf_service_control "$1" stop
-}
-
-function wrestart()
-{
-    wolf_service_control "$1" restart
-}
 
 safe_source ~/.self.bashrc
 safe_source /etc/self.bashrc

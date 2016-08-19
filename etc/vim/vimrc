@@ -455,6 +455,9 @@ function! W_shortcut_setting()
         autocmd InsertLeave * set timeoutlen=1000
     augroup end
 
+    nnoremap <C-e> 5<C-e>
+    nnoremap <C-y> 5<C-y>
+
     "}}}
 endfunction
 " }}}
@@ -487,10 +490,10 @@ function! W_gui_setting()
 
     " 设置默认配色方案
     if s:W_colorscheme_applied == 0
-        set background=light
-        call W_set_colorscheme("colorzone")
-        "set background=dark
-        "call W_set_colorscheme("solarized")
+        "set background=light
+        "call W_set_colorscheme("colorzone")
+        set background=dark
+        call W_set_colorscheme("solarized")
         "call W_set_colorscheme("tango2")
     endif
 
@@ -668,7 +671,8 @@ function! W_set_colorscheme(color)
     elseif &background == 'dark'
         " 针对 dark 类主题
         if g:W_color_scheme == "solarized"
-            hi Normal   guibg=#00303C guifg=#A5C8C8
+            "hi Normal   guibg=#00303C guifg=#A5C8C8
+            hi Normal   guibg=#063946 guifg=#A5C8C8
             hi Comment  guifg=#6E7F96
             hi Folded   gui=bold
             hi Function  guifg=#5ED25C
@@ -862,7 +866,6 @@ function! W_ft_c()
     "highlight WarningCols gui=undercurl
     "match WarningCols /\%>100v/
 
-    call W_cscope_init()
     call W_C_replace()
 
     runtime ftplugin/man.vim
@@ -878,16 +881,8 @@ function! W_ft_c()
     nnoremap <Leader>M8 :Man 8 <C-r>=expand("<cword>")<CR><CR>
     nnoremap <Leader>M9 :Man 9 <C-r>=expand("<cword>")<CR><CR>
 
-    nnoremap <buffer> <CR>
-        \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
-    nnoremap <buffer> <C-LeftMouse>
-        \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
-    nnoremap <buffer> <Leader>b :call W_cscope_back()<CR>
-    nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>
-    nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>
+    call W_cscope_settings()
 
-    " remove auto_cd group
-    autocmd! auto_cd
 endfunction
 " }}}
 " W_ft_asm(){{{
@@ -904,6 +899,7 @@ endfunction
 " W_ft_python(){{{
 function! W_ft_python()
     set foldmethod=indent
+    call W_cscope_settings()
 endfunction
 " }}}
 " W_ft_help(){{{
@@ -919,6 +915,8 @@ function! W_ft_sh()
     set foldmethod=indent
     "call W_set_colorscheme("neon")
     inoremap { {}<Left>
+
+    call W_cscope_settings()
 endfunction
 " }}}
 " W_ft_vim(){{{
@@ -1059,13 +1057,13 @@ function! W_code_common_setting()
     call W_common_replace()
 
     "light colorscheme
-    set background=light
-    call W_set_colorscheme("colorzone")
+    "set background=light
+    "call W_set_colorscheme("colorzone")
 
     "dark colorscheme
-    "set background=dark
+    set background=dark
     "call W_set_colorscheme("tango2")
-    "call W_set_colorscheme("solarized")
+    call W_set_colorscheme("solarized")
 endfunction
 "}}}
 " W_C_replace: C语言自动替换 {{{
@@ -1200,7 +1198,7 @@ function! W_cscope_init()
     call W_cscope_init_db()
     set csverb
 
-    nnoremap <Leader>fg :cs find g <C-R>=expand("<cword>")<CR><CR>
+    nnoremap <Leader>fg zz:cs find g <C-R>=expand("<cword>")<CR><CR>zz
     nnoremap <Leader>ff :cs find f <C-R>=expand("<cfile>")<CR><CR>
     nnoremap <Leader>fs :cs find s <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
     nnoremap <Leader>r  :cs find s <C-R>=expand("<cword>")<CR><CR><C-o>:belowright copen<CR>
@@ -1246,6 +1244,7 @@ function! W_cscope_lookup_define_or_symbol(pattern)
     let v:errmsg = ""
     execute "silent! cs find g " . a:pattern
     if v:errmsg == ""
+        normal <C-t>
         execute "cs find g " . a:pattern
         let v:errmsg = l:msg_bakup
     else
@@ -1264,6 +1263,26 @@ function! W_cscope_back()
     endif
 endfunction
 " }}}
+" W_cscope_settings {{{
+function! W_cscope_settings()
+
+    call W_cscope_init()
+
+    "nnoremap <buffer> <CR>
+    "    \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
+    "nnoremap <buffer> <C-LeftMouse>
+    "    \ :call W_cscope_lookup_define_or_symbol('<C-R>=expand("<cword>")<CR>')<CR>
+    "nnoremap <buffer> <Leader>b :call W_cscope_back()<CR>
+    nmap <buffer> <CR> <Leader>fg
+    nmap <buffer> <BS> <C-t>zz
+    nnoremap <buffer> <S-CR>    :Csg .*.*<Left><Left>
+    nnoremap <buffer> <C-CR>    :Csg <C-r>+<CR>
+
+    " remove auto_cd group
+    autocmd! auto_cd
+endfunction
+"}}}
+
 " W_auto_set_window_size: 自动根据内容设置窗口大小{{{
 function! W_auto_set_window_size()
     " get line: head -n 50 | wc -l
