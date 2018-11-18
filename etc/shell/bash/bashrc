@@ -1,3 +1,59 @@
+HOME_DIR=~wolfwzr
+
+if [ "$(uname -s)" = "Darwin" ]
+then
+    OS_TYPE="osx"
+else
+    OS_TYPE="linux"
+fi
+
+if [ "$OS_TYPE" = "linux" ]
+then
+    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
+fi
+
+# environment variable for vim script - vim-colorselector
+export DOTVIM="$HOME_DIR/.vim/bundle/vim-colorschemes"
+# variable for cscope
+export CSCOPE_EDITOR=vim
+export LANG=en_US.UTF-8
+
+if [ -n "$SSH_CONNECTION" ]
+then
+    REMOTE_IP=$(echo $SSH_CONNECTION | awk '{print $1}')
+    export DISPLAY=$REMOTE_IP:0
+fi
+
+############################################################
+# basic functions
+############################################################
+function get_current_shell ()
+{
+    if [ "$OS_TYPE" = "linux" ]
+    then
+        basename $(readlink /proc/$$/exe)
+    else
+        if [ "$BASH" != "" ]
+        then
+            echo "bash"
+        elif [ "$ZSH_NAME" != "" ]
+        then
+            echo "zsh"
+        elif [ "$version" != "" ]
+        then
+            echo "tcsh"
+        elif [ "$shell" != "" ]
+        then
+            # csh or tcsh
+            basename "$shell"
+        elif [ "$PS4" != ""]
+        then
+            echo "ksh"
+        fi
+    fi
+}
+CURRENT_SHELL=$(get_current_shell)
+
 # source target file if file exist
 function safe_source ()
 {
@@ -28,71 +84,7 @@ function uniq_path()
                         | tr '\n' ':' | sed 's/:$//g')\""
 }
 
-function copy_file ()
-{
-    local file=${1:--}
-
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        pbcopy < "$file"
-    else
-        xclip -selection clipboard < "$file"
-    fi
-}
-
-function copy_string ()
-{
-    if [ "$OS_TYPE" = "osx" ]
-    then
-        echo -n -E "$*" | pbcopy
-    else
-        echo -n -E "$*" | xclip -selection clipboard
-    fi
-}
-
-WOLFWZR_HOME=~wolfwzr
-
-if [ "$(uname -s)" = "Darwin" ]
-then
-    OS_TYPE="osx"
-else
-    OS_TYPE="linux"
-fi
-
-if [ "$OS_TYPE" = "linux" ]
-then
-    grep "model name" /proc/cpuinfo | grep -s -q "Atom" && CPU_TYPE="Atom"
-fi
-
-set -o vi
-export EDITOR=vim
-
-append_to_path "/bin"
-append_to_path "/sbin"
-append_to_path "/usr/bin"
-append_to_path "/usr/sbin"
-append_to_path "/usr/local/bin"
-append_to_path "/usr/local/sbin"
-append_to_path "/usr/libexec"
-if [ "$OS_TYPE" = "osx" ]
-then
-    append_to_path "$WOLFWZR_HOME/.local/bin"
-else
-    append_to_path "/opt/cross-mips32/bin"
-fi
-#uniq_path
-
-export HISTTIMEFORMAT="[%m-%d %R] "
-
-if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
-then
-    w | grep " w$" | awk '{print $3}' | grep -s -q ":"
-    [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
-fi
-
-############################################################
-# COMMAND PROMPT
-############################################################
+# update command prompt
 function wolf_update_ps1()
 {
     local exit_code=$?
@@ -105,20 +97,18 @@ function wolf_update_ps1()
 
     if [ $exit_code -ne 0 ]
     then
-        # reverse on error ✘
-        #last_cmd_exit_code="\[\033[35;7m\]${exit_code}✘"
-
         # warnning in PS1 head
-        last_cmd_exit_code="\[\033[35;40m\]${exit_code}✘\[\033[0m\]"
+        last_cmd_exit_code="\[\033[35m\]${exit_code}✘ \[\033[0m\]"
     fi
 
-    if [ "$TERMINAL_PROFILE" = "Light" ]
+    if [ "$TERMINAL_PROFILE" = "Dark" ]
     then
-        prefix="\[\033[47;37m\]"
+        prefix="\[\033[40m\]"
     else
-        prefix="\[\033[40;37m\]"
+        prefix="\[\033[47m\]"
     fi
-    prefix="$prefix\[\033[37m\]["
+    prefix=""
+    prefix="$prefix\[\033[33m\]["
 
     time="\[\033[37m\]\t"
     if [ "$UID" = '0' ]
@@ -127,199 +117,160 @@ function wolf_update_ps1()
     else
         username="\[\033[38m\]\u"
     fi
+    at="\[\033[33m\]@"
+    hostname="\[\033[36m\]\h"
     work_dir="\[\033[33m\]\W"
-    suffix="\[\033[37m\]]\[\033[0m\] "
+    suffix="\[\033[33m\]]\[\033[0m\]"
 
-    export PS1="$last_cmd_exit_code$prefix$time $username $work_dir$suffix"
+    export PS1="$last_cmd_exit_code$prefix$username$at$hostname $work_dir$suffix "
 }
-export PROMPT_COMMAND="wolf_update_ps1"
-#export PROMPT_DIRTRIM=
-
-if cmd_available brew
-then
-    safe_source "$(brew --prefix)/etc/bash_completion"
-fi
 
 ############################################################
-# ALIAS
+# useful functions
 ############################################################
-alias a='./a.out'
-alias b='bochs -f bochsrc'
-alias d='du -sh'
-alias h='history | less +G --'
-alias t='top'
-alias j='jobs -l'
-alias grep='grep --color=auto'
-alias tree='tree -C'
-alias pgrep='pgrep -lf'
-alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
-alias hg='history | grep -i'
-alias mkdir='mkdir -p'
-alias md='mkdir'
-alias cf='copy_file'
-alias cs='copy_string'
-alias cpwd='copy_string "$PWD"'
 
-if cmd_available clear
-then
-    alias c='clear'
-else
-    alias c="printf '\033c'"
-fi
-
-if cmd_available colordiff
-then
-    alias diff='colordiff'
-fi
-
-if [ "$OS_TYPE" = "osx" ] 
-then
-    alias r='netstat -f inet -rn'
-    alias ls='ls -G'
-    alias ll='ls -Glh'
-    alias la='ls -GlhA'
-    alias top='top -o cpu'
-    alias t='htop'
-    alias um='diskutil umount'
-    alias briss="java -jar $WOLFWZR_HOME/.local/share/briss-0.9/briss-0.9.jar"
-    alias df='df -Ph'
-    alias ds='d * | sort -g'
-    alias sdcv='sdcv --color --utf8-input --utf8-output'
-
-    alias ports='netstat -na'
-    alias tcp='netstat -nl -p tcp'
-    alias udp='netstat -na -p udp'
-    alias unix='netstat -nl -p unix'
-else
-    #alias r='route -n'
-    alias r='netstat -rn'
-    alias ls='ls --color=auto'
-    alias ll='ls --color=auto -lh'
-    alias la='ls --color=auto -lhA'
-    alias um='sudo umount -l'
-    alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
-    alias open='xdg-open'
-    alias m='mplayer -zoom'
-    alias mkd='Markdown.pl --html4tags'
-    alias df='df -PTh'
-    alias ds='d * | sort -h'
-    alias office='/usr/lib/libreoffice/program/soffice'
-    alias sdcv='sdcv --utf8-input --utf8-output'
-    alias restart-krunner='kquitapp krunner && krunner &'
-
-    # list all tcp/udp ports
-    #   -t : tcp
-    #   -u : udp
-    #   -x : unix socket
-    #   -l : listening (These are omitted by default.)
-    #   -a : show all (listening + not listening)
-    #   -n : show numberic (ip, port and uid)
-    #   -p : show process name
-    alias ports='netstat -pantu'
-    alias tcp='netstat -plnt'
-    alias udp='netstat -panu'
-    alias unix='netstat -plnx'
-fi
-
-if cmd_available zypper
-then
-    #alias s='zypper search -d'
-    alias s='zypper search'
-    alias i='sudo zypper install'
-    alias u='sudo zypper update'
-elif cmd_available yum
-then
-    alias s='yum search'
-    alias i='sudo yum install'
-    alias u='sudo yum update'
-elif cmd_available apt-get
-then
-    alias s='apt-cache search --names-only'
-    alias i='sudo apt-get install'
-    alias u='sudo apt-get update'
-elif cmd_available brew
-then
-    alias s='brew search'
-    alias i='brew install'
-    alias u='brew update'
-fi
-
-alias o='open'
-alias lb='lsblk'
-alias ..='cd ..'
-alias ...='cd ../..'
-alias .2='cd ..'
-alias .3='cd ../..'
-alias .4='cd ../../..'
-alias .5='cd ../../../..'
-alias .6='cd ../../../../..'
-alias .7='cd ../../../../../..'
-alias iconvcat='iconv -f gbk -t utf8'
-alias man_cn='LANG=zh_CN.utf8 man'
-alias info='info --vi-keys'
-alias wget='wget -c -L'
-alias pstree='pstree -sp'
-alias gpu='lspci | grep -i "vga\|3d\|2d"'
-alias p8='ping 8.8.8.8'
-
-alias o='open'
-alias g='grep'
-alias f='find . -iname'
-
-alias src='source /etc/wolfwzr.bashrc'
-
-# makescript with the last command
-alias makescript='fc -rnl | head -1 >'
-
-# ${var/pattern/string}
-# is pattern begin with /, all matchs of pattern are replaced with string
-alias path='echo -e ${PATH//:/\\n}'
-
-# alias for vi
-# environment variable for vim script - vim-colorselector
-export DOTVIM="$WOLFWZR_HOME/.vim/bundle/vim-colorschemes"
-# variable for cscope
-export CSCOPE_EDITOR=vim
-
-if [ -n "$DISPLAY" ]
-then
-    if cmd_available gvim
-    then 
-        alias vi='gvim'
-    elif cmd_available vim
+function copy_string ()
+{
+    if [ "$OS_TYPE" = "osx" ]
     then
-        alias vi='vim'
+        echo -n -E "$*" | pbcopy
+    else
+        echo -n -E "$*" | xclip -selection clipboard
     fi
-else
-    if cmd_available vim
+}
+
+function copy_file ()
+{
+    local file=${1:--}
+
+    if [ "$OS_TYPE" = "osx" ]
     then
-        alias vi='vim'
+        pbcopy < "$file"
+    else
+        xclip -selection clipboard < "$file"
     fi
-fi
+}
 
-alias vishrc="vi -p /etc/wolfwzr.bashrc $WOLFWZR_HOME/.zshrc $WOLFWZR_HOME/.oh-my-zsh/themes/wolf.zsh-theme"
-alias virc="vi $WOLFWZR_HOME/.vim/vimrc"
-alias visshconf="vi -p $WOLFWZR_HOME/.ssh/config /etc/ssh/ssh{,d}_config"
-alias vihosts="vi /etc/hosts"
-if [ "$OS_TYPE" = "osx" ]
-then
-    alias vismbconf="vi /usr/local/etc/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/Library/Application\ Support/Karabiner/private.xml"
-else
-    alias vismbconf="vi /etc/samba/smb.conf"
-    alias vikbconf="vi $WOLFWZR_HOME/.Xmodmap"
-fi
+function lspkg ()
+{
+    local fullpath
 
-alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
+    #fullpath=$(whence -p $1)
+    fullpath=$(which $1)
+    [ $? -eq 0 ] && rpm -qf $fullpath
+}
 
-############################################################
-# function shortcut
-############################################################
+function lspkgfile ()
+{
+    local pkg
+
+    pkg=$(lspkg $1)
+    [ $? -ne 0 ] && pkg=$1
+    rpm -ql $pkg
+}
+
+function filecmd ()
+{
+    file $(which $1)
+}
+
+function get_website_favicon()
+{
+    local host=$1
+    local h=$(echo $host | awk -F '.' '{print $1}')
+    if [ -n "$host" -a -n "$h" ]
+    then
+        wget "http://$host/favicon.ico" -O "$h.ico"
+    fi
+}
+
+function show_cmd_info ()
+{
+    local cmd=$1
+    local type_info
+    local man_info
+
+    type_info=$(type $cmd)
+    if [ "$type_info" = "$cmd is a shell builtin" ] || \
+       [ "$type_info" = "$cmd is a shell function" ] || \
+       echo "$type_info" | grep -sq "^$cmd is an alias"
+    then
+        echo "$type_info"
+        #echo "use 'typeset -f $cmd' to print function definition"
+        #echo "use 'help $cmd' in bash to get builtin help"
+    else
+        #man_info=$(apropos --exact --regex --sections=1,1p "^$cmd$" 2>/dev/null)
+        man_info=$(whatis -s 1,1p "$cmd" 2>/dev/null)
+        if [ $? -eq 0 ]
+        then
+            echo "$man_info"
+        else
+            echo "$type_info"
+        fi
+    fi
+}
+
+function lscmd ()
+{
+    local keyword=$1
+    local CMD_INDEX="/tmp/.cmd.index"
+
+    if [ ! -f "$CMD_INDEX" ]
+    then
+        case "$CURRENT_SHELL" in
+            bash)
+                compgen -A function -abck
+                ;;
+            zsh)
+                echo ${(k)aliases} ${(k)functions} \
+                     ${(k)builtins} ${(k)commands} | \
+                     tr ' ' '\n'
+                ;;
+        esac | sort | uniq > "$CMD_INDEX"
+    fi
+
+    if [ "$keyword" = "" ]
+    then
+        echo "Usage: $0 <keyword>"
+        return
+    fi
+
+    grep -i "$keyword" "$CMD_INDEX" | while read cmd
+    do
+        show_cmd_info $cmd
+    done | tr -s ' ' | sed 's/^\([^ ]*\) /\1※/g' | column -t -s '※' | \
+    grep --color=auto -i "$keyword"
+}
+
+# (copy) absoluate path
+function ap()
+{
+    local target
+
+    if [ -n "$1" ]; then
+        target=$(readlink -f "$1")
+    else
+        target=$PWD
+    fi
+
+    echo "\"$target\" has copied to clipboard!"
+
+    copy_string "$target"
+}
+
+# ldd check
+function lddchk()
+{
+    [ -z "$1" ] && return
+
+    ldd $(which "$1") | grep -i "not found"
+}
+
 # cd and ls
 cls () { cd $1; ls;}
 
 # mkdir and cd
-mcd () { mkdir -p $1 && cd $1}
+mcd () { mkdir -p $1 && cd $1;}
 
 # backup files and dirs
 bakup () { while [ $# -gt 0 ]; do cp -rf "$1"{,.bak}; shift; done;}
@@ -330,7 +281,7 @@ md5chk () { md5sum "$1" | grep "$2";}
 # copy last command (to clipboard)
 clc ()
 {
-    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g' 
+    #fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g'
     local last_cmd=$(fc -rnl | head -2 | tail -1 | sed 's/^[ \t]*//g')
     copy_string "$last_cmd"
 }
@@ -347,241 +298,333 @@ genpasswd ()
 # extract package to current dir
 function ex ()
 {
-    local dir=${2:-.}
-    if [ -z "$1" ]
+    local file=$1
+    local dst_dir=${2:-.}
+    local cur_dir=$PWD
+
+    if [ -z "$file" ]
     then
         echo -e "extract compressed package\nUsage: ex package_file [output_dir]"
         return
     fi
 
-    if [ -f $1 ]
+    if [ -f "$file" ]
     then
-        case $1 in
-            *.tar.gz)    mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tar.bz2)   mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tar.xz)    mkdir -p "$dir" && tar xJf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.bz2)       bunzip2 $1                                                 ;;
-            *.rar)       mkdir -p "$dir" && unrar e $1 "$dir"    && cd "$dir" && ls ;;
-            *.gz)        gunzip $1                                                  ;;
-            *.tar)       mkdir -p "$dir" && tar xf $1  -C "$dir" && cd "$dir" && ls ;;
-            *.tbz2)      mkdir -p "$dir" && tar xjf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.tgz)       mkdir -p "$dir" && tar xzf $1 -C "$dir" && cd "$dir" && ls ;;
-            *.zip)       mkdir -p "$dir" && unzip $1 -d "$dir"   && cd "$dir" && ls ;;
-            *.Z)         uncompress $1                                              ;;
-            *.7z)        mkdir -p "$dir" && 7z x $1 -o"$dir"     && cd "$dir" && ls ;;
-            *)           echo "'$1' cannot be extracted via extract()"              ;;
+        [ "${file:0:1}" = "/" ] || file="$cur_dir/$file"
+        [ "${dst_dir:0:1}" = "/" ] || dst_dir="$cur_dir/$dst_dir"
+        mkdir -p "$dst_dir" || (echo "cannot mkdir \"$dst_dir\""; return)
+        case "$file" in
+            *.tar.gz)       tar xzf "$file" -C "$dst_dir" ;;
+            *.tar.bz2)      tar xjf "$file" -C "$dst_dir" ;;
+            *.tar.xz)       tar xJf "$file" -C "$dst_dir" ;;
+            *.tar)          tar xf  "$file" -C "$dst_dir" ;;
+            *.tbz2)         tar xjf "$file" -C "$dst_dir" ;;
+            *.tgz)          tar xzf "$file" -C "$dst_dir" ;;
+            *.7z)           7z x    "$file" -o "$dst_dir" ;;
+            *.zip)          unzip   "$file" -d "$dst_dir" ;;
+            *.rar)          unrar x "$file"    "$dst_dir" ;;
+            *.bz2)          bunzip2 "$file" ;;
+            *.gz)           gunzip "$file" ;;
+            *.Z)            uncompress "$file" ;;
+            *.rpm)          cd "$dst_dir" && rpm2cpio "$file" | cpio -id ;;
+            *.a)            cd "$dst_dir" && ar x "$file" ;;
+            *.deb|*.ipk)    cd "$dst_dir" && ar x "$file" && \
+                            tar xzf control.tar.gz && rm -f control.tar.gz && \
+                            tar xzf data.tar.gz    && rm -f data.tar.gz ;;
+            *)              echo "'$file' cannot be extracted via extract()" ;;
         esac
+        cd "$dst_dir" && ls
     else
-        echo "'$1' is not a valid file"
+        echo "'$file' is not a valid file"
     fi
 }
 
-# take over stdout and stderr of the pid-specific process
-alias intercept='sudo strace -ff -e trace=write -e write=1,2 -p'
-alias monit-open='sudo strace -ff -e trace=open -p'
-
 ############################################################
-# z - a better cd
+# settings
 ############################################################
-if [ "$OS_TYPE" = "osx" ]
-then
-    source /usr/local/etc/profile.d/z.sh
+if [ "$CURRENT_SHELL" = "bash" ]; then
+    set -o vi
+    export EDITOR=vim
+    bind '"\C-n": next-history'
+    bind '"\C-p": previous-history'
+    bind '"\C-f": vi-forward-word'
+    bind '"\C-b": vi-backward-word'
+    bind '"\C-a": beginning-of-line'
+    bind '"\C-e": end-of-line'
 fi
 
-############################################################
-# DIR SHORTCUT
-############################################################
-# etc folder
-_etc="$(dirname $(readlink /etc/wolfwzr.bashrc))/../.."
-alias getc='cd "$_etc"'
-
+append_to_path "/bin"
+append_to_path "/sbin"
+append_to_path "/usr/bin"
+append_to_path "/usr/sbin"
+append_to_path "/usr/local/bin"
+append_to_path "/usr/local/sbin"
+append_to_path "/usr/libexec"
+append_to_path "/home/wolfwzr/bin"
+append_to_path "/home/wolfwzr/bin/web_search"
+append_to_path "/home/wolfwzr/bin/network"
 if [ "$OS_TYPE" = "osx" ]
 then
-    # Github
-    _gh="$WOLFWZR_HOME/Documents/git/github/wolfwzr"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # BrewHome
-    _bh="/usr/local/Cellar/"
-    alias gbh='cd "$_bh"'
-
-    # HomeBin(~/.local/bin)
-    _hb="$WOLFWZR_HOME/.local/bin"
-    alias ghb='cd "$_hb"'
-
-    # MountFolder
-    _mf="/Volumes/"
-    alias gmf='cd "$_mf"'
-
-    # SAE (Sina App Engine)
-    _sae="$WOLFWZR_HOME/Documents/svn/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
+    append_to_path "$HOME_DIR/local/bin"
 else
-    # scn/hse/plug
-    _scn="$WOLFWZR_HOME/Documents/work/scanner"
-    alias gscn='cd $_scn'
+    append_to_path "/opt/cross-mips32/bin"
+fi
+#uniq_path
 
-    _hse="$_scn/svn/scanner/user/modules/hse"
-    alias ghse="cd $_hse"
-    alias hse="(cd $_hse && vi hse-scanner-3.0.2/hsed/hsed.c)"
+export HISTTIMEFORMAT="[%m-%d %R] "
 
-    _sm="$_scn/svn/scanner/user/modules/scanner/bin/scanner_main/"
-    alias gsm='cd $_sm'
-    alias sm='(cd $_sm && vi scanner_main.c)'
-
-    _plg="$_scn/svn/signature/tr/sig/plugins"
-    alias gplg='cd $_plg'
-
-    # github
-    _gh="$WOLFWZR_HOME/Documents/myprojects/github"
-    alias ggh='cd "$_gh"'
-
-    # os develop
-    _os="$_gh/kernel_learning/real_mode_2_protected_mode"
-    alias gos='cd "$_os"'
-
-    # sae
-    _sae="$WOLFWZR_HOME/Documents/myprojects/sae/mail4wolfwzr/mail4wolfwzr/1"
-    alias gsae='cd $_sae'
+if [ "$OS_TYPE" = "linux" -a "$CPU_TYPE" = "Atom" ]
+then
+    w | grep " w$" | awk '{print $3}' | grep -s -q ":"
+    [ $? -ne 0 ] && export LC_ALL=zh_CN.utf8
 fi
 
-############################################################
-# Service control
-############################################################
-function wolf_service_control()
-{
-    # function parameter
-    #   $1 - service name (eg. smb|ssh|http)
-    #   $2 - action (eg. start|stop|restart|status)
+export PROMPT_COMMAND="wolf_update_ps1"
+#export PROMPT_DIRTRIM=
+export MANPAGER="most -s"
+#export MANPAGER="less"
 
-    local service_name=$1
-    local action=$2
-    local service_script=""
-
-    if [ "$OS_TYPE" == "linux" ]
-    then
-        service_script="/etc/init.d/${service_name}"
-    elif [ "$OS_TYPE" == "osx" ]
-    then
-        service_script="/System/Library/LaunchDaemons/${service_name}.plist"
-    else
-        echo "Unknown System: $(uname -a)"
-        return 1
-    fi
-
-    [ -z "$service_name" ] && echo "please specific a service name" && return 2
-    if [ ! -e "$service_script" ]
-    then
-        echo "$service_script: no such service"
-        return 3
-    fi
-
-    if [ "$OS_TYPE" == "linux" ]
-    then
-        case "$action" in
-            "status")
-                sudo $service_script status
-                ;;
-            "start")
-                sudo $service_script start
-                ;;
-            "stop")
-                sudo $service_script stop
-                ;;
-            "restart")
-                sudo $service_script stop
-                sudo $service_script start
-                ;;
-            *)
-                echo "$action: Invalid action, use [status|start|stop|restart]"
-                ;;
-        esac
-    elif [ "$OS_TYPE" == "osx" ]
-    then
-        case "$action" in
-            "status")
-                sudo -s launchctl list | grep "$service_name"
-                ;;
-            "start")
-                sudo -s launchctl load -w $service_script
-                ;;
-            "stop")
-                sudo -s launchctl unload -w $service_script
-                ;;
-            "restart")
-                sudo -s launchctl unload -w $service_script
-                sudo -s launchctl load -w $service_script
-                ;;
-            *)
-                echo "$action: Invalid action, use [status|start|stop|restart]"
-                ;;
-        esac
-    fi
-}
-
-function wstatus()
-{
-    wolf_service_control "$1" status
-}
-
-function wstart()
-{
-    wolf_service_control "$1" start
-}
-
-function wstop()
-{
-    wolf_service_control "$1" stop
-}
-
-function wrestart()
-{
-    wolf_service_control "$1" restart
-}
-
-function get_website_favicon()
-{
-    local host=$1
-    local h=$(echo $host | awk -F '.' '{print $1}')
-    if [ -n "$host" -a -n "$h" ]
-    then
-        wget "http://$host/favicon.ico" -O "$h.ico"
-    fi
-}
-
-function whichpkg ()
-{
-    local fullpath
-    
-    fullpath=$(whence -p $1)
-    [ $? -eq 0 ] && rpm -qf $fullpath
-}
-
-function lspkgfile ()
-{
-    local pkg
-
-    pkg=$(whichpkg $1)
-    [ $? -ne 0 ] && pkg=$1
-    rpm -ql $pkg
-}
-
-############################################################
-# MISCS
-############################################################
 if [ "$OS_TYPE" = "linux" ]
 then
-    export MANPAGER="most -s"
     if [ "$DESKTOP_SESSION" = "xfce4" ]
     then
         resize -s 30 100 > /dev/null
     fi
 fi
 
-safe_source ~/.work.bashrc
-safe_source ~/.nasl.bashrc
+############################################################
+# ALIAS
+############################################################
+
+alias a='./a.out'
+alias d='du -sh'
+alias h='history | less +G --'
+alias t='top'
+#alias j='jobs -l'
+alias grep='grep --color=auto'
+alias tree='tree -C'
+alias pgrep='pgrep -lf'
+alias hg='history | grep -i'
+alias mkdir='mkdir -p'
+alias md='mkdir'
+alias cf='copy_file'
+alias cs='copy_string'
+alias cpwd='copy_string "$PWD"'
+
+#if cmd_available clear
+#then
+#    alias c='clear'
+#else
+#    alias c="printf '\033c'"
+#fi
+function c()
+{
+    cd "$1" && ls
+}
+
+if cmd_available colordiff
+then
+    alias diff='colordiff'
+fi
+
+alias chwolf='sudo chown wolfwzr:users -R'
+
+if [ "$OS_TYPE" = "osx" ] 
+then
+    alias r='netstat -f inet -rn'
+    alias ls='ls -G'
+    alias ll='ls -Glh'
+    alias lt='ls -tr'
+    alias la='ls -GlhA'
+    alias top='top -o cpu'
+    alias t='htop'
+    alias um='diskutil umount'
+    alias briss="java -jar $HOME_DIR/local/share/briss-0.9/briss-0.9.jar"
+    alias df='df -Ph'
+    alias ds='d * | sort -g'
+    alias sdcv='sdcv --color --utf8-input --utf8-output'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,command | grep -i'
+
+    alias ports='netstat -na'
+    alias tcp='sudo netstat -na -p tcp'
+    alias udp='sudo netstat -na -p udp'
+else
+    #alias r='route -n'
+    alias r='netstat -rn'
+    alias ls='ls --color=auto --show-control-chars'
+    alias ll='ls --color=auto -lh'
+    alias lt='ls -tr'
+    alias la='ls --color=auto -lhA'
+    alias um='sudo umount -l'
+    alias briss='java -jar /usr/local/briss/briss-0.9/briss-0.9.jar'
+    alias open='xdg-open'
+    alias m='mplayer -zoom'
+    alias mkd='Markdown.pl --html4tags'
+    alias df='df -PTh'
+    alias ds='d * | sort -h'
+    alias office='/usr/lib/libreoffice/program/soffice'
+    alias sdcv='sdcv --utf8-input --utf8-output'
+    alias restart-krunner='kquitapp krunner && krunner &'
+    alias pg='env COLUMNS=500 ps -eo user,pid,ppid,cmd | grep -i'
+
+    # list all tcp/udp ports
+    #   -t : tcp
+    #   -u : udp
+    #   -x : unix socket
+    #   -l : listening (These are omitted by default.)
+    #   -a : show all (listening + not listening)
+    #   -n : show numberic (ip, port and uid)
+    #   -p : show process name
+    alias ports='sudo netstat -pantu'
+    alias tcp='sudo netstat -plnt'
+    alias udp='sudo netstat -panu'
+    alias unix='sudo netstat -plnx'
+fi
+
+if cmd_available zypper
+then
+    alias zp='sudo proxychains4 zypper'
+    #alias sc='zypper search -d'
+    alias sc='zp se'
+    alias ist='zp install -n -l'
+elif cmd_available yum
+then
+    alias sc='yum search'
+    alias ist='sudo yum install -y'
+elif cmd_available apt-get
+then
+    alias sc='apt-cache search --names-only'
+    alias ist='sudo apt-get install'
+elif cmd_available brew
+then
+    alias sc='brew search'
+    alias ist='brew install'
+fi
+
+alias o='open'
+alias qu='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias .2='cd ..'
+alias .3='cd ../..'
+alias .4='cd ../../..'
+alias .5='cd ../../../..'
+alias .6='cd ../../../../..'
+alias .7='cd ../../../../../..'
+alias iconvcat='iconv -f gbk -t utf8'
+alias icat='iconv -f gbk -t utf8'
+alias man_cn='LANG=zh_CN.utf8 man'
+alias info='info --vi-keys'
+alias wget='wget -c -L'
+alias pstree='pstree -sp'
+alias gpu='lspci | grep -i "vga\|3d\|2d"'
+
+alias o='open'
+alias g='grep'
+alias gi='grep -i'
+alias f='find . -iname'
+
+alias deb2rpm='sudo alien --to-rpm --scripts'
+alias rpm2deb='sudo alien --to-deb --scripts'
+# makescript with the last command
+alias makescript='fc -rnl | head -1 >'
+
+# ${var/pattern/string}
+# is pattern begin with /, all matchs of pattern are replaced with string
+alias path='echo -e ${PATH//:/\\n} | uniq'
+
+if [ -n "$DISPLAY" ]
+then
+    if cmd_available gvim
+    then
+        alias vi='gvim'
+    elif cmd_available vim
+    then
+        alias vi='vim'
+    fi
+else
+    if cmd_available vim
+    then
+        alias vi='vim'
+    fi
+fi
+
+alias tmux='tmux -2'
+alias tmls='tmux ls'
+alias tmat='tmux at -t'
+
+alias src='source /etc/bash.bashrc'
+alias vishrc='vi /etc/bash.bashrc \
+                 $HOME_DIR/.zshrc \
+                 $HOME_DIR/.oh-my-zsh/themes/wolf.zsh-theme \
+                 $HOME_DIR/.oh-my-zsh/themes/robbyrussell.zsh-theme \
+                 $HOME_DIR/.tmux.conf'
+alias visshconf="vi $HOME_DIR/.ssh/config /etc/ssh/ssh{,d}_config"
+alias vihosts="vi /etc/hosts"
+
+if [ "$OS_TYPE" = "osx" ]
+then
+    alias vismbconf="vi /usr/local/etc/smb.conf"
+    alias vikbconf="vi $HOME_DIR/Library/Application\ Support/Karabiner/private.xml"
+    alias virc="vi $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc " \
+               "/usr/local/Cellar/macvim/*/MacVim.app/Contents/Resources/vim/gvimrc"
+else
+    alias vismbconf="vi /etc/samba/smb.conf"
+    alias vikbconf="vi $HOME_DIR/.Xmodmap"
+    alias virc="vi $HOME_DIR/.vim/vimrc $HOME_DIR/.vim/vundle.vimrc"
+fi
+
+alias git-up='git add * && git ci -m "debug" && git pull origin dev && git push origin dev'
+alias monit-http='sudo tshark -Y "http" -T fields -e http.request.full_uri'
+
+# take over stdout and stderr of the pid-specific process
+# make sure strace has suid set by "sudo chmod u+s $(which strace)"
+alias intercept='strace -ff -e trace=write -e write=1,2 -p'
+alias trace-open='strace -ff -e trace=open'
+
+# tmux
+alias tmat='tmux attach -t'
+alias tmls='tmux ls'
+alias tmn='tmux new -s'
+
+function build_cscope()
+{
+    # cscope supported language(incomplete list):
+    #   c,cpp,lex,yacc
+    #   asm
+    #   python
+    #   shell
+    find . -iname "*.[chlysS]" \
+        -o -iname "*.cpp" \
+        -o -iname "*.asm" \
+        -o -iname "*.py" \
+        -o -iname "*.sh"  > cscope.files
+    cscope -Rb
+}
+
+function b()
+{
+    local bochsrc="bochs.bochsrc"
+
+    if [ -f "$bochsrc" ]; then
+        bochs -f "$bochsrc"
+    else
+        vi "$bochsrc"
+    fi
+}
+alias pc='proxychains4'
+
+############################################################
+# z - a better cd
+############################################################
+#if [ "$OS_TYPE" = "osx" ]
+#then
+#    source /usr/local/etc/profile.d/z.sh
+#fi
+
+safe_source ~/.self.bashrc
+safe_source /etc/self.bashrc
+
+:
+
 # vim: set ft=sh:

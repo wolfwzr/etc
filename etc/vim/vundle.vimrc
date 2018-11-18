@@ -2,24 +2,25 @@ set nocompatible
 syntax on
 filetype off
 set rtp+=~/.vim/bundle/Vundle.vim/
-call vundle#begin()
-Plugin 'gmarik/Vundle.vim'
 
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
 
 " a插件 {{{1
 " jump between .h and .c files
 Bundle 'vim-scripts/a.vim'
 nnoremap <Leader>a :A<CR>
-" if mapcheck("<Leader>is", "i") != ""
-"     set columns=100
-"     iunmap <Leader>is
-" endif
-" if mapcheck("<Leader>ih", "i") != ""
-"     iunmap <Leader>ih
-" endif
-" if mapcheck("<Leader>ihn", "i") != ""
-"     iunmap <Leader>ihn
-" endif
+"if mapcheck("<Leader>is", "i") != ""
+"    set columns=100
+"    iunmap <Leader>is
+"endif
+"if mapcheck("<Leader>ih", "i") != ""
+"    iunmap <Leader>ih
+"endif
+"if mapcheck("<Leader>ihn", "i") != ""
+"    iunmap <Leader>ihn
+"endif
 " }}}1
 
 " NERDTree插件 {{{1
@@ -40,6 +41,7 @@ nnoremap <Leader>a :A<CR>
 " :NERDTreeFind - 打开 NERDTree 窗口并定位到当前文件
 Bundle 'scrooloose/nerdtree'
 let g:NERDTreeWinSize=23
+let g:NERDTreeWinPos='right'
 " 检测NERDTree是否打开
 "if exists('t:NERDTreeBufName')
 "    let nerdtree_open = bufwinnr(t:NERDTreeBufName) != -1
@@ -64,6 +66,7 @@ function! W_nerdtree_toggle()
     endif
 endfunction
 nnoremap <Leader>e :call W_nerdtree_toggle()<CR>
+nnoremap <F8> :NERDTreeFind<CR>
 if has("autocmd")
     autocmd FileType nerdtree nnoremap <buffer> q :call W_nerdtree_toggle()<CR>
 endif
@@ -74,9 +77,15 @@ endif
 " 使用方法：
 " :TagbarToggle 或 <Leader>l
 Bundle 'majutsushi/tagbar'
+let g:tagbar_width=25
+let g:tagbar_expand = 1
+let g:tagbar_left = 1
+let g:tagbar_autopreview = 1
+nnoremap <Leader>T :TagbarToggle<CR>
+nnoremap <Leader>t :TagbarOpen fj<CR>
+autocmd FileType c,cpp,h nested :call tagbar#autoopen(0)
 " 检测Tagbar是否打开
 "let tagbar_open = bufwinnr('__Tagbar__') != -1
-let g:tagbar_width=25
 " 本函数功能：（发现g:tagbar_expand参数可解决该问题，不再自己实现）
 "   打开或关闭 Tagbar 窗口 **并且调整窗口宽度**
 "   1. 打开 Tagbar 窗口，并将 vim 窗口宽度增加 g:tagbar_width
@@ -99,8 +108,6 @@ let g:tagbar_width=25
 "    endif
 "endfunction
 "nnoremap <Leader>t :call W_tagbar_toggle()<CR>
-let g:tagbar_expand = 1
-nnoremap <Leader>t :TagbarToggle<CR>
 " }}}1
 
 " ctrlp插件 {{{1
@@ -112,13 +119,15 @@ nnoremap <Leader>t :TagbarToggle<CR>
 "    ./hello/about/block/ack/readme.md
 Bundle 'kien/ctrlp.vim'
 let g:ctrlp_map = '<C-p>'
-let g:ctrlp_cmd = 'CtrlPBuffer'
+"let g:ctrlp_cmd = 'CtrlPBuffer'
+let g:ctrlp_cmd = 'CtrlP'
 " nnoremap <Leader>b :CtrlPBuffer<CR>
 " nnoremap \| :CtrlPBuffer<CR>
 " CtrlP查找的文件列表
 let g:ctrlp_user_command = 'find %s -type f \( \( -path "*/.git/*" -o -path "*/.svn/*" -o -path "*/.hg/*" -o -path "*.swp" -o -path "*.so" -o -path "*.a" -o -path "*.o" -o -path "*.zip" -o -path "a.out" -o -path "*.tar.*" -o -path "*.tar" -o -path "*.rar" \) -prune -o -print \)'
 let g:ctrlp_by_filename = 1
-let g:ctrlp_working_path_mode = 'c'
+"let g:ctrlp_working_path_mode = 'c'
+let g:ctrlp_working_path_mode = '0'
 set wildignore+=*/.git/*,*/.hg/*,*/.svn/*
 set wildignore+=*.a,*.so,*.swp,*.zip,*.o,a.out
 let g:ctrlp_custom_ignore = {
@@ -266,7 +275,66 @@ Bundle 'octol/vim-cpp-enhanced-highlight'
 " 未启用插件
 " }}}
 
+" vim-templates插件{{{
+Bundle 'ap/vim-templates'
+" See: https://github.com/ap/vim-templates
+let g:templates_empty_files = 1
+" }}}
+
+" taskpaper {{{
+Bundle 'davidoc/taskpaper.vim'
+" }}}
+
+" Ack (grep like tool) {{{
+" Run favorite search tool from Vim, with an enhanced results list
+" From: https://github.com/mileszs/ack.vim
+Bundle 'mileszs/ack.vim'
+"}}}
+
+" ReplaceWithRegister {{{
+" Replacing an existing text with the contents of a register
+" From: https://github.com/vim-scripts/ReplaceWithRegister
+Bundle 'vim-scripts/ReplaceWithRegister'
+"}}}
+
+" csapprox -- Make gvim-only colorschemes work transparently in terminal vim {{{
+" Make gvim-only colorschemes work transparently in terminal vim
+" From: https://github.com/godlygeek/csapprox
+Bundle 'godlygeek/csapprox'
+"}}}
+
 " 未启动的插件
+
+" MultipleSearch (使用Ack代替){{{
+"Bundle 'vim-scripts/MultipleSearch'
+" }}}
+
+" todo.txt-vim {{{
+"Bundle 'freitass/todo.txt-vim'
+" }}}
+
+" vim-interestingwords (使用自定义的W_mark代替){{{
+" allows you to highlight and navigate through (multiple) different words in a buffer 
+" From: https://github.com/lfv89/vim-interestingwords
+"Bundle 'lfv89/vim-interestingwords'
+"let g:interestingWordsCycleColors = 1
+"let g:interestingWordsGUIColors = ['#8CCBEA', '#A4E57E', '#FFDB72', '#FF7272', '#FFB3FF', '#9999FF']
+"let g:interestingWordsGUIColors = [
+"        \ '#EA8E8E',
+"        \ '#8EEAEA',
+"        \ '#EABC8E',
+"        \ '#8EBCEA',
+"        \ '#EAEA8E',
+"        \ '#8E8EEA',
+"        \ '#BCEA8E',
+"        \ '#BC8EEA',
+"        \ '#8EEA8E',
+"        \ '#EA8EEA',
+"        \ '#8EEABC',
+"        \ '#EA8EBC',
+"        \]
+"let g:interestingWordsTermColors = ['154', '121', '211', '137', '214', '222']
+"}}}
 
 " bufexplorer.zip插件(未启用) {{{1
 " 安装了CtrlP后使用CtrlP的Buffer搜索功能也很方便，命令:CtrlPBuffer
@@ -406,6 +474,7 @@ Bundle 'octol/vim-cpp-enhanced-highlight'
 " }}}1
 
 call vundle#end()
+
 filetype plugin indent on
 
 " vim: set ft=vim:

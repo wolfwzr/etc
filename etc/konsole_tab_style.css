@@ -1,8 +1,9 @@
 QTabBar::tab::selected {
-    color: #1BC91B;
+    color: #0C5E02;
     font-weight: bold;
 }
 
 QTabBar::tab::hover {
-    color: #18B718;
+    /* color: #18B718; */
+    color: #0C5E02;
 }
