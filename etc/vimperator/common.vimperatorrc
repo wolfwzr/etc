@@ -3,6 +3,12 @@
 source! ~wolfwzr/.vimperatorrc.local
 
 let mapleader='\'
+set hintchars=hjklasdf
+"set hlsearch
+"set incsearch
+"set noinsertmode
+" do not focus input field when open webpage
+"set focuscontent
 
 "nnoremap a 		  	:tabprev<Return>
 "nnoremap d 		  	:tabnext<Return>
@@ -12,19 +18,24 @@ let mapleader='\'
 nnoremap j          3j
 nnoremap k          3k
 nnoremap h          gT
+nnoremap w          gT
 nnoremap l          gt
+nnoremap e          gt
+nnoremap <Right>    gt
+nnoremap <Left>     gT
 
 "nnoremap <BS>       :back<Return>
 "nnoremap <BS>       :tabclose<Return>
 
-nnoremap e          :emenu Tools.Clearly<Return>
-nnoremap i          :pageinfo<Return>
+nnoremap i           :pageinfo<Return>
 
 " Use default shortkey C-S-q instead
 "nnoremap <Leader>d  :emenu Tools.Web Developer.Network<Return>
 
+nnoremap <F2>       :emenu Tools.DownThemAll! Tools.Manager<Return>
+
 nnoremap <Leader>s  :source! ~/.vimperatorrc<Return>
-nnoremap <Leader>e  :!gvim ~/.vimperatorrc<Return><Esc>
+nnoremap <Leader>e  :!/usr/local/bin/gvim ~/.common.vimperatorrc ~/.linux.vimperatorrc ~/.osx.vimperatorrc ~/.vimperatorrc<Return><Esc>
 nnoremap <S-Return> :set fullscreen!<Return>
 
 " copy current tab url
@@ -32,53 +43,70 @@ nnoremap <S-Return> :set fullscreen!<Return>
 " nnoremap c          <C-l><C-c><Esc>
 nnoremap c          y
 " copy current url in markdown link formart
-nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
+" using plugin 'Copy Urls Expert'
+" nnoremap C :emenu Edit.Copy Urls Expert.Current Tab<Return>
+nnoremap C :js util.copyToClipboard('['+ buffer.title + '](' + buffer.URL + ')')<CR>
 
 " search skills
 " (custom search engine using http://mycroftproject.com/submitos.html)
-set defsearch=gf
+"set defsearch=g
 " search commands
-command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
-command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
-command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
-command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
-command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
-command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
-command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
-command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
-command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
+"command! -nargs=* jdsearch      open http://search.jd.com/Search?keyword=<args>&enc=utf-8
+"command! -nargs=* ydsearch      open http://dict.youdao.com/search?q=<args>
+"command! -nargs=* bdsearch      open https://www.baidu.com/s?ie=utf-8&wd=<args>
+"command! -nargs=* tbsearch      open http://s.taobao.com/search?q=<args>
+"command! -nargs=* ipsearch      open http://www.ip138.com/ips138.asp?ip=<args>&action=2
+"command! -nargs=* mbsearch      open http://www.ip138.com:8080/search.asp?action=mobile&mobile=<args>
+"command! -nargs=* ssbcsearch    open http://www.shousibaocai.com/search/<args>/1
+"command! -nargs=* bdpansearch   open <args> site:pan.baidu.com
+"command! -nargs=* ggsearch      open http://g2.hxgoogle.com/search.jsp?myq=<args>
+"command! -nargs=* gfsososearch  open http://www.gfsoso.com/?q=<args>
 
-nnoremap sb :tab bdsearch 
-nnoremap sj :tab jdsearch 
-nnoremap st :tab tbsearch 
-nnoremap sy :tab ydsearch 
-nnoremap si :tab ipsearch 
-nnoremap sm :tab mbsearch 
-nnoremap ss :tab ssbcsearch 
-nnoremap sp :tab bdpansearch 
-nnoremap sg :tab gfsososearch 
+" Add Search Engine Using firefox bookmark keyword search
+"silent bmark -title="jd search" -keyword="jd" http://search.jd.com/Search?keyword=%s&enc=utf-8
+"silent bmark -title="youdao dictionary search" -keyword="yd" http://dict.youdao.com/search?q=%s
+"silent bmark -title="baidu search" -keyword="bd" https://www.baidu.com/s?ie=utf-8&wd=%s
+"silent bmark -title="taobao search" -keyword="tb" http://s.taobao.com/search?q=%s
+"silent bmark -title="ip search" -keyword="ip" http://www.ip138.com/ips138.asp?ip=%s&action=2
+"silent bmark -title="phone number search" -keyword="ph" http://www.ip138.com:8080/search.asp?action=mobile&mobile=%s
+"silent bmark -title="shousibaocai dht search" -keyword="ssbc" http://www.shousibaocai.com/search/%s/1
+"silent bmark -title="baidu yun pan search" -keyword="bdpan" %s site:pan.baidu.com
+"silent bmark -title="gfsoso search" -keyword="gf" http://www.gfsoso.com/?q=%s
+
+"nnoremap sb :tab bdsearch 
+"nnoremap sj :tab jdsearch 
+"nnoremap st :tab tbsearch 
+"nnoremap sy :tab ydsearch 
+"nnoremap si :tab ipsearch 
+"nnoremap sm :tab mbsearch 
+"nnoremap ss :tab ssbcsearch 
+"nnoremap sp :tab bdpansearch 
+"nnoremap sg :tab ggsearch 
 
 " Quick url access or search using current search engine
 " p open url from clipboard in current tab
 " P open url from clipboard in new tab
 " nnoremap V          p
-nnoremap v          P
+" nnoremap v          P
 
-colorscheme default
+"colorscheme default
 " modify colors for default scheme
-highlight Normal color: white; background: #152F2C;
-highlight CmdLine color: white; background: #112624;
-highlight CompItem[selected] background: #1D4341; box-shadow: 0px 0px 1px #377E7A;
-highlight CompTitle font-weight: bold; background: #124342; color: white;
-highlight CompTitle>* font-weight: bold; background: #124342; color: white;
-highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0; color: #58C3BD;
-highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
-highlight InfoMsg color: yellow; background: transparent;
-highlight MoreMsg color: green; background: transparent;
-highlight Question color: green; background: transparent; font-weight: bold;
-highlight WarningMsg color: red; background: transparent;
-highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
-highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
+"highlight Normal color: white; background: #152F2C;
+"highlight CmdLine color: white; background: #112624;
+"highlight CompItem[selected] background: #1D4341; box-shadow: 0px 0px 1px #377E7A;
+"highlight CompTitle font-weight: bold; background: #124342; color: white;
+"highlight CompTitle>* font-weight: bold; background: #124342; color: white;
+"highlight Filter border-radius: 2px; background: #124342; border: 1px solid #2CA3A0; color: #58C3BD;
+"highlight StatusLine color: #DFDFDF; background: transparent; font-weight: normal;
+"highlight InfoMsg color: yellow; background: transparent;
+"highlight MoreMsg color: green; background: transparent;
+"highlight Question color: green; background: transparent; font-weight: bold;
+"highlight WarningMsg color: red; background: transparent;
+"highlight ContentSeparator border-top: 1px dotted #25553F; display: -moz-box;
+"highlight Title color: #69E8E1; background: #1B3B39; font-weight: bold;
+"highlight Object color: #6CBD7B
+"highlight Function color: #B2AE64;
+"colorscheme default
 
 " press <C-]> to complete
 iabbrev ww wolfwzr

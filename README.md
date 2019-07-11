@@ -58,7 +58,12 @@ $ bash install.sh
 提示
 ----
 
-1. 保持 SSH 会话不超时
+1. 保持 SSH 会话不超时  
     ```
     cat ServerAliveInterval 100 >> /etc/ssh/ssh_config
     ```
+2. 重新设置 github 在本地保存的用户名密码  
+   ```
+   git remote remove origin
+   git remote add origin git@github.com:wolfwzr/etc.git
+   ```

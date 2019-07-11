@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <root>
-<item> 
+<item>
   <name>Defined by wolfwzr</name>
 
   <devicevendordef>
@@ -14,6 +14,16 @@
     <vendorid>0x05ac</vendorid>
     <productid>0x0259</productid>
   </devicevendordef>
+
+  <appdef>
+      <appname>ITERM2</appname>
+      <equal>com.googlecode.iterm2</equal>
+  </appdef>
+
+  <appdef>
+      <appname>MACVIM</appname>
+      <equal>org.vim.MacVim</equal>
+  </appdef>
 
   <appdef>
     <appname>WIZNOTE</appname>
@@ -99,38 +109,13 @@
     <only>READER2</only>
     <uielementrole_only>AXWebArea</uielementrole_only>
     <autogen>
-      __KeyToKey__ 
+      __KeyToKey__
       KeyCode::TAB, ModifierFlag::NONE,
       KeyCode::SPACE, ModifierFlag::SHIFT_L
     </autogen>
   </item>
 
-  <item>
-    <name>Command + h/j/k/l to Left/Down/Up/Right in WizNote</name>
-    <identifier>wolfwzr.direction_in_wiznote</identifier>
-    <only>WIZNOTE</only>
-    <autogen>
-      __KeyToKey__
-      KeyCode::J, ModifierFlag::COMMAND_L,
-      KeyCode::CURSOR_DOWN
-    </autogen>
-    <autogen>
-      __KeyToKey__
-      KeyCode::K, ModifierFlag::COMMAND_L,
-      KeyCode::CURSOR_UP
-    </autogen>
-    <autogen>
-      __KeyToKey__
-      KeyCode::H, ModifierFlag::COMMAND_L,
-      KeyCode::CURSOR_LEFT
-    </autogen>
-    <autogen>
-      __KeyToKey__
-      KeyCode::L, ModifierFlag::COMMAND_L,
-      KeyCode::CURSOR_RIGHT
-    </autogen>
-  </item>
-
+  <!--
   <item>
     <name>hjkl to arrow if you are not editing text</name>
     <appendix>Supported Applications:</appendix>
@@ -164,6 +149,7 @@
       <autogen>__KeyToKey__ KeyCode::L, KeyCode::CURSOR_RIGHT</autogen>
     </block>
   </item>
+  -->
 
   <item>
     <name>hjkl to arrow in menu</name>
@@ -209,6 +195,68 @@
         KeyCode::CURSOR_RIGHT
       </autogen>
     </block>
+  </item>
+
+  <item>
+    <name>Swap Command_L with Control_L</name>
+    <appendix>Current Supported:</appendix>
+    <appendix> - macvim</appendix>
+    <identifier>wolfwzr.swap_cmd-l_with_ctrl-l</identifier>
+    <only>MACVIM</only>
+    <autogen>__KeyToKey__ KeyCode::COMMAND_L, KeyCode::CONTROL_L</autogen>
+    <autogen>__KeyToKey__ KeyCode::CONTROL_L, KeyCode::COMMAND_L</autogen>
+  </item>
+
+  <item>
+    <name>map Ctrl-* to Cmd-*</name>
+    <appendix>Current mapping:</appendix>
+    <appendix> - map ctrl-tab to cmd-tab</appendix>
+    <appendix> - map ctrl-shift-tab to cmd-shfit-tab</appendix>
+    <appendix> - map ctrl-` to cmd-`</appendix>
+    <appendix> - map ctrl-shift-` to cmd-shift-`</appendix>
+    <appendix> - map ctrl-q to cmd-q</appendix>
+    <appendix> - map ctrl-space to cmd-space</appendix>
+    <appendix> - map ctrl-shift-space to cmd-shift-space</appendix>
+    <appendix>Current Supported:</appendix>
+    <appendix> - macvim</appendix>
+    <appendix> - Terminal(Terminal/iTerm/iTerm2)</appendix>
+    <identifier>wolfwzr.map_ctrl-tab_to_cmd-tab</identifier>
+    <only>MACVIM,TERMINAL</only>
+    <autogen>
+        __KeyToKey__
+        KeyCode::TAB, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::TAB, ModifierFlag::CONTROL_L | ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+        KeyCode::TAB, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::BACKQUOTE, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::BACKQUOTE, ModifierFlag::CONTROL_L | ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+        KeyCode::BACKQUOTE, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_R | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::Q, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+        KeyCode::Q, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::SPACE, ModifierFlag::CONTROL_L | ModifierFlag::NONE,
+        KeyCode::SPACE, ModifierFlag::COMMAND_L | ModifierFlag::NONE,
+    </autogen>
+    <autogen>
+        __KeyToKey__
+        KeyCode::SPACE, ModifierFlag::CONTROL_L | ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+        KeyCode::SPACE, ModifierFlag::COMMAND_L | ModifierFlag::SHIFT_L | ModifierFlag::NONE,
+    </autogen>
   </item>
 
 </item>

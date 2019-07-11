@@ -1,14 +1,24 @@
+" Tab manager
+nnoremap <C-t>      :tabnew<CR>
+nnoremap d          <C-w>
+nnoremap D          u
+
+" duplicate tab
+" nnoremap <C-d>      :tabduplicate<Return>
+nnoremap <C-d>   	yP
+
 nnoremap <C-j>      gt
 nnoremap <C-k>      gT
-
-nnoremap d          <C-w>
 
 " Group tabs
 nnoremap <C-e>      <C-S-e>
 
-" duplicate tab
-" nnoremap <C-d>   yP
-nnoremap <C-d>      :tabduplicate<Return>
+
+" nnoremap e          :emenu Tools.Clearly<Return>
+" reader view is imported since firefox 38
+nnoremap <C-r>       :emenu View.Enter Reader View<Return>
+"nnoremap <C-S-r>     :emenu View.Close Reader View<Return>
+nnoremap <C-S-r>     :back<Return>
 
 nnoremap <C-S-i>    :emenu Tools.Page Info<Return>
 nnoremap <C-S-o>    :dialog openfile<Return>
@@ -19,9 +29,11 @@ nnoremap <C-[>      :back<Return>
 nnoremap <C-]>      :forward<Return>
 
 " quick search
-nnoremap V          :tab bdpansearch <C-v><Enter>
-nnoremap <C-v>      :tab  ssbcsearch <C-v><Enter>
-nnoremap <C-S-v>    :tab    ydsearch <C-v><Enter>
+nnoremap V          <C-c>:tabopen dht <C-v><Enter>
+nnoremap <C-v>      <C-c>:tabopen g <C-v> site:pan.baidu.com<Enter>
+nnoremap <C-S-v>    <C-c>:tabopen tk <C-v><Enter>
+
+nnoremap <Leader><Leader>   /<C-v><Enter>
 
 " Ctrl-Shift-n - next tabgroup
 " Ctrl-Shift-p - prev tabgroup
@@ -29,23 +41,39 @@ nnoremap <C-S-v>    :tab    ydsearch <C-v><Enter>
 " Ctrl-Shift-y - downloads
 " b            - buffer list
 
-inoremap <C-j>      <Down>
-inoremap <C-k>      <Up>
-inoremap <C-h>      <Left>
-inoremap <C-l>      <Right>
-inoremap <C-b>      <Home>
-inoremap <C-e>      <End>
-
-" go to https
-nnoremap gs  		<C-L><Left>https://<Return>
+" shortcut in edit area
+"
+" <C-e> Jump to end of field
+inoremap <C-b>      <C-Home>
+"
+" <C-u> Delete all chars before current cursor
+" <C-k> Delete all chars after current cursor
+"
+" <C-w> Delete a word before current cursor
+" <C-S-w> map to Delete a word after current cursor
+inoremap <C-S-w>      <C-t>dwi
+"
+inoremap <C-]>      <Right>
+inoremap <C-[>      <Left>
+" move cursor to next word
+inoremap <C-}>    <C-t>wa
+" move cursor to prev word
+inoremap <C-{>    <C-t>bi
+"
+" <C-z> Undo delete
+"
+" <C-i> call the external text editor, when in Insert and TextArea modes.
+"       external text editor can be set by :set editor="gvim -f", default is "gvim -f"
+" <C-]> Expand an Insert-mode abbreviation
+" <C-t> enter textarea mode, like a sample vi normal mode, can use vi comands like h/j/k/l ...
 
 " A-Enter in addresss bar to open url in new tab
 inoremap <C-Enter>  <A-Enter>
 " Select All in insert mode
 inoremap <C-a>      <C-Home><S-C-End>
 
-cnoremap <C-j>      <Right>
-cnoremap <C-k>      <Left>
+cnoremap <C-f>      <Right>
+cnoremap <C-b>      <Left>
 cnoremap <C-l>      <Del>
 
 cnoremap <C-i>      <Down>
@@ -53,12 +81,15 @@ cnoremap <C-o>      <Up>
 cnoremap <C-n>      <S-Down>
 cnoremap <C-p>      <S-Up>
 
-cnoremap <C-b>      <Home>
-cnoremap <C-e>      <End>
+" Select All in command line mode
+cnoremap <C-S-a>      <C-Home><S-C-End>
+" copy all in command line mode"
+cnoremap <C-S-c>      <C-Home><S-C-End><C-c><Right>
 
-" Select All in command mode
-cnoremap <C-a>      <C-Home><S-C-End>
-" Repeat last vimperator command
-nnoremap <C-a>      :<Up><Return>
+" DANGER: Repeat last vimperator command
+" nnoremap <C-a>      :<Up><Return>
+
+" go to https
+nnoremap gs  		<C-l><Left>https://<Return>
 
 " vim: set ft=vim:

@@ -1,3 +1,5 @@
+source /etc/bash.bashrc
+
 # Path to your oh-my-zsh installation.
 export ZSH=~wolfwzr/.oh-my-zsh
 
@@ -5,8 +7,8 @@ export ZSH=~wolfwzr/.oh-my-zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-#ZSH_THEME="robbyrussell"
-ZSH_THEME="wolf"
+ZSH_THEME="robbyrussell"
+#ZSH_THEME="wolf"
 #ZSH_THEME="random"
 
 DISABLE_UPDATE_PROMPT=true
@@ -53,7 +55,7 @@ DISABLE_UPDATE_PROMPT=true
 
 # User configuration
 
-export PATH="/home/wolfwzr/perl5/bin:/home/wolfwzr/perl5/bin:/usr/lib/mpi/gcc/openmpi/bin:/usr/local/bin:/usr/bin:/bin:/usr/bin/X11:/usr/games:/opt/kde3/bin:/usr/lib/mit/bin:/usr/lib/qt3/bin:/sbin:/usr/sbin:/usr/local/sbin:/usr/libexec:/opt/cross-mips32/bin:/sbin:/usr/sbin:/home/wolfwzr/usr/bin:/sbin:/usr/sbin:/home/wolfwzr/usr/bin"
+export PATH="/home/wolfwzr/bin:/home/wolfwzr/usr/bin/usr/local/bin:/usr/local/sbin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/bin/X11:/opt/kde3/bin:/usr/lib/qt3/bin:/usr/libexec:/usr/games"
 # export MANPATH="/usr/local/man:$MANPATH"
 
 source $ZSH/oh-my-zsh.sh
@@ -67,7 +69,13 @@ bindkey '^_' run-help
 bindkey '^Y' vi-put-before
 bindkey '^h' backward-delete-char
 bindkey '^w' backward-kill-word
-bindkey -s '^E' '^[I#^m'
+#bindkey -s '^E' '^[I#^m'
+bindkey '^n' down-history
+bindkey '^p' up-history
+bindkey -M viins '^f' vi-forward-word
+bindkey -M viins '^b' vi-backward-word
+bindkey -M viins '^a' vi-beginning-of-line
+bindkey -M viins '^e' vi-end-of-line
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -97,7 +105,8 @@ bindkey -s '^E' '^[I#^m'
 # use comments in interactive mode
 setopt interactivecomments
 
-compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z' + -g '(-/)' ex
+compctl -g '*.tar.bz2 *.tar.gz *.bz2 *.gz *.jar *.rar *.tar *.tbz2 *.tgz *.zip *.Z *.a *.rpm *.deb *.ipk' \
+      + -g '(-/)' ex
 
 functions user-complete (){
     if [[ -n $BUFFER ]] ; then     # 如果该行有内容
@@ -127,9 +136,18 @@ function comment-command-line () {
 	zle -U ''
 }
 zle -N comment-command-line
-bindkey '^E' comment-command-line
+#bindkey '^E' comment-command-line
 
-source /etc/wolfwzr.bashrc
+function open-current-folder() {
+    xdg-open .
+}
+zle -N open-current-folder
+bindkey '^o' open-current-folder
+
+bindkey -s '^g' 'ls^M'
+bindkey -s '^j' 'cd -^M'
+bindkey -s '^k' 'cd ..^M'
+
 alias src='source ~/.zshrc'
 
 # history options
@@ -152,3 +170,8 @@ alias -s jpg=xview
 alias -s jpeg=xview
 alias -s png=xview
 alias -s pdf=o
+alias -s exe=wine
+alias -s py=python
+
+[[ -s ~/.autojump/etc/profile.d/autojump.sh ]] && source ~/.autojump/etc/profile.d/autojump.sh
+autoload -U compinit && compinit -u
